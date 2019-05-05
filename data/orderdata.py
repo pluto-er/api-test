@@ -157,7 +157,7 @@ class OrderData:
 									continue
 								if (sale_status != 1 or spec_status != 1) and coupon_status != 1:
 									continue
-								# time.sleep(3)
+								time.sleep(3)
 								if data['type'] in [1, 2]:  # 堂食
 									res = self.add_order_ts(data['type'], shop_reserve_data, goods_type, sale_status,
 															spec_status)
