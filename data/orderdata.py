@@ -157,7 +157,7 @@ class OrderData:
 									continue
 								if (sale_status != 1 or spec_status != 1) and coupon_status != 1:
 									continue
-								time.sleep(3)
+								# time.sleep(3)
 								if data['type'] in [1, 2]:  # 堂食
 									res = self.add_order_ts(data['type'], shop_reserve_data, goods_type, sale_status,
 															spec_status)
@@ -239,7 +239,7 @@ class OrderData:
 									params['message'] = "购物车内有菜品在非可售时间内，但是下单成功"
 									self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 									continue
-								if int(sale_status) == 4 and params['status'] == 200 and params['code'] == 1:
+								if int(sale_status) == 4 and params['status'] == 200 and params['code'] == 0:
 									result_status = {"key": [], "val": [], 'report': "库存不足，下单成功"}
 									params['status'] = 500
 									params['message'] = "购物车内有菜品库存不足，但是下单成功"
@@ -260,6 +260,13 @@ class OrderData:
 									result_status = {"key": [], "val": [], 'report': params['message']}
 									params['code'] = 0
 									params['report_status'] = 202
+									self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+									continue
+								if int(params['code']) == 1:
+									result_status = {"key": [], "val": [], 'report': "库存不足"}
+									params['code'] = 0
+									params['message'] = "库存不足"
+									params['report_status'] = 200
 									self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 									continue
 
@@ -299,6 +306,8 @@ class OrderData:
 	def add_order_ts(self, order_type, shop_reserve_data, goods_type, sale_status, spec_status):
 		# 获取商品
 		goods_list = self.get_goods_shopping(order_type, shop_reserve_data, goods_type, sale_status)
+		if goods_list == 500:
+			return 500
 		if not goods_list['goods_list']:
 			return 500
 		# 获取加购
@@ -316,7 +325,8 @@ class OrderData:
 	def add_order_wm(self, order_type, shop_reserve_data, goods_type, sale_status, spec_status):
 		# 获取商品
 		goods_list = self.get_goods_shopping(order_type, shop_reserve_data, goods_type, sale_status)
-		if not goods_list['goods_list']:
+
+		if goods_list == 500 or not goods_list['goods_list']:
 			return 500
 
 		book_time = goods_list['bookTime']
@@ -365,7 +375,7 @@ class OrderData:
 	def add_order_wd(self, order_type, shop_reserve_data, goods_type, sale_status, spec_status):
 		# 获取商品
 		goods_list = self.get_goods_shopping(order_type, shop_reserve_data, goods_type, sale_status)
-		if not goods_list['goods_list']:
+		if goods_list == 500 or not goods_list['goods_list']:
 			return 500
 
 		book_time = goods_list['bookTime']

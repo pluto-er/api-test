@@ -85,21 +85,21 @@ class User:
 	# 订单
 	def my_order(self):
 		model = "订单"
-		self.coupon.check_invite_conf([model, '邀请奖励比例'])
-		self.order.list([model, '订单列表'])
-		self.order.count([model, '订单统计'])
-		self.order.detail([model, '订单详情'])
-		self.worker.list([model, '员工列表'])
+		# self.coupon.check_invite_conf([model, '邀请奖励比例'])
+		# self.order.list([model, '订单列表'])
+		# self.order.count([model, '订单统计'])
+		# self.order.detail([model, '订单详情'])
+		# self.worker.list([model, '员工列表'])
 		self.order.add([model, '下单'])
 
 	# self.comment.add_comment(['评论', '发布评论'])
 
 	def user_all(self):
-		self.my_data()
-		self.my_coupon()
-		self.my_recharge()
-		self.my_invitations()
-		self.my_comment()
+		# self.my_data()
+		# self.my_coupon()
+		# self.my_recharge()
+		# self.my_invitations()
+		# self.my_comment()
 		self.my_order()
 
 

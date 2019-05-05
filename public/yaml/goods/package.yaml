@@ -94,7 +94,7 @@ retData:
       }
       ]
     },
-    "property": {}
+#    "property": []
   },
   "status": 200,
   "code": 0,
