@@ -1,0 +1,38 @@
+uri: "/shop/wifi/wifi-list"  #店铺列表
+retData:
+  - status: 1
+    page: 1
+    size: 10
+  - status: 2
+    page: 1
+    size: 10
+
+
+result: {
+  "data": {
+    "total": 1,
+    "page": 1,
+    "list": [
+    {
+      "id": 30,
+      "bid": 10006,
+      "sid": 96,
+      "name": "测试门店wifi",
+      "sort": 1,
+      "password": "12345678",
+      "status": 1,
+      "correctTimes": 0,
+      "incorrectTimes": 0,
+      "isDel": 2,
+      "ctime": 1554964739,
+      "utime": 1554964739
+    }
+    ]
+  },
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+  "serverTime": 1554965071.1652689
+}
+
+

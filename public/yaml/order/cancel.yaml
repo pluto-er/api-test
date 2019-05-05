@@ -1,0 +1,13 @@
+uri: "/order/cancel"  #取消订单
+retData:
+  - orderId: 1234
+
+"result": {
+  "data": {},
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+  "serverTime": 1555061012.1468971
+}
+
+

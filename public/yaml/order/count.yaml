@@ -1,0 +1,15 @@
+uri: "/order/count"  #订单不同状态的计数统计
+retData:
+
+
+"result": {
+  "data": {
+    "waitCommentCount": 0
+  },
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+  "serverTime": 1555061012.1468971
+}
+
+

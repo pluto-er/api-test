@@ -1,0 +1,34 @@
+uri: "/activity/config/get-reg" #获取活动配置-注册弹窗信息#配置类型，注册：registerPopup，邀请：invitationRegisterPopup，确认订单：orderRegisterPopup
+retData:
+  - key: "registerPopup"
+    isShare: 1
+  - key: "invitationRegisterPopup"
+    isShare: 1
+  - key: "orderRegisterPopup"
+    isShare: 1
+
+
+"result": {
+  "data": {
+    "register": {
+      "status": 2,
+      "value": {
+        "line1": "邀请撒打算打算的2",
+        "line2": "下单更优惠爱上十大",
+        "button": "立享会员优惠立享"
+      }
+    },
+    "registerNext": {
+      "status": 2,
+      "value": {
+        "line1": "注册享会员价",
+        "button": "立享会员优惠"
+      }
+    }
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1555679011.8816431
+}
+

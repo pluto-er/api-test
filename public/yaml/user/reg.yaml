@@ -1,0 +1,15 @@
+uri: "/user/vip/reg"  #注册会员 - 确认注册
+retData:
+  - mobile: 1
+    code: 10
+    userCouponId: 0   #券ID
+
+"result": {
+  "data": {},
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1543809473.254349
+}
+
+

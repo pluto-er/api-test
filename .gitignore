@@ -1,0 +1,17 @@
+.buildpath
+.settings/*
+.settings
+.project
+composer.lock
+/public/logs/*
+.env
+.idea/
+.git/
+.phpintel/
+*.patch
+runtime/
+docs/
+temp/
+vendor/
+/app/config/develop/main.php
+.DS_Store

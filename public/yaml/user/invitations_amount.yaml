@@ -1,0 +1,19 @@
+uri: "/user/data/invitations-amount"  #我的钱包-邀请奖励金额统计
+retData:
+  - startTime: 1555055395
+    endTime: 1554652800
+  -
+"result": {
+  "data": {
+    "giveAmount": 0,
+    "spendingGive": 0,
+    "giveOutAmount": 0,
+    "invitationsNumber": 0,
+    "invitationsAmount": 0
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554880505.7516551
+}
+

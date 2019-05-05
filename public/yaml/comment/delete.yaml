@@ -1,0 +1,12 @@
+uri: "/comment/comment/delete"
+retData:
+  - cid: 20
+"result": {
+  "data": {},
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554209408.009201
+}
+
+

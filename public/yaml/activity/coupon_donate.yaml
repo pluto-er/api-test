@@ -1,0 +1,13 @@
+uri: "/activity/coupon/donate" #赠券
+retData:
+  - id: 1
+
+"result": {
+  "data": {},
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554870412.842526
+}
+
+

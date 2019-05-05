@@ -1,0 +1,80 @@
+uri: "/comment/comment/get-detail"
+retData:
+  - targetId: 1374
+    type: 1
+#  - targetId: 266
+#    type: 2
+
+
+"result": {
+  "data": {
+    "comment": {
+      "id": 13909,
+      "sid": 1,
+      "orderno": "154289156486568490967",
+      "uid": 22,
+      "orderStar": 2,
+      "goodsStar": 2,
+      "serviceStar": 5,
+      "environmentStar": 1,
+      "starType": 1,
+      "labelId": "38,39,40",
+      "label": [
+        "菜不新鲜",
+        "环境太差",
+        "服务不周到"
+      ],
+      "like": 0,
+      "type": 1,
+      "reply": 2,
+      "order_goods_id": "193,213,204",
+      "orderGoods": "现捞猪蹄,招牌卤煮小龙虾,白米饭",
+      "upGoodsId": "193,204",
+      "upGoods": [
+        "现捞猪蹄",
+        "白米饭"
+      ],
+      "downGoodsId": "213",
+      "downGoods": "招牌卤煮小龙虾",
+      "content": "味道一般，服务太差了",
+      "ctime": 1542891603,
+      "utime": 0,
+      "isDel": 2,
+      "photo": [
+        "https://img.weizhilian.com/10001/1/image/shop/harkei1gu6n9c3stlk5sm2jcq1",
+        "https://img.weizhilian.com/10001/1/image/shop/2pvr861tojgq2rt8fgbamaf6hj"
+      ],
+      "uName": "",
+      "uIcon": "",
+      "comment": "",
+      "isLike": 0,
+      "likeList": [
+        "闻子闻.png"
+      ]
+    },
+    "replay": {
+      "99": {
+        "id": 99,
+        "sid": 1,
+        "cid": 13909,
+        "replayId": 0,
+        "fromId": 38,
+        "fromType": 1,
+        "toId": 37,
+        "toType": 1,
+        "content": "这是一条回复消息",
+        "ctime": 1543492793,
+        "utime": 0,
+        "isDel": 2,
+        "fromName": "叙叙徐徐",
+        "toName": "plutoer"
+      }
+    }
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1543809473.254349
+}
+
+

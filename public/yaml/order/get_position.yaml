@@ -1,0 +1,20 @@
+uri: "/order/rider/get-position"  #订单管理 - 获取骑手位置信息
+retData:
+  deliveryOrderno: "DW155426191301605748429"
+
+
+"result": {
+  "data": {
+    "orderId": "DW155426191301605748429",
+    "riderName": "1",
+    "riderPhone": "18368856978",
+    "riderLat": "",
+    "riderLng": ""
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554878164.3996949
+}
+
+

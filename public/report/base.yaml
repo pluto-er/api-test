@@ -1,0 +1,10 @@
+testName:  "测试报告"   #测试标题
+testAll: 0        #测试总数
+testFail: 0       #测试警告数
+beginTime: 0      #开始时间
+begin_time: 0     #开始时间戳
+totalTime: 0      #总耗时
+testSkip: 0       #测试警告
+testPass: 0      #测试通过
+testError: 0      #测试通过
+testResult: []       #内容

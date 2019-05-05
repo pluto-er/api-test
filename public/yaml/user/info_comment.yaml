@@ -1,0 +1,65 @@
+uri: "/user/info/comment"  #用户评论奖励数据列表
+retData:
+  - page: 1
+    size: 10
+
+"result": {
+  "data": {
+    "total": 3,
+    "page": 1,
+    "size": 20,
+    "list": [
+    {
+      "id": 2628,
+      "uid": 46,
+      "sid": 96,
+      "type": 4,
+      "amount": 648,
+      "ctime": 1553494218,
+      "orderId": "155349415118911191881",
+      "scene": 2,
+      "extend": {
+        "orderType": 5
+      },
+      "fromUid": 0,
+      "subTitle": "自提外带 155349415118911191881"
+    },
+    {
+      "id": 2596,
+      "uid": 46,
+      "sid": 96,
+      "type": 4,
+      "amount": 468,
+      "ctime": 1553484760,
+      "orderId": "155348459610928414930",
+      "scene": 2,
+      "extend": {
+        "orderType": 5
+      },
+      "fromUid": 0,
+      "subTitle": "自提外带 155348459610928414930"
+    },
+    {
+      "id": 1649,
+      "uid": 46,
+      "sid": 96,
+      "type": 4,
+      "amount": 288,
+      "ctime": 1552548329,
+      "orderId": "155254826608718496766",
+      "scene": 2,
+      "extend": {
+        "orderType": 2
+      },
+      "fromUid": 0,
+      "subTitle": "外带订单 155254826608718496766"
+    }
+    ]
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1555055016.7976141
+}
+
+

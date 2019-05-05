@@ -1,0 +1,35 @@
+uri: "/user/data/invitations-by"  #用户邀请奖励数据列表 #按人数
+retData:
+  - type: 0   #类型，1已消费，2未消费 ,0全部，默认0
+    order:  {
+      consumptionAmount: desc  #排序值 空表示默认排序，可选值 按消费金额降序
+    }
+    page: 1
+    size: 10
+  - type: 1
+    order: {
+      consumptionAmount: desc  #排序值 空表示默认排序，可选值 按消费金额降序
+    }
+    page: 1
+    size: 10
+  - type: 2
+    order: {
+      consumptionAmount: desc  #排序值 空表示默认排序，可选值 按消费金额降序
+    }
+    page: 1
+    size: 10
+
+"result": {
+  "data": {
+    "total": 0,
+    "page": 1,
+    "size": 20,
+    "list": []
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554880100.3613279
+}
+
+

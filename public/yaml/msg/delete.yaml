@@ -1,0 +1,12 @@
+uri: "/msg/push/delete"  #删除消息通知
+retData:
+  - id: 5546
+
+"result": {
+  "status":200,
+  "code":0,
+  "message":"ok",
+  "data":{}
+}
+
+

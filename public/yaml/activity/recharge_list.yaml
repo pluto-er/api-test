@@ -1,0 +1,23 @@
+uri: "/activity/recharge/list" #获取充值活动列表
+retData:
+
+
+"result": {
+  "data": [
+  {
+    "id": 12,
+    "sid": 96,
+    "amount": 50000,
+    "give": 5000,
+    "isEnable": 1,
+    "sort": 0,
+    "ctime": 1551952301,
+    "title": "充500送50"
+  }
+  ],
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1556003152.5264921
+}
+

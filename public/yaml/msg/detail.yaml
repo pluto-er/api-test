@@ -1,0 +1,45 @@
+uri: "/msg/push/detail"  #删除消息通知
+retData:
+
+"result": {
+  "data": {
+    "notice": [
+    {
+      "type": 1,
+      "num": 5,
+      "ctime": "1553961923",
+      "content": "优惠券即将过期"
+    },
+    {
+      "type": 2,
+      "num": 1,
+      "ctime": "1553494218",
+      "content": "评论奖励6.48元已到账"
+    },
+    {
+      "type": 3,
+      "num": 5,
+      "content": "plutoer回复了你的评论",
+      "ctime": "1554987384"
+    },
+    {
+      "type": 4,
+      "num": 7,
+      "ctime": "1554357232",
+      "content": "订单取消-退款81元"
+    },
+    {
+      "type": 5,
+      "num": 41,
+      "ctime": "1554812893",
+      "content": "用餐评价提醒"
+    }
+    ]
+  },
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+  "serverTime": 1554989662.35008
+}
+
+

@@ -1,0 +1,12 @@
+uri: "/comment/comment/delete-replay"
+retData:
+  - replayId: 8
+"result": {
+  "data": {},
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554209408.009201
+}
+
+

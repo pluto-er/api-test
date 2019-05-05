@@ -1,0 +1,22 @@
+uri: "/user/address/update"  #修改
+retData:
+  - residential: "成都腾讯大厦B座(成都市武侯区)"
+    address: "892"
+    name: "王"
+    sex: 1
+    mobile: "18281614311"
+    label: 4
+    lat: "30.546203249138"
+    lon: "104.06128955533"
+    usual: 1
+    id: 21
+
+result: {
+  "data": {},
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554880231.483284
+}
+
+

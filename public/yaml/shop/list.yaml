@@ -1,0 +1,142 @@
+uri: "/shop/shop/list"  #店铺列表
+retData:
+  - cityId: 510100
+    query:
+    page: 1
+    size: 10
+  - cityId: 510100
+    query: "测试"
+    page: 1
+    size: 10
+  - cityId: 1000111 #错误cityId
+    query:
+    page: 1
+    size: 10
+    error: 1
+
+
+result: {
+  "data": {
+    "total": 7,
+    "list": [
+    {
+      "id": 143,
+      "bid": 10006,
+      "name": "测试-qxq",
+      "type": 1,
+      "cityId": 510100,
+      "cover": "https://img.weizhilian.com/10000/1/image/shop/iouhj1hg0l3p3t27kh30oguqd2",
+      "tel": "[{\"type\":1,\"area\":\"\",\"mobile\":\"oN4NoxAWbdxtnQRLIpZwDQ==\"}]",
+      "lat": "30.577794",
+      "lon": "104.000195",
+      "address": "四川省成都市机场路近都段112号空港16区",
+      "tag": "好店",
+      "status": 1,
+      "del": 2,
+      "openHereStatus": 3,
+      "goToStatus": 3,
+      "selfLiftStatus": 3,
+      "bannerTimeSpan": -1,
+      "bannerVideoStatus": 2,
+      "posterTimeSpan": -1,
+      "diningMode": "1,2,3,4,5,6",
+      "diningSupport": 1,
+      "mealTime": 300,
+      "rewardRatio": 500,
+      "printerStatus": 1,
+      "retireCode": "72409ddce86925904bc3a70ee5a77ee8",
+      "retireCodeSalt": "ElTuB/)-",
+      "exportCode": "",
+      "exportCodeSalt": "",
+      "rewardStatus": 1,
+      "bookStatus": 2,
+      "bookDays": 2,
+      "bookRemindTime": 900,
+      "deliveryType": [
+        "1",
+        "2"
+      ],
+      "autoDeliveryStatus": 1,
+      "autoDeliveryType": "2",
+      "utime": 1554912002,
+      "ctime": 1554120893,
+      "mobile": "oN4NoxAWbdxtnQRLIpZwDQ==",
+      "autoDeliveryTime": 15,
+      "rewardSet": "1,3,5,10,15,20",
+      "bookExpand": {
+        "bookDays": 2,
+        "wmStatus": 1,
+        "ztStatus": 1,
+        "printType": 3,
+        "remindTime": 900
+      },
+      "wxPayAccount": "",
+      "coverUrl": "https://img.weizhilian.com/10000/1/image/shop/iouhj1hg0l3p3t27kh30oguqd2",
+      "wmBookStatus": 1,
+      "ztBookStatus": 1,
+      "printType": 3,
+      "bname": "豪虾传测试",
+      "hasWmSet": 1,
+      "openHereRealStatus": 1,
+      "goToRealStatus": 1,
+      "selfLiftRealStatus": 1,
+      "distance": 11344.290000000001,
+      "showType": 2,
+      "score": 486,
+      "firstBanner": "https://img.weizhilian.com/10006/143/image/shop/2nmsoivodrop0nlpj857dfijr3",
+      "bookDate": "",
+      "bookTime": "",
+      "bannerData": {
+        "video": [],
+        "bannerList": [
+        {
+          "id": 756,
+          "bid": 10006,
+          "sid": 143,
+          "type": 2,
+          "fileType": 1,
+          "fileId": 738,
+          "sort": 1,
+          "status": 1,
+          "ctime": 1554185785,
+          "utime": 1554185785,
+          "title": "",
+          "videoCover": "",
+          "videoCoverUrl": "",
+          "uri": "https://img.weizhilian.com/10006/143/image/shop/4tslrhr3rkpijqj65hjjqb08cr",
+          "url": "https://img.weizhilian.com/10006/143/image/shop/4tslrhr3rkpijqj65hjjqb08cr",
+          "fileSize": 0,
+          "videoPlayTime": 0
+        },
+        {
+          "id": 757,
+          "bid": 10006,
+          "sid": 143,
+          "type": 2,
+          "fileType": 1,
+          "fileId": 740,
+          "sort": 2,
+          "status": 1,
+          "ctime": 1554185785,
+          "utime": 1554185785,
+          "title": "",
+          "videoCover": "",
+          "videoCoverUrl": "",
+          "uri": "https://img.weizhilian.com/10006/143/image/shop/g4f5d76pbbk10m28h896acpj8f",
+          "url": "https://img.weizhilian.com/10006/143/image/shop/g4f5d76pbbk10m28h896acpj8f",
+          "fileSize": 0,
+          "videoPlayTime": 0
+        }
+        ]
+      }
+    }
+    ],
+    "page": 1
+  },
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+  "serverTime": 1554951237.891834
+}
+
+

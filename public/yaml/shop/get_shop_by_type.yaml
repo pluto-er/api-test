@@ -1,0 +1,36 @@
+uri: "/shop/shop/get-shop-by-type" #下单时店铺切换列表
+retData:
+  - cityId: 510100
+    query: ""
+    page: 1
+    size: 10
+    orderType: 0
+
+"result": {
+  "data": {
+    "total": "7",
+    "list": [
+    {
+      "id": 143,
+      "name": "测试-qxq",
+      "address": "四川省成都市机场路近都段112号空港16区",
+      "openHereRealStatus": 1,
+      "goToRealStatus": 2,
+      "selfLiftRealStatus": 1,
+      "lat": "30.577794",
+      "lon": "104.000195",
+      "orderCount": 0,
+      "openTime": [],
+      "distance": 11344.290000000001,
+      "showType": 2
+    }
+    ],
+    "page": 1
+  },
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+  "serverTime": 1554869519.824827
+}
+
+

@@ -1,0 +1,18 @@
+uri: "/activity/coupon/get-share" #获取分享优惠券地址（返回空数据表示商家未设置分享优惠券）
+retData:
+  - orderId: 0
+  - orderId: 3100
+
+"result": {
+  "data": {
+    "url": "/pages/share/share/index?bid=10006&sid=96&code=5fee00be03d690751fbdd1fc83f325c6",
+    "bname": "豪虾传测试",
+    "sname": "豪虾测试",
+    "orderId": 2456
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554878975.23861
+}
+

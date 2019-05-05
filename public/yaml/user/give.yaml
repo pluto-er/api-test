@@ -1,0 +1,43 @@
+uri: "/user/data/give"  #用户赠送数据列表
+retData:
+  - type: 1
+    page: 1
+    size: 10
+  - type: 2
+    page: 1
+    size: 10
+
+"result": {
+  "data": {
+    "total": 1,
+    "page": 1,
+    "size": 2,
+    "list": [
+    {
+      "id": 4178,
+      "uid": 30,
+      "sid": 96,
+      "type": 5,
+      "amount": 30000,
+      "ctime": 1555324722,
+      "orderId": "155532344441101081931/FL",
+      "scene": 3,
+      "extend": {
+        "money": 3000,
+        "reGive": 1,
+        "fromUid": 53
+      },
+      "fromUid": 53,
+      "nickname": "Empress",
+      "avatar": "https://img.weizhilian.com/10006/0/image/avatar/e9dc82c242c89dcbaf982216e02f61a3",
+      "spendingAmount": 3000
+    }
+    ]
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1555324883.380409
+}
+
+

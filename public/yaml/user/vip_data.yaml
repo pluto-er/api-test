@@ -1,0 +1,50 @@
+uri: "/user/vip/data"  #会员数据获取（等级划分、成长值规则、会员等级情况）
+retData:
+
+"result": {
+  "data": {
+    "growthRule": {
+      "money": 100,
+      "growth": 1,
+      "title": "每消费1元，可获得1成长值"
+    },
+    "levelRule": [
+    {
+      "id": 8,
+      "sid": 96,
+      "title": "普通会员",
+      "integral": 0,
+      "discount": 10000,
+      "ctime": 1551861463,
+      "utime": 1551861527,
+      "type": 1,
+      "coupon": 2
+    },
+    {
+      "id": 9,
+      "sid": 96,
+      "title": "白银",
+      "integral": 1,
+      "discount": 9000,
+      "ctime": 1551861527,
+      "utime": 1553855465,
+      "type": 1,
+      "coupon": 1
+    }
+    ],
+    "nowData": {
+      "levelString": "白银",
+      "discount": 9000,
+      "integral": 443,
+      "isHig": 1,
+      "nextIntegral": 0,
+      "nextlevelString": ""
+    }
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1555036792.2338719
+}
+
+

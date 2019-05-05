@@ -1,0 +1,20 @@
+uri: "/activity/coupon/get-invite-rebate" #获取用户邀请比例
+retData:
+  - labelId: PT
+  - labelId: MT
+  - labelId: HH
+  - labelId:
+
+"result": {
+  "data": {
+    "ratio": 300,
+    "firstRatio": 2000,
+    "type": "PT"
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554209408.009201
+}
+
+

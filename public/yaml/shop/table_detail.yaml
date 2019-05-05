@@ -1,0 +1,33 @@
+uri: "/shop/table/detail"  #商家桌位详情
+retData:
+  - qrCode: "b38c4102b742f1b6b3b9889e3c20d346"
+    tid: 0
+  - qrCode:
+    tid: 90
+
+result: {
+  "data": {
+    "id": 90,
+    "bid": 10006,
+    "sid": 96,
+    "tableCode": "A10",
+    "qrCode": "b38c4102b742f1b6b3b9889e3c20d346",
+    "qrUrl": "/10006/96/image/qrcodemini/c7a255327d2944aae4fa075e9d3165b0.png",
+    "area": "Q",
+    "userNum": 4,
+    "status": 1,
+    "isDel": 2,
+    "ctime": 1550114352,
+    "utime": 1555071111,
+    "isAssemble": 2,
+    "mainId": 0,
+    "orderId": 2605,
+    "type": 1
+  },
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+  "serverTime": 1555074553.169456
+}
+
+

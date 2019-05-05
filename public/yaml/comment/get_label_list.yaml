@@ -1,0 +1,45 @@
+uri: "/comment/comment/get-label-list" #评论标签
+retData:
+  - type: 1
+  - type: 2
+  - type: 3
+  - type: 0
+  - type: 4
+  - type:
+
+"result": {
+  "data": {
+    "good": [
+    {
+      "id": 6,
+      "sid": 2,
+      "title": "服务态度好",
+      "sort": 1,
+      "type": 1,
+      "shopType": 1,
+      "ctime": 1541043031,
+      "utime": 0,
+      "isDel": 2
+    }
+    ],
+    "bad": [
+    {
+      "id": 8,
+      "sid": 2,
+      "title": "菜不新鲜",
+      "sort": 1,
+      "type": 2,
+      "shopType": 1,
+      "ctime": 1541043936,
+      "utime": 0,
+      "isDel": 2
+    }
+    ]
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554209408.009201
+}
+
+

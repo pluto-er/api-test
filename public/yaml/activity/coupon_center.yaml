@@ -1,0 +1,22 @@
+uri: "/activity/coupon/center" #领取中心
+retData:
+
+"result": {
+  "data": [
+  {
+    "type": 4,
+    "amount": 500
+  },
+  {
+    "type": 5,
+    "amount": 100
+  }
+  ],
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554869582.2222259
+}
+
+
+

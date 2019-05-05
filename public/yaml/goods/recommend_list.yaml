@@ -1,0 +1,36 @@
+uri: "/goods/recommend/list" #菜品推荐-列表
+retData:
+
+
+result: {
+  "data": [
+  {
+    "id": 32,
+#    "tag": {
+#      "zh": [
+#        "11"
+#      ]
+#    },
+    "name": "车厘子ll",
+    "price": 1000,
+    "type": 1,
+    "vipPrice": 800,
+    "stock": 10000,
+    "photo": [
+      "https://img.weizhilian.com/10006/96/image/puduct/1le4bpa3kbmknvshijkfv3ikfh"
+    ],
+    "isSale": 1,
+    "sales": "110",
+    "gid": [
+      "11"
+    ],
+    "down": 0
+  },
+  ],
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554967758.4686151
+}
+
+

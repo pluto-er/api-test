@@ -1,0 +1,42 @@
+uri: "/user/data/invitations"  #邀请奖励明细
+retData:
+  - page: 1
+    size: 10
+    startTime: 0
+    endTime: 0
+
+"result": {
+  "data": {
+    "total": 1,
+    "page": 1,
+    "size": 2,
+    "list": [
+    {
+      "id": 4177,
+      "uid": 30,
+      "sid": 96,
+      "type": 3,
+      "amount": 30000,
+      "ctime": 1555323469,
+      "orderId": "155532344441101081931",
+      "scene": 2,
+      "extend": {
+        "money": 3000,
+        "fromUid": 53
+      },
+      "fromUid": 53,
+      "reGive": 2,
+      "sex": 2,
+      "nickname": "Empress",
+      "avatar": "https://img.weizhilian.com/10006/0/image/avatar/e9dc82c242c89dcbaf982216e02f61a3",
+      "spendingAmount": 3000
+    }
+    ]
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1555323632.922406
+}
+
+

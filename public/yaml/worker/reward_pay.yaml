@@ -1,0 +1,26 @@
+uri: "/worker/worker/reward-pay"  #打赏
+retData:
+  - type: 1
+    workerId: 203
+    platform: wx
+    rewardMoney: 1
+
+
+"result": {
+  "data": {
+    "appId": "wxd9a28df0646534d8",
+    "timeStamp": "1554975512",
+    "nonceStr": "YfHDhjc4Do1ZkOrA",
+    "package": "prepay_id=wx111738328172324e145b28700240569057",
+    "signType": "MD5",
+    "paySign": "46C22F8973E0CA8110CF1E3DC950EA36",
+    "orderno": "155497551449366520868",
+    "prepayId": "wx111738328172324e145b28700240569057"
+  },
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+  "serverTime": 1554975515.3308871
+}
+
+

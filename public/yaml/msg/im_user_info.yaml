@@ -1,0 +1,18 @@
+uri: "/msg/im/getUserInfo"  #获取用户IM信息
+retData:
+  - suid: 0  #店长ucid
+    ucid: 242
+
+
+"result": {
+  "data": {
+    "uid": "10006_96_0",
+    "suid": "10006_96_0",
+    "sig": "eJxNjV1rgzAYRv*Ltx3z1STODnohs7NCt1E-GAMhBJNI6qYSo1079t-nOst6ew7neb6sbJvesrJsh8ZQc*yEdW*BdXPGiovGKKmEnqADAB5devRiWdcpTpmhSPOrqOc1PavfBgM42EfgzVJ8dkoLyqT52ySEuNPubEehe9U2k3DBIY6LAP6lUR9iTgB5xCWXP1VN*GmdP8TBI96MB6ew4-a9IntS2Mt4lyX9uBlOesLDs5dGuLBlUu8ZegvUOqjuQv76wviYBsqPytokO39BIpmfsh4fkwNsTcjlorBDkq*s7x8voli9"
+  },
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+  "serverTime": 1555036525.6399679
+}
+

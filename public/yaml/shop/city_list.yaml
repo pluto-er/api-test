@@ -1,0 +1,33 @@
+uri: "/shop/shop/city-list"  #店铺列表
+test_cases: "https://www.tapd.cn/33092098/sparrow/tcase/view/1133092098001000190?url_cache_key=aaafcbadb0146bd669841a97f2ad20d3" #测试用例地址
+retData:
+  - lon: 0
+    lat: 0
+  - lat: "30.548751831054688"
+    lon: "104.05888366699219"
+  - lat: "104.548751831054688" # 错误地址
+    lon: "30.05888366699219"
+
+result: {
+  "data": {
+    "cityId": "110100",
+    "cityName": "北京市",
+    "count": "0",
+    "cityList": {
+      "310100": {
+        "cityid": 310100,
+        "parentid": 310000,
+        "type": 1,
+        "name": "上海市",
+        "count": "4",
+        "cityId": 310100,
+        "cityName": "上海市",
+      }
+    }
+  },
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+}
+
+

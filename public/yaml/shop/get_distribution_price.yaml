@@ -1,0 +1,20 @@
+uri: "/shp/shop/get-distribution-price" #根据经纬度和时间计算配送价格
+retData:
+  - time: 1556017200 #送餐时间戳
+    lon: "104.06893660019"
+    lat: "30.513657380519"
+
+
+"result": {
+  "data": {
+    "totalPrice": 800,
+    "distance": 371,
+    "startingPrice": 20000
+  },
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+  "serverTime": 1556007924.5270951
+}
+
+

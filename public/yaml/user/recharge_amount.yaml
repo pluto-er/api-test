@@ -1,0 +1,17 @@
+uri: "/user/data/recharge-amount"  #充值统计数据
+retData:
+
+"result": {
+  "data": {
+    "rechargeAmount": 100000,
+    "rechargeGiveAmount": 100000,
+    "spendingRechargeAmount": 0,
+    "spendingRechargeGiveAmount": 3600
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1555054307.9597211
+}
+
+

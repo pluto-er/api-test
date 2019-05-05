@@ -1,0 +1,34 @@
+uri: "/activity/coupon/coupon-goods-able-list" #菜品券-首次发券选择可发券列表
+retData:
+  - gids: [74,180,11]
+    payTime: 1554271525
+    orderno: 155427152562271082213
+    orderId: 2107
+
+"result": {
+  "data":{
+    "total":1,
+    "list":[
+    {
+      "id":1,
+      "sid":1,
+      "gid":117,
+      "name":"1",
+      "atime":1542100077,
+      "photo":[
+        "https://img.weizhilian.com/https://img.weizhilian.com/10001/1/shop/oju3i5hved0vg03irmnqo6tghm"
+      ],
+      "shelves":1,
+      "price":0,
+      "vipPrice":0,
+      "spec":""
+    }
+    ]
+  },
+  "status":200,
+  "code":0,
+  "message":"",
+  "serverTime":1542109066.995157
+}
+
+

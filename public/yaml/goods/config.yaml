@@ -1,0 +1,28 @@
+uri: "/goods/goods/config" #菜品相关配置
+retData:
+  - type: [1,2] #用餐类型，1.堂食；2.外带；3.外卖；默认空
+  - type: []
+  - type: [1]
+  - type: [2]
+  - type: [3]
+  - type: [1,3]
+  - type: [2,3]
+
+result: {
+  "data": {
+    "recommend": 1,
+    "fullscreen": 2,
+    "advertising": 2,
+    "category": 1,
+    "categoryNav": {
+      "checked": [],
+      "uncheck": []
+    }
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1556262325.976748
+}
+
+

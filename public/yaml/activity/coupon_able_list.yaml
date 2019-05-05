@@ -1,0 +1,52 @@
+uri: "/activity/coupon/coupon-able-list" #优惠券使用-可用券列表
+retData:
+  - labelId: PT
+#  - labelId: MT
+#  - labelId: HH
+
+"result": {
+  "data": {
+    "goodsCoupon": [],
+    "coupon": [],
+    "goodsCouponRule": {
+      "id": 1,
+      "sid": 96,
+      "activity": 1,
+      "expiry": 1,
+      "timeLimit": 1,
+      "timeLimitSet": [
+      {
+        "time": [
+        {
+          "end": "23:59",
+          "start": "00:00"
+        }
+        ],
+        "week": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ]
+      }
+      ],
+      "screen": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "receive": 1,
+      "share": 1
+    }
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554870412.842526
+}
+
+

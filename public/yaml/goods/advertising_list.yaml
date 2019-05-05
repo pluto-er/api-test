@@ -1,0 +1,106 @@
+uri: "/goods/advertising/list" #广告位列表
+retData:
+  - type: 1
+  - type: 3
+  - type: 4
+
+"result": {
+  "data": [
+  {
+    "id": 7,
+    "sid": 96,
+    "sort": 1,
+    "glid": 32,
+    "video": [
+    {
+      "id": 705,
+      "bid": 10006,
+      "sid": 96,
+      "title": "测试视频",
+      "fileType": 2,
+      "videoCover": "",
+      "uri": "10006/96/video/bigScreen/1vs7ko3sdt7s1b5gnt2g6gdool",
+      "status": 1,
+      "fileSize": 0,
+      "videoPlayTime": 0,
+      "ctime": 1552964912,
+      "utime": 1552964912,
+      "url": "https://img.weizhilian.com/10006/96/video/bigScreen/1vs7ko3sdt7s1b5gnt2g6gdool",
+      "videoCoverUrl": ""
+    }
+    ],
+    "photo": [
+      "https://img.weizhilian.com/10006/96/image/advertisingSpace/pa7khakc9b5voqmcdd6bi5hkdo"
+    ],
+    "atime": 1551336808,
+    "type": 1,
+    "name": "番茄",
+    "price": 2000000,
+    "min": 1,
+    "unit": "份",
+    "cid": 16,
+    "showEn": 2,
+    "showEnName": "",
+    "boxPrice": 10000,
+    "boxNum": 1,
+    "vipPrice": 0,
+    "dineIn": 1,
+    "takeAway": 1,
+    "takeOut": 1,
+    "stock": 15,
+    "limitation": 1,
+    "isSale": 1,
+    "gid": 73
+  },
+  {
+    "id": 104,
+    "sid": 96,
+    "sort": 2,
+    "glid": 111,
+    "video": [
+    {
+      "id": 756,
+      "bid": 10006,
+      "sid": 96,
+      "title": "",
+      "fileType": 2,
+      "videoCover": "",
+      "uri": "10006/96/video/advertisingSpace/7o4uotes5kq9ksf83jasc134uo",
+      "status": 1,
+      "fileSize": 0,
+      "videoPlayTime": 0,
+      "ctime": 1554196946,
+      "utime": 1554196946,
+      "url": "https://img.weizhilian.com/10006/96/video/advertisingSpace/7o4uotes5kq9ksf83jasc134uo",
+      "videoCoverUrl": ""
+    }
+    ],
+    "photo": [],
+    "atime": 1553686235,
+    "type": 2,
+    "name": "水果系",
+    "price": 100,
+    "min": 1,
+    "unit": "份",
+    "cid": 4,
+    "showEn": 2,
+    "showEnName": "",
+    "boxPrice": 0,
+    "boxNum": 1,
+    "vipPrice": 100,
+    "dineIn": 1,
+    "takeAway": 1,
+    "takeOut": 1,
+    "stock": 1,
+    "limitation": 1,
+    "isSale": 1,
+    "gid": 0
+  }
+  ],
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554879755.328517
+}
+
+

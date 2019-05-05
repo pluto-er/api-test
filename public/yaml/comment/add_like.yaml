@@ -1,0 +1,16 @@
+uri: "/comment/comment/add-like"
+retData:
+  - cid: 584
+    type: 1
+  - cid: 584
+    type: 2
+
+"result": {
+  "data": {},
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554209408.009201
+}
+
+

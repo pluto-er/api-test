@@ -1,0 +1,13 @@
+uri: "/user/vip/code"  #注册会员 - 获取验证码
+retData:
+  mobile: 18281614311
+
+"result": {
+  "data": {},
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1555036792.2338719
+}
+
+

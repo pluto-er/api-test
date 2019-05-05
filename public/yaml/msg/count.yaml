@@ -1,0 +1,15 @@
+uri: "/msg/push/count"  #获取用户未读消息总数
+retData:
+
+
+"result": {
+  "data": {
+    "num": 0
+  },
+  "status": 200,
+  "code": 0,
+  "message": "ok",
+  "serverTime": 1555038024.5038221
+}
+
+

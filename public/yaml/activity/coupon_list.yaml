@@ -1,0 +1,59 @@
+uri: "/activity/coupon/list" #我的优惠券列表
+retData:
+  - type: 1  #类型1.未使用；2.已使用，3.已过期，4.赠送记录
+    page: 1
+    size: 10
+  - type: 2
+    page: 1
+    size: 10
+  - type: 3
+    page: 1
+    size: 10
+  - type: 4
+    page: 1
+    size: 10
+
+"result": {
+  "data": {
+    "page": 2,
+    "size": 1,
+    "list": [
+    {
+      "id": 569,
+      "uid": 46,
+      "fromUid": 0,
+      "sid": 96,
+      "type": 4,
+      "status": 3,
+      "amount": 500,
+      "condition": 1000,
+      "expire": 1553153129,
+      "holiday": 1,
+      "usetime": "[]",
+      "scenarios": "1,2,3",
+      "ctime": 1552548329,
+      "allowGive": 2,
+      "allowStack": 1,
+#      "expand": {
+#        "commentOrderno": "155254826608718496766"
+#      },
+      "code": "3181eb18ce30ac54561b0942dc420a67",
+      "identity": "e0b74fc99c48c515c85ce44f5b6d3aef",
+      "description": "",
+      "utime": 0
+    }
+    ],
+    "count": {
+      "unused": 0,
+      "used": 0,
+      "expiry": 5,
+      "record": 0
+    }
+  },
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554877188.960113
+}
+
+

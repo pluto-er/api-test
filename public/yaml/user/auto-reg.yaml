@@ -1,0 +1,13 @@
+uri: "/user/vip/auto-reg"  #注册会员 - 一键注册
+retData:
+  - userCouponId: 0   #券ID
+
+"result": {
+  "data": {},
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1543809473.254349
+}
+
+

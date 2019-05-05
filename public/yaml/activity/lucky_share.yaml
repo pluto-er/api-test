@@ -1,0 +1,13 @@
+uri: "/activity/coupon/lucky-share" #领取分享优惠券
+retData:
+  - code: 1
+
+"result": {
+  "data": {},
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554209408.009201
+}
+
+

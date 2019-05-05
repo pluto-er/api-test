@@ -1,0 +1,12 @@
+uri: "/activity/coupon/share-callback" #分享券分享上报
+retData:
+  orderId: 2456
+
+"result": {
+  "data": {},
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "serverTime": 1554869763.1023469
+}
+
