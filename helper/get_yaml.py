@@ -93,15 +93,15 @@ class GetYaml:
 					]
 				},
 			]
-		if status_code in ['错误', '失败']:
-			send_data = "【" + str(model[0]) + "-" + str(model[1]) + "】出错 traceid=" + str(
-					params['traceid']) + "，message=" + str(params['message']) + ",report=" + str(result_code['report']) \
-						+ ",缺少key=" + str([result_code['key']]) + ",value值错误=" + str([result_code['val']]) + \
-						",url=" + str(ret['url']) + ",\nexpect=" + str(ret['expect']['result']) + "，\nresult=" + str(
-					params)
-			qywx = Qywx()
-			qywx.send_msg_qywx_text(
-					{'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": send_data})
+		# if status_code in ['错误', '失败']:
+		# 	send_data = "【" + str(model[0]) + "-" + str(model[1]) + "】出错 traceid=" + str(
+		# 			params['traceid']) + "，message=" + str(params['message']) + ",report=" + str(result_code['report']) \
+		# 				+ ",缺少key=" + str([result_code['key']]) + ",value值错误=" + str([result_code['val']]) + \
+		# 				",url=" + str(ret['url']) + ",\nexpect=" + str(ret['expect']['result']) + "，\nresult=" + str(
+		# 			params)
+		# 	qywx = Qywx()
+		# 	qywx.send_msg_qywx_text(
+		# 			{'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": send_data})
 		# 写入base
 		OperationYaml.set(file_path, file_data)
 
