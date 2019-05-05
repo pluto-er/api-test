@@ -3,7 +3,7 @@ from lib.client import RunMethod
 from lib.global_val import glo
 
 corpid = "wwf9c376064d78d25f"  # 企业id
-corpsecret = "oRx2I9_TvbtSPT0qS9cV3KfGXjuOPzbaa11k99FOLZI"  # 密钥
+corpsecret = "dbj5tOQcTqB3z2F6rKjPMDl84fxMAUqmZ6Z2d23ZyBo"  # 密钥
 
 
 class Qywx:
@@ -43,4 +43,4 @@ class Qywx:
 
 if __name__ == '__main__':
 	run = Qywx()
-	run.send_msg_qywx_text({'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000002, "content": ""})
+	run.send_msg_qywx_text({'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": ""})

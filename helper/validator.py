@@ -81,16 +81,12 @@ class ValidatorHelper:
 	def set_dict_list(self, data, params):
 		data_val = []
 		params_val = []
-		if isinstance(type(data), dict):
-			for data_key in data:
-				data_val.append(data[data_key])
-		else:
-			data_val = data
+		data_key = data.keys()
 
-		if isinstance(type(params), dict):
-			for params_key in params:
-				params_val.append(params[params_key])
-		else:
-			params_val = params
+		for data_key_data in data_key:
+			data_val.append(data[data_key_data])
 
+		params_key = params.keys()
+		for params_key_data in params_key:
+			params_val.append(params[params_key_data])
 		return {"data": data_val, "params": params_val}

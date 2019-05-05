@@ -614,6 +614,8 @@ class OrderData:
 		if send_time:
 			now = int(time.mktime(time.strptime(send_time, "%Y-%m-%d %H:%M:%S")))
 		goods = self.goods.get_shopping(order_type, goods_type, shop_reserve_data, send_time)
+		if not goods:
+			return 500
 		# 开始组装数据
 		goods_list_data = []
 		price = vip_price = box_price = 0

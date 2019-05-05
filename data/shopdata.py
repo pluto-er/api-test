@@ -219,11 +219,12 @@ class ShopData:
 		url = ret['url']
 		header = ret['header']
 		post_data = ret['expect']['retData']
+		exect_data = ret['expect']['result']['data']['list']
 		# 循环用例，请求获取数据
 		for data in post_data:
 			# 请求api获取结果
 			params = self.send_post.send_post(url, data, header)
-			dict_val = self.validator.set_dict_list(ret['expect']['result']['data']['list'], params['data']['list'])
+			dict_val = self.validator.set_dict_list(exect_data, params['data']['list'])
 			params['data']['list'] = dict_val['params']
 			ret['expect']['result']['data']['list'] = dict_val['data']
 			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status

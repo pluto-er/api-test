@@ -101,7 +101,7 @@ class GetYaml:
 					params)
 			qywx = Qywx()
 			qywx.send_msg_qywx_text(
-					{'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000002, "content": send_data})
+					{'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": send_data})
 		# 写入base
 		OperationYaml.set(file_path, file_data)
 
