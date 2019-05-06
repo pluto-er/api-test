@@ -130,8 +130,10 @@ class GetYaml:
 
 		# 判断是否存在路径
 		first_file_path = root_path + "/public/html/" + day
+		print(first_file_path)
 		is_exists = os.path.exists(first_file_path)
 		if not is_exists:
+			print("目录不存在")
 			os.makedirs(first_file_path)
 
 		# 创建yaml数据

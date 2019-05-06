@@ -18,7 +18,7 @@ class Startup:
 	def start_up(self):
 		model = "启动页"
 		self.shop.city_list([model, '城市列表'])
-		self.shop.list([model, '城市门店'])
+		# self.shop.list([model, '城市门店'])
 
 
 if __name__ == '__main__':

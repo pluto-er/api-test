@@ -34,10 +34,10 @@ class UserMain:
 		GetYaml.init_file(file_name)
 		# 开始执行
 		self.startup.start_up()  # 启动页面
-		self.shop.start_up()
-		self.goods.start_up()
-		self.user.user_all()
-		self.msg.start_up()
+		# self.shop.start_up()
+		# self.goods.start_up()
+		# self.user.user_all()
+		# self.msg.start_up()
 
 		# 写入html文件
 		self.get_html_data.set_html()
