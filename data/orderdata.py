@@ -139,6 +139,8 @@ class OrderData:
 
 		for data in post_data:  # 循环就餐类型
 			shop_detail = self.shop.detail(model)
+			if not shop_detail['data']:
+				continue
 			# 判断当前就餐方式是否支持预订单
 			shop_reserve = self.decide_reserve(data['type'], shop_detail['data']['bookExpand'])
 			# 获取商品 多规格
@@ -158,146 +160,151 @@ class OrderData:
 								if (sale_status != 1 or spec_status != 1) and coupon_status != 1:
 									continue
 								time.sleep(3)
-								if data['type'] in [1, 2]:  # 堂食
-									res = self.add_order_ts(data['type'], shop_reserve_data, goods_type, sale_status,
-															spec_status)
-									if res == 500:
-										self.set_to_yaml(ret, data, model, "没有菜品,type=" + str(data['type']))
+								try:
+									if data['type'] in [1, 2]:  # 堂食
+										res = self.add_order_ts(data['type'], shop_reserve_data, goods_type,
+																sale_status, spec_status)
+										if res == 500:
+											self.set_to_yaml(ret, data, model, "没有菜品,type=" + str(data['type']))
+											continue
+									if data['type'] == 3:  # 外卖
+										res = self.add_order_wm(data['type'], shop_reserve_data, goods_type,
+																sale_status, spec_status)
+										if res == 500:
+											self.set_to_yaml(ret, data, model, "没有菜品,type=" + str(data['type']))
+											continue
+										data['addressId'] = res['addressId']
+										data['book'] = shop_reserve_data
+										data['bookTime'] = res['bookTime']
+									if data['type'] in [4, 5]:  # 自提
+										res = self.add_order_wd(data['type'], shop_reserve_data, goods_type,
+																sale_status, spec_status)
+										if res == 500:
+											self.set_to_yaml(ret, data, model, "没有菜品,type=" + str(data['type']))
+											continue
+										data['addressId'] = res['addressId']
+										data['book'] = shop_reserve_data
+										data['bookTime'] = res['bookTime']
+
+									# 验证菜品
+									check_status = self.check_goods(res)
+									# print(check_status)
+									# exit()
+									if check_status == 500:
+										self.set_to_yaml(ret, data, model, "验证菜品失败,type=" + str(data['type']))
 										continue
-								if data['type'] == 3:  # 外卖
-									res = self.add_order_wm(data['type'], shop_reserve_data, goods_type, sale_status,
-															spec_status)
-									if res == 500:
-										self.set_to_yaml(ret, data, model, "没有菜品,type=" + str(data['type']))
+
+									# 获取用户等级和余额
+									user = self.user.info(model)
+									if not user:
 										continue
-									data['addressId'] = res['addressId']
-									data['book'] = shop_reserve_data
-									data['bookTime'] = res['bookTime']
+									discount = int(user['discount']) / 10000
+									balance = user['balance']
 
-								if data['type'] in [4, 5]:  # 自提
-									res = self.add_order_wd(data['type'], shop_reserve_data, goods_type, sale_status,
-															spec_status)
-									if res == 500:
-										self.set_to_yaml(ret, data, model, "没有菜品,type=" + str(data['type']))
+									if user['vipId']:
+										pay_amount = int(res['vip_price'])
+									else:
+										pay_amount = int(res['price'])
+
+									# 优惠券
+									data['couponIds'] = []
+									coupon_data = self.coupon_list(pay_amount, data['type'], coupon_status)
+									if coupon_data:
+										pay_amount = pay_amount - int(coupon_data['amount'])
+										data['couponIds'] = [coupon_data['id']]
+									pay_amount = abs(int(pay_amount * discount))
+									data['balance'] = random.randint(0, pay_amount)
+									if balance < data['balance']:
+										data['balance'] = balance
+									data['payAmount'] = pay_amount - data['balance']
+									data['addGoodsList'] = res['addGoodsList']
+									data['goodsList'] = res['goodsList']
+									# 微信支付
+									# print(
+									# 		"sale_status=" + str(sale_status) + ";spec_status=" + str(
+									# 				spec_status) + ";coupon_status=" + str(coupon_status))
+									# print(data)
+									ret['expect']['result'] = {'data': {'payment': {'appId': 'wxd9a28df0646534d8',
+										'timeStamp': '1528272139', 'nonceStr': 'ZqVLm8Pat11R1lES',
+										'package': 'prepay_id=wx0616310921997445847a6bb82103985001', 'signType': 'MD5',
+										'paySign': 'CD4DF19AE59427DFE83517F0A71CC9DA', 'orderId': 12345,
+										'orderno': '155641426764551068878', 'payAmount': 10240,
+										'prepayId': 'wx280917482887322d8d7918c11135339134'}, 'type': 1},
+										'status': 200, 'code': 0, 'message': '', 'serverTime': 1554209408.009201}
+
+									params = self.send_post.send_post(url, data, header)
+
+									# print(params)
+									if int(sale_status) == 2 and params['status'] == 200 and params['code'] == 0:
+										result_status = {"key": [], "val": [], 'report': "菜品在非可售时间内下单，下单成功"}
+										params['status'] = 500
+										params['message'] = "购物车内有菜品在非可售时间内，但是下单成功"
+										self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 										continue
-									data['addressId'] = res['addressId']
-									data['book'] = shop_reserve_data
-									data['bookTime'] = res['bookTime']
+									if int(sale_status) == 4 and params['status'] == 200 and params['code'] == 0:
+										result_status = {"key": [], "val": [], 'report': "库存不足，下单成功"}
+										params['status'] = 500
+										params['message'] = "购物车内有菜品库存不足，但是下单成功"
+										self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+										continue
+									if int(spec_status) == 2 and params['status'] == 200 and params['code'] == 2:
+										result_status = {"key": [], "val": [],
+											'report': params['message'] + "有必选加购产品，但是未选择 "}
+										params['code'] = 0
+										self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+										continue
+									if int(coupon_status) == 3 and params['status'] == 200 and params['code'] == 2:
+										result_status = {"key": [], "val": [], 'report': "优惠券不能使用，消费金额未达到"}
+										params['code'] = 0
+										self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+										continue
+									if int(params['code']) == 15005:
+										result_status = {"key": [], "val": [], 'report': params['message']}
+										params['code'] = 0
+										params['report_status'] = 202
+										self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+										continue
+									if int(params['code']) == 1:
+										result_status = {"key": [], "val": [], 'report': "库存不足"}
+										params['code'] = 0
+										params['message'] = "库存不足"
+										params['report_status'] = 200
+										self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+										continue
 
-								# 验证菜品
-								check_status = self.check_goods(res)
-								# print(check_status)
-								# exit()
-								if check_status == 500:
-									self.set_to_yaml(ret, data, model, "验证菜品失败,type=" + str(data['type']))
-									continue
+									result_status = self.validator.validate_status(ret, params, model, data)
+									if result_status == "fail":
+										continue
 
-								# 获取用户等级和余额
-								user = self.user.info(model)
-								if not user:
-									continue
-								discount = int(user['discount']) / 10000
-								balance = user['balance']
+									# 取消订单
+									cancel_status = self.cancel_order(params['data']['payment']['orderId'])
+									if cancel_status == 500:
+										continue
 
-								if user['vipId']:
-									pay_amount = int(res['vip_price'])
-								else:
-									pay_amount = int(res['price'])
+									# 再次使用余额支付
+									if balance < pay_amount:
+										result = 500
+										params['message'] = "余额不足"
+										self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+										continue
 
-								# 优惠券
-								data['couponIds'] = []
-								coupon_data = self.coupon_list(pay_amount, data['type'], coupon_status)
-								if coupon_data:
-									pay_amount = pay_amount - int(coupon_data['amount'])
-									data['couponIds'] = [coupon_data['id']]
-								pay_amount = int(pay_amount * discount)
-								data['balance'] = random.randint(0, pay_amount)
-								if balance < data['balance']:
-									data['balance'] = balance
-								data['payAmount'] = pay_amount - data['balance']
-								data['addGoodsList'] = res['addGoodsList']
-								data['goodsList'] = res['goodsList']
-								# 微信支付
-								# print(
-								# 		"sale_status=" + str(sale_status) + ";spec_status=" + str(
-								# 				spec_status) + ";coupon_status=" + str(coupon_status))
-								# print(data)
-								ret['expect']['result'] = {'data': {'payment': {'appId': 'wxd9a28df0646534d8',
-									'timeStamp': '1528272139', 'nonceStr': 'ZqVLm8Pat11R1lES',
-									'package': 'prepay_id=wx0616310921997445847a6bb82103985001', 'signType': 'MD5',
-									'paySign': 'CD4DF19AE59427DFE83517F0A71CC9DA', 'orderId': 12345,
-									'orderno': '155641426764551068878', 'payAmount': 10240,
-									'prepayId': 'wx280917482887322d8d7918c11135339134'}, 'type': 1},
-									'status': 200, 'code': 0, 'message': '', 'serverTime': 1554209408.009201}
+									data['balance'] = pay_amount
+									data['payAmount'] = 0
+									data['payType'] = 1
+									data['goods_type'] = goods_type
+									ret['expect']['result'] = {'data': {'payment': {'orderId': 12345}, 'type': 1},
+										'status': 200, 'code': 0, 'message': '', 'serverTime': 1554209408.009201}
+									params = self.send_post.send_post(url, data, header)
+									result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+									if result_status == "fail":
+										continue
 
-								params = self.send_post.send_post(url, data, header)
-
-								# print(params)
-								if int(sale_status) == 2 and params['status'] == 200 and params['code'] == 0:
-									result_status = {"key": [], "val": [], 'report': "菜品在非可售时间内下单，下单成功"}
-									params['status'] = 500
-									params['message'] = "购物车内有菜品在非可售时间内，但是下单成功"
 									self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
-									continue
-								if int(sale_status) == 4 and params['status'] == 200 and params['code'] == 0:
-									result_status = {"key": [], "val": [], 'report': "库存不足，下单成功"}
-									params['status'] = 500
-									params['message'] = "购物车内有菜品库存不足，但是下单成功"
+								except BaseException as e:
+									result_status = {"key": [], "val": [], 'report': str(e)}
+									params = {"report_status": 202, "request_time": 0, "traceid": "", "status": 200,
+										"code": 0, "message": str(e)}
 									self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
-									continue
-								if int(spec_status) == 2 and params['status'] == 200 and params['code'] == 2:
-									result_status = {"key": [], "val": [],
-										'report': params['message'] + "有必选加购产品，但是未选择 "}
-									params['code'] = 0
-									self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
-									continue
-								if int(coupon_status) == 3 and params['status'] == 200 and params['code'] == 2:
-									result_status = {"key": [], "val": [], 'report': "优惠券不能使用，消费金额未达到"}
-									params['code'] = 0
-									self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
-									continue
-								if int(params['code']) == 15005:
-									result_status = {"key": [], "val": [], 'report': params['message']}
-									params['code'] = 0
-									params['report_status'] = 202
-									self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
-									continue
-								if int(params['code']) == 1:
-									result_status = {"key": [], "val": [], 'report': "库存不足"}
-									params['code'] = 0
-									params['message'] = "库存不足"
-									params['report_status'] = 200
-									self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
-									continue
-
-								result_status = self.validator.validate_status(ret, params, model, data)
-								if result_status == "fail":
-									continue
-
-								# 取消订单
-								cancel_status = self.cancel_order(params['data']['payment']['orderId'])
-								if cancel_status == 500:
-									continue
-
-								# 再次使用余额支付
-								if balance < pay_amount:
-									result = 500
-									params['message'] = "余额不足"
-									self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
-									continue
-
-								data['balance'] = pay_amount
-								data['payAmount'] = 0
-								data['payType'] = 1
-								data['goods_type'] = goods_type
-								ret['expect']['result'] = {'data': {'payment': {'orderId': 12345}, 'type': 1},
-									'status': 200, 'code': 0, 'message': '', 'serverTime': 1554209408.009201}
-								params = self.send_post.send_post(url, data, header)
-								result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-								if result_status == "fail":
-									continue
-
-								self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 
@@ -345,6 +352,8 @@ class OrderData:
 		for address_post in params['data']:
 			if address_post['usual'] == 1:
 				choice_address.append(address_post)
+		if not choice_address:
+			return 500
 		address_data = random.choice(choice_address)
 
 		price_url = ret['host'] + "/shop/shop/get-distribution-price"
@@ -384,7 +393,8 @@ class OrderData:
 		goods_add = self.get_goods_add_shopping(order_type, spec_status)
 		# 获取联系人电话
 		picked = self.user.picked_up_info()
-
+		if not picked['data']:
+			return 500
 		result = {
 			'bookTime': book_time,
 			'goodsList': goods_list['goods_list'],

@@ -23,6 +23,7 @@ class Qywx:
 		return access_token
 
 	def send_msg_qywx_text(self, data):
+		return True
 		access_token = self.get_access_token()
 		post_data = {
 			"touser": data['touser'],
