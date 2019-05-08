@@ -4,7 +4,7 @@ from lib.operation_html import OperationHtml
 from lib.operation_yaml import OperationYaml
 from helper.send_email import SendEmailHelper
 from lib.global_val import glo
-
+from helper.qywx import Qywx
 
 class GetHtml:
 
@@ -36,6 +36,9 @@ class GetHtml:
 		content = '<html><h3>全面测试小程序api:' \
 				  '</h3><a href="' + conf['case_url'] + file_name + '" ' \
 																	'style="font-size:18px">点击查看报告</a></html>'
+		qywx = Qywx()
+		qywx.send_msg_qywx_text(
+				{'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": content})
 		self.send_email.send_report_email(title, content)
 
 	def set_start(self, file_path):
