@@ -23,7 +23,6 @@ class Qywx:
 		return access_token
 
 	def send_msg_qywx_text(self, data):
-		return True
 		access_token = self.get_access_token()
 		post_data = {
 			"touser": data['touser'],
@@ -44,4 +43,4 @@ class Qywx:
 
 if __name__ == '__main__':
 	run = Qywx()
-	run.send_msg_qywx_text({'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": ""})
+	run.send_msg_qywx_text({'touser': '', "totag": "", "toparty": "2|4", "agentid": 1000012, "content": ""})

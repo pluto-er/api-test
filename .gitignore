@@ -2,3 +2,4 @@
 /public/report/*
 .idea/
 .git/
+.venv/

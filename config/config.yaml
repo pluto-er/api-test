@@ -3,8 +3,8 @@ header:
   content-type: "application/json"
   bid: "10006"
   sid: "96"
-  uid: "30"
-  token: "196f6e80b66e101a279752c049e61097" #token指定用户并直接修改过期时间
+  uid: "62"
+  token: "066e9487bcf12e58af1662a18e738c91" #token指定用户并直接修改过期时间
   locale: "1"
   miniversion: "1"
   sdkversion: "1"
