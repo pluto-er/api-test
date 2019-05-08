@@ -95,10 +95,16 @@ class GetYaml:
 			]
 		if status_code in ['错误', '失败']:
 			send_data = "【" + str(model[0]) + "-" + str(model[1]) + "】出错 traceid=" + str(
-					params['traceid']) + "，message=" + str(params['message']) + ",report=" + str(result_code['report']) \
-						+ ",缺少key=" + str([result_code['key']]) + ",value值错误=" + str([result_code['val']]) + \
-						",url=" + str(ret['url']) + ",\nexpect=" + str(ret['expect']['result']) + "，\nresult=" + str(
+					params['traceid']) + "，message=" + str(params['message'])
+			if result_code['report']:
+				send_data += ",report=" + str(result_code['report'])
+			if result_code['key']:
+				send_data += ",缺少key=" + str([result_code['key']])
+			if result_code['val']:
+				send_data += ",value值错误=" + str([result_code['val']])
+			send_data += ",url=" + str(ret['url']) + ",\nexpect=" + str(ret['expect']['result']) + "，\nresult=" + str(
 					params)
+
 			qywx = Qywx()
 			qywx.send_msg_qywx_text(
 					{'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": send_data})

@@ -139,7 +139,7 @@ class OrderData:
 
 		for data in post_data:  # 循环就餐类型
 			shop_detail = self.shop.detail(model)
-			if not shop_detail['data']:
+			if shop_detail == 500 or not shop_detail['data']:
 				continue
 			# 判断当前就餐方式是否支持预订单
 			shop_reserve = self.decide_reserve(data['type'], shop_detail['data']['bookExpand'])
