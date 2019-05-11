@@ -3,9 +3,8 @@ retData:
   - type: 1
     page: 1
     size: 10
-  - type: 2
-    page: 1
-    size: 10
+    cases_text: "用户赠送数据列表"
+
 
 "result": {
   "data": {

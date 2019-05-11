@@ -4,6 +4,7 @@ retData:
     size: 10
     startTime: 0
     endTime: 0
+    cases_text: "邀请奖励明细"
 
 "result": {
   "data": {

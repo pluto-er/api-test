@@ -1,12 +1,18 @@
 uri: "/shop/shop/city-list"  #店铺列表
 test_cases: "https://www.tapd.cn/33092098/sparrow/tcase/view/1133092098001000190?url_cache_key=aaafcbadb0146bd669841a97f2ad20d3" #测试用例地址
 retData:
+  - lon:
+    lat:
+    cases_text: "经纬度值为空"
   - lon: 0
     lat: 0
+    cases_text: "经纬度为0"
   - lat: "30.548751831054688"
     lon: "104.05888366699219"
+    cases_text: "正确经纬度"
   - lat: "104.548751831054688" # 错误地址
     lon: "30.05888366699219"
+    cases_text: "错误经纬度"
 
 result: {
   "data": {

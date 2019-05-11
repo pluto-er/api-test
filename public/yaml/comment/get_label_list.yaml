@@ -1,11 +1,17 @@
 uri: "/comment/comment/get-label-list" #评论标签
 retData:
   - type: 1
+    cases_text: "堂食评论标签"
   - type: 2
+    cases_text: "外带评论标签"
   - type: 3
+    cases_text: "外卖评论标签"
   - type: 0
+    cases_text: "默认评论标签"
   - type: 4
+    cases_text: "错误就餐方式评论标签"
   - type:
+    cases_text: "不传入就餐方式评论标签"
 
 "result": {
   "data": {

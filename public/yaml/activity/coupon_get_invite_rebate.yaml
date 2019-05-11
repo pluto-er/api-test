@@ -1,9 +1,13 @@
 uri: "/activity/coupon/get-invite-rebate" #获取用户邀请比例
 retData:
   - labelId: PT
+    cases_text: "普通推广者邀请比例"
   - labelId: MT
+    cases_text: "媒体推广者邀请比例"
   - labelId: HH
+    cases_text: "合伙推广者邀请比例"
   - labelId:
+    cases_text: "邀请比例"
 
 "result": {
   "data": {

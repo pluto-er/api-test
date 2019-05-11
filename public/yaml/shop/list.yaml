@@ -4,14 +4,17 @@ retData:
     query:
     page: 1
     size: 10
+    cases_text: "某城市商铺列表"
   - cityId: 510100
     query: "测试"
     page: 1
     size: 10
+    cases_text: "搜索城市店铺列表"
   - cityId: 1000111 #错误cityId
     query:
     page: 1
     size: 10
+    cases_text: "错误城市数据列表"
     error: 1
 
 

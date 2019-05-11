@@ -11,6 +11,7 @@ from helper.get_html import GetHtml
 from helper.request_post import SendPost
 from helper.validator import ValidatorHelper
 from helper.get_config import GetDataConfig
+from helper.get_premise import GetPremise
 from data.workerdata import WorkerData
 from data.userdata import UserData
 
@@ -25,6 +26,7 @@ class MsgData:
 		self.get_config_data = GetDataConfig()
 		self.worker = WorkerData()
 		self.user = UserData()
+		self.get_premise = GetPremise()
 
 	# 获取每种通知类型最新数据和通知数量
 	def detail(self, model):
@@ -32,7 +34,7 @@ class MsgData:
 		ret = self.get_config_data.get_data_post("getMessageCount", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "通知数量"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
@@ -77,8 +79,9 @@ class MsgData:
 		# 循环用例，请求获取数据
 		for data in post_data:
 			# 获取消息列表
-			params = self.list(model, [{"type": random.randint(1, 6)}])
-			if params == 500:
+			params_post = self.get_config_data.get_conf("getMessageList")
+			params = self.send_post.send_post(params_post['url'], {"type": random.randint(1, 6)}, params_post['header'])
+			if params['status'] != 200 or not params['data']:
 				continue
 
 			if params['data']['list']:
@@ -106,21 +109,22 @@ class MsgData:
 		post_data = ret['expect']['retData']
 
 		# 获取店长
-		worker = self.worker.list(model)
-		if not worker['data']['manager']:
+		params_post = self.get_config_data.get_conf("workerList")
+		worker = self.send_post.send_post(params_post['host'] + params_post['uri'], {}, params_post['header'])
+		if worker['status'] != 200 or not worker['data']['manager']:
 			return 500
 
-		worker_manager = worker['data']['manager']['uid']
+		worker_manager_uid = worker['data']['manager']['uid']
 		# 获取当前用户用户中心id
-		user = self.user.info(model)
+		user = self.get_premise.get_user_info()
 		if user == 500:
 			return 500
 
 		# 循环用例，请求获取数据
 		for data in post_data:
 			# 请求api获取结果
-			data['suid'] = worker_manager
-			data['ucid'] = user['ucid']
+			data['suid'] = worker_manager_uid
+			data['ucid'] = user['data']['ucid']
 			params = self.send_post.send_post(url, data, header)
 			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
 			if result_status == 'fail':
@@ -140,20 +144,21 @@ class MsgData:
 		post_data = ret['expect']['retData']
 
 		# 获取店长
-		worker = self.worker.list(model)
-		if not worker['data']['manager']:
+		params_post = self.get_config_data.get_conf("workerList")
+		worker = self.send_post.send_post(params_post['host'] + params_post['uri'], {}, params_post['header'])
+		if worker['status'] != 200 or not worker['data']['manager']:
 			return 500
 
 		worker_manager = worker['data']['manager']['uid']
 		# 获取当前用户用户中心id
-		user = self.user.info(model)
+		user = self.get_premise.get_user_info()
 		if user == 500:
 			return 500
 
 		# 循环用例，请求获取数据
 		for data in post_data:
 			data['toUid'] = worker_manager
-			data['fromUid'] = user['ucid']
+			data['fromUid'] = user['data']['ucid']
 			params = self.send_post.send_post(url, data, header)
 			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
 			if result_status == 'fail':
@@ -169,7 +174,7 @@ class MsgData:
 		ret = self.get_config_data.get_data_post("getUnMsgDataNumber", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "未读消息总数"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)

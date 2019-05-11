@@ -2,6 +2,7 @@ uri: "/msg/im/getUserInfo"  #获取用户IM信息
 retData:
   - suid: 0  #店长ucid
     ucid: 242
+    cases_text: "联系店长-获取用户IM信息"
 
 
 "result": {

@@ -2,6 +2,7 @@ uri: "/user/info/comment"  #用户评论奖励数据列表
 retData:
   - page: 1
     size: 10
+    cases_text: "评论奖励列表"
 
 "result": {
   "data": {

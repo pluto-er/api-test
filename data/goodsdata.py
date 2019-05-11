@@ -13,6 +13,7 @@ from helper.get_html import GetHtml
 from helper.request_post import SendPost
 from helper.validator import ValidatorHelper
 from helper.get_config import GetDataConfig
+from helper.get_premise import GetPremise
 
 
 # from datetime import datetime
@@ -26,6 +27,7 @@ class GoodsData:
 		self.send_post = SendPost()
 		self.validator = ValidatorHelper()
 		self.get_config_data = GetDataConfig()
+		self.get_premise = GetPremise()
 
 	# 获取配置
 	def config(self, model):
@@ -59,7 +61,7 @@ class GoodsData:
 		ret = self.get_config_data.get_data_post("recommendList", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "菜品推荐-列表"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
@@ -80,21 +82,24 @@ class GoodsData:
 		file_path = "/public/yaml/goods/recommend_one.yaml"
 		ret = self.get_config_data.get_data_post("recommendDetail", file_path)
 		url = ret['url']
-		header = ret['header']
 		post_data = ret['expect']['retData']
 
 		# 循环用例，请求获取数据
 		for data in post_data:
 			# 获取菜品推荐列表
-			recommend_list = self.recommend_list(model)
-			for recommend_data in recommend_list['data']:
-				data['id'] = recommend_data['id']
-				params = self.send_post.send_post(url, data, header)
-				result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-				if result_status == 'fail':
-					return 500
+			header = self.get_config_data.get_conf("recommendList")
+			recommend_list = self.send_post.send_post(header['host'] + header['uri'], data, header['header'])
+			if recommend_list == 500 or not recommend_list['data']:
+				continue
+			recommend_data = random.choice(recommend_list['data'])
 
-				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+			data['id'] = recommend_data['id']
+			params = self.send_post.send_post(url, data, ret['header'])
+			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+			if result_status == 'fail':
+				return 500
+
+			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 
@@ -151,20 +156,25 @@ class GoodsData:
 		post_data = ret['expect']['retData']
 
 		for data in post_data:
+			params_post = self.get_config_data.get_conf("getCateListUrl")
+			category_list = self.send_post.send_post(params_post['host'] + params_post['uri'],
+													 {"type": data['type']}, params_post['header'])
+			if category_list['status'] != 200 or not category_list['data']['list']:
+				return False
+			category_id = []
+			for category_data in category_list['data']['list']:
+				if category_data['id'] != 0:
+					category_id.append(category_data)
+			list_data = random.choice(category_id)
 			# 请求api获取结果
-			category_list = self.category_list(model, [{"type": data['type']}])
-			if not category_list['data']['list']:
+			data['cid'] = list_data['id']
+
+			params = self.send_post.send_post(url, data, header)
+			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+			if result_status == 'fail':
 				continue
 
-			for list_data in category_list['data']['list']:
-				data['cid'] = list_data['id']
-
-				params = self.send_post.send_post(url, data, header)
-				result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-				if result_status == 'fail':
-					continue
-
-				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 
@@ -200,23 +210,21 @@ class GoodsData:
 
 		# 循环用例，请求获取数据
 		for data in post_data:
-			order_type = [1, 2, 3]
-			for type_data in order_type:
-				goods_list = self.get_goods(model, type_data, [2])
-				if not goods_list:
-					continue
+			# 获取套餐
+			goods_list = self.get_premise.get_goods(data['type'], [2])
+			goods_data = random.choice(goods_list)
+			if not goods_list:
+				continue
 
-				for goods_data in goods_list:
-					data['glid'] = goods_data['id']
-					data['type'] = type_data
+			data['glid'] = goods_data['id']
+			data['type'] = data['type']
+			# 请求api获取结果
+			params = self.send_post.send_post(url, data, header)
+			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+			if result_status == 'fail':
+				continue
 
-					# 请求api获取结果
-					params = self.send_post.send_post(url, data, header)
-					result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-					if result_status == 'fail':
-						continue
-
-					self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 
@@ -253,24 +261,23 @@ class GoodsData:
 
 		# 循环用例，请求获取数据
 		for data in post_data:
-			for type_data in [1, 2, 3]:
-				for goods_type in [1, 2, 3]:
-					goods_list = self.get_goods(model, type_data, [goods_type])
-					if not goods_list:
-						continue
+			goods_list = self.get_premise.get_goods(data['type'], data['goods_type'])
+			if not goods_list:
+				continue
 
-					for goods_data in goods_list:
-						data['glid'] = goods_data['id']
-						data['type'] = type_data
-						data['num'] = goods_data['min']
+			params_post = []
+			for goods_data in goods_list:
+				goods_post = {"gid": goods_data['id'], "num": goods_data['min']}
+				params_post.append(goods_post)
 
-						# 请求api获取结果
-						params = self.send_post.send_post(url, data, header)
-						result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-						if result_status == 'fail':
-							continue
+			# 请求api获取结果
+			data['gids'] = params_post
+			params = self.send_post.send_post(url, data, header)
+			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+			if result_status == 'fail':
+				continue
 
-						self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 
@@ -306,21 +313,20 @@ class GoodsData:
 		# 循环用例，请求获取数据
 		for data in post_data:
 			# 获取套餐
-			order_type = [1, 2, 3]
-			for type_data in order_type:
-				goods_list = self.get_goods(model, type_data, [3])
-				if not goods_list:
-					continue
-				for goods_data in goods_list:
-					data['glid'] = goods_data['id']
-					data['type'] = type_data
-					# 请求api获取结果
-					params = self.send_post.send_post(url, data, header)
-					result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-					if result_status == 'fail':
-						continue
+			goods_list = self.get_premise.get_goods(data['type'], [3])
+			goods_data = random.choice(goods_list)
+			if not goods_list:
+				continue
 
-					self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+			data['glid'] = goods_data['id']
+			data['type'] = data['type']
+			# 请求api获取结果
+			params = self.send_post.send_post(url, data, header)
+			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+			if result_status == 'fail':
+				continue
+
+			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 

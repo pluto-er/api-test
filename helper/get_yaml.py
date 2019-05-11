@@ -67,12 +67,19 @@ class GetYaml:
 		if not result_code['report']:
 			result_code['report'] = "无"
 		# 组装数据
+		try:
+			cases_text = data['cases_text']
+			del data['cases_text']
+		except KeyError:
+			cases_text = ""
+
 		result = [
 			{
 				"className": model[0],
 				"modelName": model[1],
 				"methodName": ret['uri'],
 				"description": str(data),
+				"caseText": str(cases_text),
 				"spendTime": params['request_time'],
 				"status": status_code,
 				"traceid": params['traceid'],
@@ -104,7 +111,6 @@ class GetYaml:
 		# 		send_data += ",value值错误=" + str([result_code['val']])
 		# 	send_data += ",url=" + str(ret['url']) + ",\nexpect=" + str(ret['expect']['result']) + "，\nresult=" + str(
 		# 			params)
-
 
 		# 写入base
 		OperationYaml.set(file_path, file_data)

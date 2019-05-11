@@ -6,18 +6,21 @@ retData:
     }
     page: 1
     size: 10
+    cases_text: "用户邀请奖励数据列表-全部"
   - type: 1
     order: {
       consumptionAmount: desc  #排序值 空表示默认排序，可选值 按消费金额降序
     }
     page: 1
     size: 10
+    cases_text: "用户邀请奖励数据列表-已消费"
   - type: 2
     order: {
       consumptionAmount: desc  #排序值 空表示默认排序，可选值 按消费金额降序
     }
     page: 1
     size: 10
+    cases_text: "用户邀请奖励数据列表-未消费"
 
 "result": {
   "data": {

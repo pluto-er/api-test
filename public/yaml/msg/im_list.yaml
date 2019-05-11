@@ -4,6 +4,7 @@ retData:
     fromUid: 46
     page: 1
     size: 10
+    cases_text: "聊天记录"
 
 "result": {
   "data": {

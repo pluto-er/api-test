@@ -1,12 +1,15 @@
 uri: "/goods/goods/config" #菜品相关配置
 retData:
   - type: [1,2] #用餐类型，1.堂食；2.外带；3.外卖；默认空
+    cases_text: "堂食和外带的菜品相关配置"
   - type: []
+    cases_text: "默认类型的菜品相关配置"
   - type: [1]
+    cases_text: "堂食的菜品相关配置"
   - type: [2]
+    cases_text: "外带的菜品相关配置"
   - type: [3]
-  - type: [1,3]
-  - type: [2,3]
+    cases_text: "外卖的菜品相关配置"
 
 result: {
   "data": {

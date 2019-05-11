@@ -11,6 +11,7 @@ from helper.get_html import GetHtml
 from helper.request_post import SendPost
 from helper.validator import ValidatorHelper
 from helper.get_config import GetDataConfig
+from helper.get_premise import GetPremise
 from data.shopdata import ShopData
 
 
@@ -22,6 +23,7 @@ class WorkerData:
 		self.send_post = SendPost()
 		self.validator = ValidatorHelper()
 		self.get_config_data = GetDataConfig()
+		self.get_premise = GetPremise()
 		self.shop = ShopData()
 
 	# 获取员工列表
@@ -63,7 +65,7 @@ class WorkerData:
 			result_status['report'] = report
 			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
-		return params
+		return True
 
 	# 员工点赞，点踩或者取消点赞和点踩
 	def evaluation(self, model):
@@ -72,19 +74,12 @@ class WorkerData:
 		url = ret['url']
 		header = ret['header']
 		post_data = ret['expect']['retData']
-
 		# 获取员工列表
-		worker = self.list(model)
-		worker_list = []
-		if worker['data']['manager']:
-			worker_list.append(worker['data']['manager'])
-		if worker['data']['workerList']:
-			worker_list.append(random.choice(worker['data']['workerList']))
-		if not worker_list:
-			return 500
+		worker_list = self.get_premise.worker_list()
 
 		# 循环用例，请求获取数据
 		for data in post_data:
+			case_text = data['cases_text']
 			for worker_data in worker_list:
 				# 请求api获取结果
 				data['workerId'] = worker_data['uid']
@@ -92,7 +87,9 @@ class WorkerData:
 				result_status = self.validator.validate_status(ret, params, model, data)
 				if result_status == 'fail':
 					continue
-
+				data['cases_text'] = case_text
+				if "manager_status" in worker_data:
+					data['cases_text'] += "-店长"
 				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
@@ -100,17 +97,12 @@ class WorkerData:
 	# 打赏
 	def reward_pay(self, model):
 		# 获取员工列表
-		worker = self.list(model)
-		worker_list = []
-		if worker['data']['manager']:
-			worker_list.append(worker['data']['manager'])
-		if worker['data']['workerList']:
-			worker_list.append(random.choice(worker['data']['workerList']))
+		worker_list = self.get_premise.worker_list()
 		if not worker_list:
 			return False
-
 		# 获取打赏列表
-		reward = self.shop.reward_set(model)
+		header = self.get_config_data.get_conf("getRewardSet")
+		reward = self.send_post.send_post(header['host'] + header['uri'], {}, header['header'])
 		if not reward['data']:
 			return False
 
@@ -128,7 +120,9 @@ class WorkerData:
 			result_status = self.validator.validate_status(ret, params, model, post_data)
 			if result_status == 'fail':
 				continue
-
+			post_data['cases_text'] = "打赏员工小费"
+			if "manager_status" in data:
+				post_data['cases_text'] = "打赏店长小费"
 			self.get_yaml_data.set_to_yaml(ret, post_data, params, model, result_status)
 
 		return True

@@ -1,28 +1,7 @@
 uri: "/comment/comment/add-comment"
 retData:
   - orderno: 154824478103611172611
-    orderId: 1
-    orderStar: 5
-    goodsStar: 5
-    serviceStar: 5
-    environmentStar: 5
-    content: "这是一条自动测试评论"
-    type: 1
-    label:
-      - labelId: 63
-        labelName: "不好吃"
-        labelType: 1
-      - labelId: 66
-        labelName: "很不错的"
-        labelType: 1
-    goods:
-      - goodsId: 74
-        goodsName: "水煮肉片"
-        type: 1
-      - goodsId: 180
-        goodsName: "超级辣的龙虾"
-        type: 2
-  - orderno: 154824478103611172611
+    cases_text: "评论内容少于8个字"
     orderId: 1
     orderStar: 5
     goodsStar: 5
@@ -39,6 +18,7 @@ retData:
         goodsName: "水煮肉片"
         type: 1
   - orderno: 154824478103611172611
+    cases_text: "评论内容为空"
     orderId: 1
     orderStar: 5
     goodsStar: 5
@@ -55,6 +35,7 @@ retData:
         goodsName: "水煮肉片"
         type: 1
   - orderno: 154824478103611172611
+    cases_text: "评论内容大于最大值500个字"
     orderId: 1
     orderStar: 5
     goodsStar: 5
@@ -80,7 +61,29 @@ retData:
       - goodsId: 74
         goodsName: "水煮肉片"
         type: 1
-
+  - orderno: 154824478103611172611
+    cases_text: "发布评论"
+    orderId: 1
+    orderStar: 5
+    goodsStar: 5
+    serviceStar: 5
+    environmentStar: 5
+    content: "这是一条自动测试评论"
+    type: 1
+    label:
+      - labelId: 63
+        labelName: "不好吃"
+        labelType: 1
+      - labelId: 66
+        labelName: "很不错的"
+        labelType: 1
+    goods:
+      - goodsId: 74
+        goodsName: "水煮肉片"
+        type: 1
+      - goodsId: 180
+        goodsName: "超级辣的龙虾"
+        type: 2
 
 "result": {
   "data": {

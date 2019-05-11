@@ -1,6 +1,14 @@
 uri: "/goods/info/spec" #点餐-获取规格
 retData:
-  - glid: 105 #菜品列表id
+  - glid: 5
+    type: 1
+    cases_text: "堂食-多规格详情"
+  - glid: 5
+    type: 2
+    cases_text: "外带-多规格详情"
+  - glid: 5
+    type: 3
+    cases_text: "外卖-多规格详情"
 
 result: {
   "data": {

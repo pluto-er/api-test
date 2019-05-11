@@ -47,7 +47,7 @@ class InvitationsData:
 		ret = self.get_config_data.get_data_post("handelInvitationsUser", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "邀请消费人数统计"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)

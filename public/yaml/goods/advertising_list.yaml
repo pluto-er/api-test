@@ -1,8 +1,11 @@
 uri: "/goods/advertising/list" #广告位列表
 retData:
   - type: 1
+    cases_text: "堂食广告"
   - type: 3
+    cases_text: "外卖广告"
   - type: 4
+    cases_text: "自提广告"
 
 "result": {
   "data": [

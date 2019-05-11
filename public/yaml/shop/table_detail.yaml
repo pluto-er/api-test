@@ -2,8 +2,10 @@ uri: "/shop/table/detail"  #商家桌位详情
 retData:
   - qrCode: "b38c4102b742f1b6b3b9889e3c20d346"
     tid: 0
+    cases_text: "二维码桌位详情"
   - qrCode:
     tid: 90
+    cases_text: "桌位号桌位详情"
 
 result: {
   "data": {

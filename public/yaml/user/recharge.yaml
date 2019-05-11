@@ -2,6 +2,7 @@ uri: "/user/data/recharge"  #用户充值明细
 retData:
   - page: 1
     size: 10
+    cases_text: "充值明细"
 
 "result": {
   "data": {

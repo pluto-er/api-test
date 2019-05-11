@@ -4,24 +4,31 @@ retData:
   - page: 1
     size: 10
     type: 1
+    cases_text: "储值消费明细"
   - page: 1
     size: 10
     type: 2
+    cases_text: "储值赠送消费明细"
   - page: 1
     size: 10
     type: 3
+    cases_text: "邀请奖励消费明细"
   - page: 1
     size: 10
     type: 4
+    cases_text: "评论奖励消费明细"
   - page: 1
     size: 10
     type: 5
+    cases_text: "互赠金额消费明细"
   - page: 1
     size: 10
     type: 6
+    cases_text: "微信支付金额消费明细"
   - page: 1
     size: 10
     type: 0
+    cases_text: "全部消费明细"
 
 "result": {
   "data": {

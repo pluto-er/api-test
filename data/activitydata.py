@@ -27,7 +27,7 @@ class ActivityData:
 		ret = self.get_config_data.get_data_post("getRechargeList", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "充值活动列表"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)

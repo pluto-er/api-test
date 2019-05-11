@@ -112,7 +112,24 @@ class OrderData:
 
 		for data in post_data:
 			for type in [1, 2, 3, 4, 5, 8, 9, 10]:
-				order = self.list(model, [{"status": [type]}])
+				if type == 1:
+					data['cases_text'] = "待付款订单详情"
+				elif type == 2:
+					data['cases_text'] = "待配送订单详情"
+				elif type == 3:
+					data['cases_text'] = "配送中订单详情"
+				elif type == 4:
+					data['cases_text'] = "备餐中订单详情"
+				elif type == 5:
+					data['cases_text'] = "制作中订单详情"
+				elif type == 8:
+					data['cases_text'] = "待评价订单详情"
+				elif type == 9:
+					data['cases_text'] = "已完成订单详情"
+				elif type == 10:
+					data['cases_text'] = "已取消订单详情"
+				params_post = self.get_config_data.get_conf("getOrderList")
+				order = self.send_post.send_post(params_post['url'], {"status": [type]}, params_post['header'])
 				if not order['data']['list']:
 					result_status = {"key": [], "val": [], 'report': "没有订单，type=" + str(type)}
 					self.get_yaml_data.set_to_yaml(ret, data, order, model, result_status)

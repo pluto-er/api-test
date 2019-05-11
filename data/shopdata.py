@@ -47,52 +47,51 @@ class ShopData:
 		file_path = "/public/yaml/shop/list.yaml"
 		ret = self.get_config_data.get_data_post("shopList", file_path)
 		url = ret['url']
-		header = ret['header']
 		post_data = ret['expect']['retData']
 
 		# 获取城市列表
-		city_result = self.city_list(model, [{"lon": 0, "lat": 0}])
-		if city_result['status'] == 500:
-			return 500
-		city_list = list(city_result['data']['cityList'])
-		for city_key in city_list:
-			# 循环用例，请求获取数据
-			for data in post_data:
-				result = 200
-				if 'error' not in data:
-					data['cityId'] = city_key
-				params = self.send_post.send_post(url, data, header)
-				result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-				if result_status == 'fail':
-					continue
+		header = self.get_config_data.get_conf("cityList")
+		city_result = self.send_post.send_post(header['host'] + header['uri'], {"lon": 0, "lat": 0}, header['header'])
+		if city_result['status'] == 500 or not city_result['data']:
+			return False
 
-				# 特殊值断言
-				report = ""
-				if params['data']:
-					# 断言数量
-					if data['query'] is None and (
-							int(city_result['data']['cityList'][city_key]['count']) != int(params['data'][
-																							   'total'])):
-						report += "城市ID" + str(city_key) + "在city_list统计为,total=" + \
-								  str(city_result['data']['cityList'][city_key][
-										  'count']) + "，在shop_list里为:" + str(params['data']['total']) + '<br/>'
-						params['report_status'] = 202
-					for result_data in params['data']['list']:
-						if data['query']:
-							if data['query'] not in result_data['name']:
-								report += str(result_data['name']) + "不在搜索城市中，cityId=" + str(data['query']) + '<br/>'
-								params['report_status'] = 202
-								continue
-						if int(result_data['cityId']) != int(data['cityId']):
-							report = report + "门店名【" + str(result_data['name']) + "】,cityId:" + str(
-									result_data['cityId']) + "不在此城市中，cityId=" + str(data['cityId']) + "<br/>"
+		city_key = random.choice(list(city_result['data']['cityList']))
+		# 循环用例，请求获取数据
+		for data in post_data:
+			if 'error' not in data:
+				data['cityId'] = city_key
+			params = self.send_post.send_post(url, data, ret['header'])
+			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+			if result_status == 'fail':
+				continue
+
+			# 特殊值断言
+			report = ""
+			if params['data']:
+				# 断言数量
+				if data['query'] is None and (
+						int(city_result['data']['cityList'][city_key]['count']) != int(params['data'][
+																						   'total'])):
+					report += "城市ID" + str(city_key) + "在city_list统计为,total=" + \
+							  str(city_result['data']['cityList'][city_key][
+									  'count']) + "，在shop_list里为:" + str(params['data']['total']) + '<br/>'
+					params['report_status'] = 202
+				for result_data in params['data']['list']:
+					if data['query']:
+						if data['query'] not in result_data['name']:
+							report += str(result_data['name']) + "不在搜索城市中，cityId=" + str(data['query']) + '<br/>'
 							params['report_status'] = 202
-				else:
-					report += "没有相关门店，query=" + str(data['query'])
-				result_status['report'] = report
-				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+							continue
+					if int(result_data['cityId']) != int(data['cityId']):
+						report = report + "门店名【" + str(result_data['name']) + "】,cityId:" + str(
+								result_data['cityId']) + "不在此城市中，cityId=" + str(data['cityId']) + "<br/>"
+						params['report_status'] = 202
+			else:
+				report += "没有相关门店，query=" + str(data['query'])
+			result_status['report'] = report
+			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
-		return result
+		return True
 
 	# 获取商家详情
 	def detail(self, model):
@@ -101,7 +100,7 @@ class ShopData:
 		ret = self.get_config_data.get_data_post("shopDetail", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {'cases_text': "店铺详情"}
 
 		params = self.send_post.send_post(url, data, header)
 		result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
@@ -164,12 +163,12 @@ class ShopData:
 		ret = self.get_config_data.get_data_post("getRewardSet", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "获取打赏配置"}
 
 		params = self.send_post.send_post(url, data, header)
 		result_status = self.validator.validate_status(ret, params, model, data)
 		if result_status == 'fail':
-			return 500
+			return False
 
 		# 特殊值断言
 		report = ""
@@ -179,7 +178,7 @@ class ShopData:
 		result_status['report'] = report
 		self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
-		return params
+		return True
 
 	# 品牌故事
 	def story_detail(self, model):
@@ -187,7 +186,7 @@ class ShopData:
 		ret = self.get_config_data.get_data_post("storyDetail", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {'cases_text': "品牌故事"}
 
 		params = self.send_post.send_post(url, data, header)
 		result_status = self.validator.validate_status(ret, params, model, data)
@@ -220,6 +219,7 @@ class ShopData:
 		header = ret['header']
 		post_data = ret['expect']['retData']
 		exect_data = ret['expect']['result']['data']['list']
+
 		# 循环用例，请求获取数据
 		for data in post_data:
 			# 请求api获取结果
@@ -243,10 +243,20 @@ class ShopData:
 		url = ret['url']
 		header = ret['header']
 		post_data = ret['expect']['retData']
-
+		# 获取桌位
+		params_post = self.get_config_data.get_conf("tableList")
+		table_list = self.send_post.send_post(params_post['url'], {"status": 1}, params_post['header'])
+		if table_list['status'] != 200 or not table_list['data']:
+			return False
+		dict_val = self.validator.set_dict_list(table_list['data']['list'], table_list['data']['list'])
+		table_one = random.choice(dict_val['data'])
 		# 循环用例，请求获取数据
 		for data in post_data:
 			# 请求api获取结果
+			if data['qrCode']:
+				data['qrCode'] = table_one['qrCode']
+			if data['tid']:
+				data['tid'] = table_one['id']
 			params = self.send_post.send_post(url, data, header)
 
 			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
@@ -266,9 +276,19 @@ class ShopData:
 		header = ret['header']
 		post_data = ret['expect']['retData']
 
+		# 获取桌位
+		params_post = self.get_config_data.get_conf("tableList")
+		table_list = self.send_post.send_post(params_post['url'], {"status": 1}, params_post['header'])
+		if table_list['status'] != 200 or not table_list['data']:
+			return False
+		dict_val = self.validator.set_dict_list(table_list['data']['list'], table_list['data']['list'])
+		table_one = random.choice(dict_val['data'])
+
 		# 循环用例，请求获取数据
 		for data in post_data:
 			# 请求api获取结果
+			data['tid'] = table_one['id']
+			data['uid'] = ret['header']['uid']
 			params = self.send_post.send_post(url, data, header)
 
 			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status

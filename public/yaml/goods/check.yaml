@@ -5,6 +5,9 @@ retData:
         num: 1
       - gid: 286
         num: 1
+    type: 1
+    goods_type: [1]
+    cases_text: "检查菜品是否正常"
 
 "result": {
   "data":{},

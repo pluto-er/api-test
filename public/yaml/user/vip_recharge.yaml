@@ -3,6 +3,7 @@ retData:
   - amount: 2000
     give: 200
     id: 12
+    cases_text: "充值"
 
 "result": {
   "data": {

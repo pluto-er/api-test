@@ -1,6 +1,7 @@
 uri: "/user/vip/code"  #注册会员 - 获取验证码
 retData:
   mobile: 18281614311
+  cases_text: "注册验证码"
 
 "result": {
   "data": {},

@@ -1,8 +1,11 @@
 uri: "/goods/list/addition" #点餐-加购提醒
 retData:
   - type: 1
+    cases_text: "堂食加购提醒"
   - type: 2
+    cases_text: "外带加购提醒"
   - type: 3
+    cases_text: "外卖加购提醒"
 
 
 "result": {

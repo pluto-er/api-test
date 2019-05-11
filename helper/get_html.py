@@ -39,7 +39,9 @@ class GetHtml:
 		qywx = Qywx()
 		qywx.send_msg_qywx_text(
 				{'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": content})
-		self.send_email.send_report_email(title, content)
+		print(content)
+
+		# self.send_email.send_report_email(title, content)
 
 	def set_start(self, file_path):
 		return self.get_data_html.set_start(file_path)

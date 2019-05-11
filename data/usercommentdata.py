@@ -54,7 +54,7 @@ class UserCommentData:
 		ret = self.get_config_data.get_data_post("getCommentAmount", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "累计评论金额"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
@@ -72,7 +72,7 @@ class UserCommentData:
 		ret = self.get_config_data.get_data_post("getCommentUserCount", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "评论统计"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)

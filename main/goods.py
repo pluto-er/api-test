@@ -16,6 +16,7 @@ from data.goodsdata import GoodsData
 from data.shopdata import ShopData
 from data.workerdata import WorkerData
 from helper.get_html import GetHtml
+from helper.get_config import GetDataConfig
 
 
 class Goods:
@@ -33,55 +34,115 @@ class Goods:
 		self.shop = ShopData()
 		self.worker = WorkerData()
 		self.get_html_data = GetHtml()
+		self.get_config_data = GetDataConfig()
 
-	# 点餐
+	# 点餐列表
 	def my_data(self):
-		model = "点餐"
-		self.user.init_shop([model, '会员初始化'])
-		self.shop.detail([model, '店铺详情'])
-		self.user.info([model, '用户详情'])
-		self.goods.category_list([model, '菜品分类'])
-		self.goods.list_index([model, '菜品列表'])
-		self.goods.package([model, '套餐详情'])
-		self.goods.spec([model, '多规格'])
+		model = ["点餐", '菜品列表']
+		try:
+			self.user.init_shop(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('initUserShop', model, e)
+		try:
+			self.shop.detail(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('shopDetail', model, e)
+		try:
+			self.user.info(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('getUserInfo', model, e)
+		try:
+			self.goods.category_list(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('getCateListUrl', model, e)
+		try:
+			self.goods.list_index(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('getGoodsListUrl', model, e)
+		try:
+			self.goods.package(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('getPackageDetailUrl', model, e)
+		try:
+			self.goods.spec(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('getGoodsDetailUrl', model, e)
 
 	# 点餐-确认订单
 	def my_order(self):
 		model = "点餐"
-		# self.goods.check([model, '检验菜品'])  # 最好注释
-		# self.goods.addition([model, '加购提醒'])
-		self.shop.table_list([model, '座位详情'])
-		self.shop.table_detail([model, '座位详情'])
-		self.shop.table_set_status([model, '扫码占座'])
-		self.coupon.coupon_able_list([model, '优惠券列表'])
-		self.activity.recharge_list([model, '充值活动列表'])
-		self.user.info([model, '用户详情'])
-		self.user.init_shop([model, '会员初始化'])
+		try:
+			self.goods.check([model, '检验菜品'])
+		except Exception as e:
+			self.get_config_data.get_error_base('checkGoodsStatusList', [model, '检验菜品'], e)
+		try:
+			self.goods.addition([model, '加购提醒'])
+		except Exception as e:
+			self.get_config_data.get_error_base('getAddSlpListUrl', [model, '加购提醒'], e)
+		try:
+			self.shop.table_list([model, '座位详情'])
+		except Exception as e:
+			self.get_config_data.get_error_base('tableList', [model, '座位详情'], e)
+		try:
+			self.shop.table_detail([model, '座位详情'])
+		except Exception as e:
+			self.get_config_data.get_error_base('getStoreTableDetail', [model, '座位详情'], e)
+		try:
+			self.shop.table_set_status([model, '扫码占座'])
+		except Exception as e:
+			self.get_config_data.get_error_base('setTableStatus', [model, '扫码占座'], e)
+		try:
+			self.coupon.coupon_able_list([model, '优惠券列表'])
+		except Exception as e:
+			self.get_config_data.get_error_base('getAvailableCoupon', [model, '优惠券列表'], e)
+		try:
+			self.activity.recharge_list([model, '充值活动列表'])
+		except Exception as e:
+			self.get_config_data.get_error_base('getRechargeList', [model, '充值活动列表'], e)
+		try:
+			self.user.init_shop([model, '会员初始化'])
+		except Exception as e:
+			self.get_config_data.get_error_base('initUserShop', [model, '会员初始化'], e)
 
 	# 支付完成
-	def add_order(self):
-		model = "支付完成"
-		self.shop.detail([model, "商户详情"])
-		self.goods.check([model, "菜品检验"])
-		self.order.detail([model, "订单详情"])
-		self.coupon.coupon_get_share([model, "分享地址"])
-		self.coupon.check_invite_conf([model, "邀请返现券"])
-		self.coupon.coupon_goods_able_list([model, "菜品券列表"])
+	def pay_success(self):
+		model = ["订单", "支付完成"]
+		try:
+			self.shop.detail(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('shopDetail', model, e)
+		try:
+			self.goods.check(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('checkGoodsStatusList', model, e)
+		try:
+			self.order.detail(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('orderDetail', model, e)
+		try:
+			self.coupon.coupon_get_share(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('getShareCoupon', model, e)
+		try:
+			self.coupon.check_invite_conf(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('isCashBack', model, e)
+		try:
+			self.coupon.coupon_goods_able_list(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('getCouponGoodsList', model, e)
 
 	# 广告位
 	def poster(self):
-		model = "广告位"
-		self.goods.advertising_list([model, '广告位'])
-		self.coupon.get_reg([model, '注册弹框'])
-
-	def start_up(self):
-		self.my_data()
-		self.add_order()
-		self.poster()
-		self.my_order()
-
-
-# self.add_order()
+		model = ["广告", "广告位"]
+		try:
+			self.goods.advertising_list(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('getAdListData', model, e)
+		try:
+			self.coupon.get_reg(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('getRegConfigInfo', model, e)
 
 
 if __name__ == '__main__':

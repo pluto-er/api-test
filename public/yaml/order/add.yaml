@@ -4,7 +4,7 @@ retData:
     "addGoodsList": [{"type":2,"goodsCouponId":0,"attributes":[{"id":43,"valueId":80}],"id":80,"number":1}]
     "couponIds": []
     "balance": 0 #使用余额
-    "type":  1
+    "type":  5
     "payAmount": 0
     "payType": 2
     "payMethod": 2
@@ -15,66 +15,66 @@ retData:
     "dinnersNumber": 0
     "addressId": 0
     "uniqueCode": "680c93cb-5989-1b5f-0e86-aad051bc7771"
-  - "goodsList": [] #外带
-    "addGoodsList": []
-    "couponIds": []
-    "balance": 0 #使用余额
-    "type":  2
-    "payAmount": 0
-    "payType": 2
-    "payMethod": 2
-    "remark": ""
-    "book": 1
-    "bookTime": 0
-    "tableId": 90
-    "dinnersNumber": 0
-    "addressId": 0
-    "uniqueCode": "680c93cb-5989-1b5f-0e86-aad051bc7771"
-  - "goodsList": [] #外卖
-    "addGoodsList": []
-    "couponIds": []
-    "balance": 0 #使用余额
-    "type":  3
-    "payAmount": 0
-    "payType": 3
-    "payMethod": 2
-    "remark": ""
-    "book": 1
-    "bookTime": 0
-    "tableId": 90
-    "dinnersNumber": 0
-    "addressId": 0
-    "uniqueCode": "680c93cb-5989-1b5f-0e86-aad051bc7771"
-  - "goodsList": [] #自提堂食
-    "addGoodsList": []
-    "couponIds": []
-    "balance": 0 #使用余额
-    "type":  4
-    "payAmount": 0
-    "payType": 2
-    "payMethod": 2
-    "remark": ""
-    "book": 1
-    "bookTime": 0
-    "tableId": 90
-    "dinnersNumber": 0
-    "addressId": 0
-    "uniqueCode": "680c93cb-5989-1b5f-0e86-aad051bc7771"
-  - "goodsList": [] #外带
-    "addGoodsList": []
-    "couponIds": []
-    "balance": 0 #使用余额
-    "type":  5  #自提外带
-    "payAmount": 0
-    "payType": 2
-    "payMethod": 2
-    "remark": ""
-    "book": 1
-    "bookTime": 0
-    "tableId": 90
-    "dinnersNumber": 0
-    "addressId": 0
-    "uniqueCode": "680c93cb-5989-1b5f-0e86-aad051bc7771"
+#  - "goodsList": [] #外带
+#    "addGoodsList": []
+#    "couponIds": []
+#    "balance": 0 #使用余额
+#    "type":  2
+#    "payAmount": 0
+#    "payType": 2
+#    "payMethod": 2
+#    "remark": ""
+#    "book": 1
+#    "bookTime": 0
+#    "tableId": 90
+#    "dinnersNumber": 0
+#    "addressId": 0
+#    "uniqueCode": "680c93cb-5989-1b5f-0e86-aad051bc7771"
+#  - "goodsList": [] #外卖
+#    "addGoodsList": []
+#    "couponIds": []
+#    "balance": 0 #使用余额
+#    "type":  3
+#    "payAmount": 0
+#    "payType": 3
+#    "payMethod": 2
+#    "remark": ""
+#    "book": 1
+#    "bookTime": 0
+#    "tableId": 90
+#    "dinnersNumber": 0
+#    "addressId": 0
+#    "uniqueCode": "680c93cb-5989-1b5f-0e86-aad051bc7771"
+#  - "goodsList": [] #自提堂食
+#    "addGoodsList": []
+#    "couponIds": []
+#    "balance": 0 #使用余额
+#    "type":  4
+#    "payAmount": 0
+#    "payType": 2
+#    "payMethod": 2
+#    "remark": ""
+#    "book": 1
+#    "bookTime": 0
+#    "tableId": 90
+#    "dinnersNumber": 0
+#    "addressId": 0
+#    "uniqueCode": "680c93cb-5989-1b5f-0e86-aad051bc7771"
+#  - "goodsList": [] #外带
+#    "addGoodsList": []
+#    "couponIds": []
+#    "balance": 0 #使用余额
+#    "type":  5  #自提外带
+#    "payAmount": 0
+#    "payType": 2
+#    "payMethod": 2
+#    "remark": ""
+#    "book": 1
+#    "bookTime": 0
+#    "tableId": 90
+#    "dinnersNumber": 0
+#    "addressId": 0
+#    "uniqueCode": "680c93cb-5989-1b5f-0e86-aad051bc7771"
 
 
 "result": {

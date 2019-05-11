@@ -3,9 +3,11 @@ retData:
   - type: 2
     workerId: 203
     rewardMoney: 0
+    cases_text: "员工点赞"
   - type: 3
     workerId: 203
     rewardMoney: 0
+    cases_text: "员工点踩"
 
 
 "result": {

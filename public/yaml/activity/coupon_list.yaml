@@ -3,15 +3,19 @@ retData:
   - type: 1  #类型1.未使用；2.已使用，3.已过期，4.赠送记录
     page: 1
     size: 10
+    cases_text: "未使用优惠券列表"
   - type: 2
     page: 1
     size: 10
+    cases_text: "已使用优惠券列表"
   - type: 3
     page: 1
     size: 10
+    cases_text: "已过期优惠券列表"
   - type: 4
     page: 1
     size: 10
+    cases_text: "赠送记录优惠券列表"
 
 "result": {
   "data": {
@@ -34,9 +38,9 @@ retData:
       "ctime": 1552548329,
       "allowGive": 2,
       "allowStack": 1,
-#      "expand": {
-#        "commentOrderno": "155254826608718496766"
-#      },
+      #      "expand": {
+      #        "commentOrderno": "155254826608718496766"
+      #      },
       "code": "3181eb18ce30ac54561b0942dc420a67",
       "identity": "e0b74fc99c48c515c85ce44f5b6d3aef",
       "description": "",

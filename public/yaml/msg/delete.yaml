@@ -1,6 +1,7 @@
 uri: "/msg/push/delete"  #删除消息通知
 retData:
   - id: 5546
+    cases_text: "删除消息"
 
 "result": {
   "status":200,

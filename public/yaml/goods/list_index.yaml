@@ -1,9 +1,17 @@
 uri: "/goods/list/index" #点餐-菜品列表
 retData:
-  - type: [1,2]
+  - type: [1]
     cid: 7
+    cases_text: "堂食的菜品列表"
+  - type: [2]
+    cid: 7
+    cases_text: "外带的菜品列表"
   - type: [3]
     cid: 7
+    cases_text: "外卖的菜品列表"
+  - type: [1,2]
+    cid: 7
+    cases_text: "堂食、外带菜品列表"
 
 "result":  {
   "data": [

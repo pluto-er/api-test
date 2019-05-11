@@ -3,6 +3,7 @@ retData:
   - status: 1
     tid: 90
     uid: 30
+    cases_text: "扫码占桌"
 
 result: {
   "data": {},

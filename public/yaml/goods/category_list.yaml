@@ -1,8 +1,14 @@
 uri: "/goods/category/list" #点餐-菜品分类列表
 
 retData:
-  - type: [1,2]
+  - type: [1]
+    cases_text: "堂食的菜品分类列表"
+  - type: [2]
+    cases_text: "外带的菜品分类列表"
   - type: [3]
+    cases_text: "外卖的菜品分类列表"
+  - type: [1,2]
+    cases_text: "堂食、外带的菜品分类列表"
 
 "result":  {
   "code": 0,
@@ -53,8 +59,8 @@ retData:
       {
         'id': '1', 'show': '1', 'class': 'large-img',
         'params': {'x': '-1.1184236100342E-13', 'y': '387.73412698413', 'width': '750', 'height': '558.53174603175', 'rotate': '0'},
-#        'imgSize': '大图 (4:3)',
-#        'disabled': '0'
+        #        'imgSize': '大图 (4:3)',
+        #        'disabled': '0'
       }
       ]
     }

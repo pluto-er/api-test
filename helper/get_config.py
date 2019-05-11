@@ -5,6 +5,7 @@ import sys
 from helper.get_yaml import GetYaml
 from helper.request_post import SendPost
 from helper.validator import ValidatorHelper
+from helper.get_yaml import GetYaml
 
 
 class GetDataConfig:
@@ -13,6 +14,7 @@ class GetDataConfig:
 		self.comment_list_data = GetYaml()
 		self.comment_post = SendPost()
 		self.validator = ValidatorHelper()
+		self.get_yaml_data = GetYaml()
 
 	# 获取请求/预期值参数
 	def get_data_post(self, file_name, file_path):
@@ -46,8 +48,18 @@ class GetDataConfig:
 
 		host = header_yaml['host']
 		header = header_yaml['header']
-		result = {'host': host, 'header': header, 'uri': uri}
+		url = host + uri
+		result = {'host': host, 'header': header, 'uri': uri, 'url': url}
 		return result
+
+	def get_error_base(self, uri, model, e):
+		ret = self.get_conf(uri)
+		ret["expect"] = {"result": []}
+		pay_ret = {'data': {}, 'status': 500, 'code': 0, 'message': "自动化程序报错:Exception=" + str(e),
+			"request_time": 0, "traceid": 0}
+		result_status = {"key": [], "val": [], 'report': ""}
+
+		self.get_yaml_data.set_to_yaml(ret, {"cases_text": model[1]}, pay_ret, model, result_status)
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ uri: "/user/data/invitations-amount"  #我的钱包-邀请奖励金额统计
 retData:
   - startTime: 1555055395
     endTime: 1554652800
-  -
+    cases_text: "邀请奖励金额统计"
 "result": {
   "data": {
     "giveAmount": 0,

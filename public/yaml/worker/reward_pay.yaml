@@ -4,6 +4,7 @@ retData:
     workerId: 203
     platform: wx
     rewardMoney: 1
+    cases_text: "打赏员工"
 
 
 "result": {

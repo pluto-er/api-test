@@ -3,17 +3,17 @@ header:
   content-type: "application/json"
   bid: "10006"
   sid: "96"
-  uid: "30"
-  token: "066e9487bcf12e58af1662a18e738c90" #token指定用户并直接修改过期时间
+  uid: "63"
+  token: "2414c603b629c76ac770183c8bb21cc7" #token指定用户并直接修改过期时间
   locale: "1"
   miniversion: "1"
   sdkversion: "1"
 
 #请求环境域名
 #host: "http://127.0.0.5"
-host: "https://api-qa.weizhilian.com"
+host: "https://api-testing.weizhilian.com"
 #case_url: "http://192.168.31.243"
-#case_url: "http://192.168.0.138"
+#case_url: "http://192.168.103.126"
 case_url: "http://148.70.137.31:8171"
 
 # 接收测试结果的邮件，多个用，隔开
@@ -154,6 +154,8 @@ uri:
   getOldIMMsg: "/msg/im/imList"
   # 获取注册弹窗信息配置
   getRegConfigInfo: "/activity/config/get-reg"
+  # 保存用户自提的手机号
+  saveUserSelfMobile: "/user/info/save-picked-up-info"
   # 获取用户自提的手机号
   getUserSelfMobile: "/user/info/picked-up-info"
   # 店铺是否开启邀请返现
@@ -222,8 +224,7 @@ uri:
   checkSlpGoodsData: "/goods/goods/for-order-info"
   # 分享券上报
   shareCallback: "/activity/coupon/share-callback"
-  # 保存用户自提的手机号
-  saveUserSelfMobile: "/user/info/save-picked-up-info"
+
   # 下单时店铺切换列表
   storeByType: "/shop/shop/get-shop-by-type"
   #获取全屏点餐列表

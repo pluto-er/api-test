@@ -1,7 +1,9 @@
 uri: "/activity/coupon/get-share" #获取分享优惠券地址（返回空数据表示商家未设置分享优惠券）
 retData:
   - orderId: 0
+    cases_text: "无订单分享优惠券地址"
   - orderId: 3100
+    cases_text: "有订单分享优惠券地址"
 
 "result": {
   "data": {

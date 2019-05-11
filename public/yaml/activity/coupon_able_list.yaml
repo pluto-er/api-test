@@ -1,6 +1,7 @@
 uri: "/activity/coupon/coupon-able-list" #优惠券使用-可用券列表
 retData:
   - labelId: PT
+    cases_text: "可使用优惠券列表"
 #  - labelId: MT
 #  - labelId: HH
 

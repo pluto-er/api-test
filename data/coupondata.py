@@ -50,7 +50,7 @@ class CouponData:
 		ret = self.get_config_data.get_data_post("getCouponCenterList", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "优惠券领券中心"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
@@ -126,7 +126,7 @@ class CouponData:
 		ret = self.get_config_data.get_data_post("getCouponUsedAmount", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "优惠券使用总计优惠金额"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
@@ -149,7 +149,12 @@ class CouponData:
 			post_data = ret['expect']['retData']
 
 		# 获取订单
-		order_list = self.order.list(model, [{"status": [9], "page": 1, "size": 10, "refundType": []}])
+		params_post = self.get_config_data.get_conf("getOrderList")
+		order_list = self.send_post.send_post(params_post['url'],
+											  {"status": [9], "page": 1, "size": 10, "refundType": []},
+											  params_post['header'])
+		if order_list['status'] != 200 or not order_list['data']:
+			return False
 		order_one = random.choice(order_list['data']['list'])
 
 		# 循环用例，请求获取数据
@@ -165,7 +170,7 @@ class CouponData:
 
 			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
-		return params
+		return True
 
 	# 获取邀请优惠券信息
 	def get_invitations(self, model):
@@ -173,7 +178,7 @@ class CouponData:
 		ret = self.get_config_data.get_data_post("getInvitationsInfo", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "邀请优惠券"}
 
 		params = self.send_post.send_post(url, data, header)
 		result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
@@ -195,7 +200,7 @@ class CouponData:
 		ret = self.get_config_data.get_data_post("getInvitationsRule", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "邀请奖励规则"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
@@ -215,7 +220,7 @@ class CouponData:
 		ret = self.get_config_data.get_data_post("isCashBack", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {'cases_text': "邀请返现券"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
@@ -284,7 +289,10 @@ class CouponData:
 		# 循环用例，请求获取数据
 		for data in post_data:
 			# 获取可赠送的优惠券
-			res = self.coupon_list(model, [{"type": 1, "page": 1}])
+			params_post = self.get_config_data.get_conf("getMyCouponList")
+			res = self.send_post.send_post(params_post['url'], {"type": 1, "page": 1}, params_post['header'])
+			if res['status'] != 200 or not res['data']:
+				continue
 			choice_coupon = ""
 			for coupon_data in res['data']['list']:
 				if coupon_data['allowGive'] == 1:
@@ -384,19 +392,27 @@ class CouponData:
 		# 循环用例，请求获取数据
 		for data in post_data:
 			# 获取订单列表
-			order_list = self.order.list(model, [{"status": [9], "size": 3}])
+			params_post = self.get_config_data.get_conf("getOrderList")
+			order_list = self.send_post.send_post(params_post['url'], {"status": [9], "size": 3}, params_post['header'])
+			if order_list['status'] != 200 or not order_list['data']:
+				continue
+
 			order_one = random.choice(order_list['data']['list'])
 
 			# 获取分享的code
-			share_code = self.coupon_get_share(model, [{"orderId": order_one['id']}])
+			params_post = self.get_config_data.get_conf("getShareCoupon")
+			share_code = self.send_post.send_post(params_post['url'], {"orderId": order_one['id']},
+												  params_post['header'])
+
 			url_code = share_code['data']['url']
 			# 截取code
 			code_data = url_code.split('=')
 			code = code_data[len(code_data) - 1]
 
 			# 检查当前用户是否已领取此分享券
-			check_share = self.check_receive_share(model, [{"code": code}])
-			if check_share == 500:
+			params_post = self.get_config_data.get_conf("checkReceiveShare")
+			check_share = self.send_post.send_post(params_post['url'], {"code": code}, params_post['header'])
+			if check_share['status'] != 200 or not check_share['data']:
 				continue
 
 			# 请求api获取结果
@@ -406,7 +422,11 @@ class CouponData:
 				continue
 
 			# 获取已领取的分享优惠券信息
-			self.receive_share(model, [{"code": code}])
+
+			params_post = self.get_config_data.get_conf("getReceiveShare")
+			check_share = self.send_post.send_post(params_post['url'], {"code": code}, params_post['header'])
+			if check_share['status'] != 200 or not check_share['data']:
+				continue
 
 			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 

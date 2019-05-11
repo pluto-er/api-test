@@ -2,6 +2,7 @@ uri: "/worker/worker/list"  #为您服务员工列表
 retData:
   - page: 1
     size: 10
+    cases_text: "员工列表"
 
 
 "result": {

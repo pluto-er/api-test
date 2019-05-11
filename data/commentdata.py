@@ -11,6 +11,7 @@ from helper.get_yaml import GetYaml
 from helper.get_html import GetHtml
 from helper.request_post import SendPost
 from helper.validator import ValidatorHelper
+from helper.get_premise import GetPremise
 from helper.get_config import GetDataConfig
 from data.orderdata import OrderData
 
@@ -25,6 +26,7 @@ class CommentData:
 		self.validator = ValidatorHelper()
 		self.get_data_config = GetDataConfig()
 		self.order = OrderData()
+		self.get_premise = GetPremise()
 
 	# 获取评论列表
 	def list(self, model = [], post_data = None):
@@ -95,7 +97,7 @@ class CommentData:
 			result_status['report'] = report
 			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
-		return params
+		return True
 
 	# 点赞/取消点赞
 	def add_like(self, model):
@@ -107,7 +109,7 @@ class CommentData:
 		# 获取评论列表
 		comment_post_data = [
 			{"type": random.choice([1, 3, 4]), "star": random.randint(1, 5), "page": 1, "size": 5, "state": 1}]
-		comment_return = self.get_comment_list(model, comment_post_data)
+		comment_return = self.get_premise.get_comment_list(comment_post_data)
 		comment = comment_return['data']
 		if not comment['data']['list']:
 			comment['report_status'] = 202
@@ -116,33 +118,31 @@ class CommentData:
 			self.get_yaml_data.set_to_yaml(ret, comment_return['post'], comment, model, result_status)
 			return False
 
+		for comment_data in comment['data']['list']:
+			if comment_data['isLike'] == 1:
+				continue
+			choice_comment = comment_data
+			break
+
 		# 循环用例，请求获取数据
 		for data in post_data:
-			for comment_data in comment['data']['list']:
-				cid = data['cid']
-				if data['type'] == 1 and comment_data['isLike'] == 1:
-					continue
-				if data['type'] == 2:
-					num = random.randint(1, 3)
-					if num != 3:
-						continue
-				data['cid'] = comment_data['id']
-				like = len(comment_data['likeList'])
-				params = self.comment_post.send_post(url, data, header)
-				result_status = self.validator.validate_status(ret, params, model, data)
-				if result_status == 'fail':
-					continue
+			data['cid'] = choice_comment['id']
+			like = len(choice_comment['likeList'])
+			params = self.comment_post.send_post(url, data, header)
+			result_status = self.validator.validate_status(ret, params, model, data)
+			if result_status == 'fail':
+				continue
 
-				# 断言是否写入成功
-				detail = self.comment_detail_condition(data['cid'])
-				like_num = len(detail['data']['comment']['likeList'])
-				if like_num == like:
-					params['report_status'] = 204
-					result_status['report'] = "点赞/点踩失败,type=" + str(data['type'])
-					self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
-					continue
-
+			# 断言是否写入成功
+			detail = self.comment_detail_condition(data['cid'])
+			like_num = len(detail['data']['comment']['likeList'])
+			if like_num == like:
+				params['report_status'] = 204
+				result_status['report'] = "点赞/点踩失败,type=" + str(data['type'])
 				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+				continue
+
+			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 
@@ -157,7 +157,7 @@ class CommentData:
 		# 获取评论列表
 		comment_post_data = [
 			{"type": random.choice([1, 3, 4]), "star": random.randint(1, 5), "page": 1, "size": 5, "state": 1}]
-		comment_return = self.get_comment_list(model, comment_post_data)
+		comment_return = self.get_premise.get_comment_list(comment_post_data)
 		comment = comment_return['data']
 		if not comment['data']['list']:
 			comment['report_status'] = 202
@@ -165,21 +165,46 @@ class CommentData:
 			result_status = {"key": [], "val": [], 'report': ""}
 			self.get_yaml_data.set_to_yaml(ret, comment_return['post'], comment, model, result_status)
 			return False
-
+		comment_data = random.choice(comment['data']['list'])
 		# 循环用例，请求获取数据
 		for data in post_data:
-			for comment_data in comment['data']['list']:
-				# 评论评论
-				data['cid'] = comment_data['id']
-				data['toId'] = comment_data['uid']
+			# 评论评论
+			data['cid'] = comment_data['id']
+			data['toId'] = comment_data['uid']
 
+			params = self.comment_post.send_post(url, data, header)
+			if not data['content']:
+				result_status = {"key": [], "val": [], 'report': "无评论信息，已手动屏蔽错误"}
+				params['status'] = 200
+				params['message'] = ''
+				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+				continue
+			result_status = self.validator.validate_status(ret, params, model, data)
+			if result_status == "fail":
+				continue
+
+			# 断言是否写入成功
+			detail = self.comment_detail_condition(data['cid'])
+			replay = detail['data']['replay']
+			# 断言回复评论
+			if int(replay[len(replay) - 1]['fromId']) != int(header['uid']):
+				params['report_status'] = 204
+				result_status['report'] = "发布评论失败"
+				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+				continue
+
+			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+
+			# 评论回复
+			comment_replay = random.choice(comment['data']['list'])
+			if comment_replay['replay']:
+				data['cases_text'] = "回复评论的评论"
+				replay_post = random.choice(comment_replay['replay'])
+				data['cid'] = comment_replay['id']
+				data['toId'] = replay_post['fromId']
+				data['toType'] = replay_post['fromType']
+				data['replayId'] = replay_post['id']
 				params = self.comment_post.send_post(url, data, header)
-				if not data['content']:
-					result_status = {"key": [], "val": [], 'report': "无评论信息，已手动屏蔽错误"}
-					params['status'] = 200
-					params['message'] = ''
-					self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
-					continue
 				result_status = self.validator.validate_status(ret, params, model, data)
 				if result_status == "fail":
 					continue
@@ -187,7 +212,6 @@ class CommentData:
 				# 断言是否写入成功
 				detail = self.comment_detail_condition(data['cid'])
 				replay = detail['data']['replay']
-				# 断言回复评论
 				if int(replay[len(replay) - 1]['fromId']) != int(header['uid']):
 					params['report_status'] = 204
 					result_status['report'] = "发布评论失败"
@@ -195,30 +219,6 @@ class CommentData:
 					continue
 
 				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
-
-				# 评论回复
-				comment_replay = random.choice(comment['data']['list'])
-				if comment_replay['replay']:
-					replay_post = random.choice(comment_replay['replay'])
-					data['cid'] = comment_replay['id']
-					data['toId'] = replay_post['fromId']
-					data['toType'] = replay_post['fromType']
-					data['replayId'] = replay_post['id']
-					params = self.comment_post.send_post(url, data, header)
-					result_status = self.validator.validate_status(ret, params, model, data)
-					if result_status == "fail":
-						continue
-
-					# 断言是否写入成功
-					detail = self.comment_detail_condition(data['cid'])
-					replay = detail['data']['replay']
-					if int(replay[len(replay) - 1]['fromId']) != int(header['uid']):
-						params['report_status'] = 204
-						result_status['report'] = "发布评论失败"
-						self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
-						continue
-
-					self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 
@@ -231,51 +231,65 @@ class CommentData:
 		header = ret['header']
 		post_data = ret['expect']['retData']
 		# 循环用例，请求获取数据
-		for data in post_data:
-			# 获取订单
-			order_list = self.order.list(model, [{"status": [8]}])
-			if order_list['data']['list']:
-				order_one = random.choice(order_list['data']['list'])
+		for star in [1, 2, 3, 4, 5]:
+			if star == 1:
+				star_text = "【一星差评】"
+			elif star == 2:
+				star_text = "【二星差评】"
+			elif star == 3:
+				star_text = "【三星中评】"
+			elif star == 4:
+				star_text = "【四星中评】"
 			else:
-				result_status = {"key": [], "val": [], 'report': "没有未评论订单"}
-				self.get_yaml_data.set_to_yaml(ret, data, order_list, model, result_status)
-				break
-			# 请求api获取结果
-			data['orderId'] = order_one['id']
-			data['orderno'] = order_one['orderno']
-			data['orderStar'] = random.randint(1, 5)
-			data['goodsStar'] = random.randint(1, 5)
-			data['serviceStar'] = random.randint(1, 5)
-			data['environmentStar'] = random.randint(1, 5)
-			data['type'] = order_one['type']
-			data['goods'] = []
-			for goods_data in order_one['goodsList']:
-				goods = {"goodsId": goods_data['goodsId'], 'goodsName': goods_data['goodsName'],
-					'type': random.randint(1, 2)}
-				data['goods'].append(goods)
-			data['content'] = "自动测试评论，时间：" + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-			# 标签
-			type = data['type']
-			if data['type'] == 4:
-				type = 1
-			elif data['type'] == 5:
-				type = 2
-			ret_label = self.get_label_list(model, [{"type": type}])
-			data['label'] = []
-			if ret_label['data']:
-				if data['orderStar'] in [1, 2]:
-					ret_label_data = ret_label['data']['bad']
-				else:
-					ret_label_data = ret_label['data']['good']
-				for choice in ret_label_data:
-					label = {"labelId": choice['id'], "labelName": choice['title'], "labelType": choice['type']}
-					data['label'].append(label)
-			params = self.comment_post.send_post(url, data, header)
-			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-			if result_status == 'fail':
-				continue
+				star_text = "【五星好评】"
 
-			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+			for data in post_data:
+				# 获取订单
+				order_list = self.order.list(model, [{"status": [8]}])
+				if order_list['data']['list']:
+					order_one = random.choice(order_list['data']['list'])
+				else:
+					result_status = {"key": [], "val": [], 'report': "没有未评论订单"}
+					data['cases_text'] = star_text + data['cases_text']
+					self.get_yaml_data.set_to_yaml(ret, data, order_list, model, result_status)
+					break
+				# 请求api获取结果
+				data['orderId'] = order_one['id']
+				data['orderno'] = order_one['orderno']
+				data['orderStar'] = star
+				data['goodsStar'] = random.randint(1, 5)
+				data['serviceStar'] = random.randint(1, 5)
+				data['environmentStar'] = random.randint(1, 5)
+				data['type'] = order_one['type']
+				data['goods'] = []
+				for goods_data in order_one['goodsList']:
+					goods = {"goodsId": goods_data['goodsId'], 'goodsName': goods_data['goodsName'],
+						'type': random.randint(1, 2)}
+					data['goods'].append(goods)
+				data['content'] = "自动测试评论，时间：" + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+				# 标签
+				type = data['type']
+				if data['type'] == 4:
+					type = 1
+				elif data['type'] == 5:
+					type = 2
+				ret_label = self.get_label_list(model, [{"type": type}])
+				data['label'] = []
+				if ret_label['data']:
+					if data['orderStar'] in [1, 2]:
+						ret_label_data = ret_label['data']['bad']
+					else:
+						ret_label_data = ret_label['data']['good']
+					for choice in ret_label_data:
+						label = {"labelId": choice['id'], "labelName": choice['title'], "labelType": choice['type']}
+						data['label'].append(label)
+				params = self.comment_post.send_post(url, data, header)
+				result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+				if result_status == 'fail':
+					continue
+
+				data['cases_text'] = star_text + data['cases_text']
+				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 

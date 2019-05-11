@@ -2,10 +2,13 @@ uri: "/activity/config/get-reg" #获取活动配置-注册弹窗信息#配置类
 retData:
   - key: "registerPopup"
     isShare: 1
+    cases_text: "注册弹窗"
   - key: "invitationRegisterPopup"
     isShare: 1
+    cases_text: "邀请弹窗"
   - key: "orderRegisterPopup"
     isShare: 1
+    cases_text: "确认订单弹窗"
 
 
 "result": {

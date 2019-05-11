@@ -5,76 +5,91 @@ retData:
     page: 1
     size: 10
     state: 1
+    cases_text: "堂食评论列表-五星"
   - type: 1
     star: 4
     page: 1
     size: 10
     state: 1
+    cases_text: "堂食评论列表-四星"
   - type: 1
     star: 3
     page: 1
     size: 10
     state: 1
+    cases_text: "堂食评论列表-三星"
   - type: 1
     star: 2
     page: 1
     size: 10
     state: 1
+    cases_text: "堂食评论列表-二星"
   - type: 1
     star: 1
     page: 1
     size: 10
     state: 1
+    cases_text: "堂食评论列表-一星"
   - type: 3 # 外卖
     star: 5
     page: 1
     size: 10
     state: 1
+    cases_text: "外卖评论列表-五星"
   - type: 3
     star: 4
     page: 1
     size: 10
     state: 1
+    cases_text: "外卖评论列表-四星"
   - type: 3
     star: 3
     page: 1
     size: 10
     state: 1
+    cases_text: "外卖评论列表-三星"
   - type: 3
     star: 2
     page: 1
     size: 10
     state: 1
+    cases_text: "外卖评论列表-二星"
   - type: 3
     star: 1
     page: 1
     size: 10
     state: 1
+    cases_text: "外卖评论列表-一星"
   - type: 4 # 自提
     star: 5
     page: 1
     size: 10
     state: 1
+    cases_text: "自提评论列表-五星"
   - type: 4
     star: 4
     page: 1
     size: 10
     state: 1
+    cases_text: "自提评论列表-四星"
   - type: 4
     star: 3
     page: 1
     size: 10
     state: 1
+    cases_text: "自提评论列表-三星"
   - type: 4
     star: 2
     page: 1
     size: 10
     state: 1
+    cases_text: "自提评论列表-二星"
   - type: 4
     star: 1
     page: 1
     size: 10
     state: 1
+    cases_text: "自提评论列表-一星"
 
 
 "result": {

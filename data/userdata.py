@@ -30,7 +30,7 @@ class UserData:
 		ret = self.get_config_data.get_data_post("getVipLevel", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "会员数据"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
@@ -68,7 +68,7 @@ class UserData:
 		ret = self.get_config_data.get_data_post("getUserInfo", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {'cases_text': "用户详情"}
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
 		result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
@@ -92,7 +92,7 @@ class UserData:
 		ret = self.get_config_data.get_data_post("getStarSignList", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "星座列表"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
@@ -176,7 +176,7 @@ class UserData:
 		ret = self.get_config_data.get_data_post("getRechargeCount", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "充值统计数据"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
@@ -251,7 +251,7 @@ class UserData:
 		ret = self.get_config_data.get_data_post("initUserShop", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {'cases_text': "店铺会员初始化"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
@@ -289,7 +289,7 @@ class UserData:
 		ret = self.get_config_data.get_data_post("getAccountBalance", file_path)
 		url = ret['url']
 		header = ret['header']
-		data = []
+		data = {"cases_text": "钱包"}
 
 		# 请求api获取结果
 		params = self.send_post.send_post(url, data, header)
