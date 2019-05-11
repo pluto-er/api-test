@@ -38,19 +38,21 @@ class Goods:
 
 	# 点餐列表
 	def my_data(self):
-		model = ["点餐", '菜品列表']
+		model = ["点餐", '菜品列表', 'user']
 		try:
 			self.user.init_shop(model)
 		except Exception as e:
 			self.get_config_data.get_error_base('initUserShop', model, e)
 		try:
-			self.shop.detail(model)
-		except Exception as e:
-			self.get_config_data.get_error_base('shopDetail', model, e)
-		try:
 			self.user.info(model)
 		except Exception as e:
 			self.get_config_data.get_error_base('getUserInfo', model, e)
+		model = ["点餐", '菜品列表', 'shop']
+		try:
+			self.shop.detail(model)
+		except Exception as e:
+			self.get_config_data.get_error_base('shopDetail', model, e)
+		model = ["点餐", '菜品列表', 'goods']
 		try:
 			self.goods.category_list(model)
 		except Exception as e:
@@ -72,53 +74,56 @@ class Goods:
 	def my_order(self):
 		model = "点餐"
 		try:
-			self.goods.check([model, '检验菜品'])
+			self.goods.check([model, '检验菜品', 'goods'])
 		except Exception as e:
-			self.get_config_data.get_error_base('checkGoodsStatusList', [model, '检验菜品'], e)
+			self.get_config_data.get_error_base('checkGoodsStatusList', [model, '检验菜品', 'goods'], e)
 		try:
-			self.goods.addition([model, '加购提醒'])
+			self.goods.addition([model, '加购提醒', 'goods'])
 		except Exception as e:
-			self.get_config_data.get_error_base('getAddSlpListUrl', [model, '加购提醒'], e)
+			self.get_config_data.get_error_base('getAddSlpListUrl', [model, '加购提醒', 'goods'], e)
 		try:
-			self.shop.table_list([model, '座位详情'])
+			self.shop.table_list([model, '座位详情', 'shop'])
 		except Exception as e:
-			self.get_config_data.get_error_base('tableList', [model, '座位详情'], e)
+			self.get_config_data.get_error_base('tableList', [model, '座位详情', 'shop'], e)
 		try:
-			self.shop.table_detail([model, '座位详情'])
+			self.shop.table_detail([model, '座位详情', 'shop'])
 		except Exception as e:
-			self.get_config_data.get_error_base('getStoreTableDetail', [model, '座位详情'], e)
+			self.get_config_data.get_error_base('getStoreTableDetail', [model, '座位详情', 'shop'], e)
 		try:
-			self.shop.table_set_status([model, '扫码占座'])
+			self.shop.table_set_status([model, '扫码占座', 'shop'])
 		except Exception as e:
-			self.get_config_data.get_error_base('setTableStatus', [model, '扫码占座'], e)
+			self.get_config_data.get_error_base('setTableStatus', [model, '扫码占座', 'shop'], e)
 		try:
-			self.coupon.coupon_able_list([model, '优惠券列表'])
+			self.coupon.coupon_able_list([model, '优惠券列表', 'activity'])
 		except Exception as e:
-			self.get_config_data.get_error_base('getAvailableCoupon', [model, '优惠券列表'], e)
+			self.get_config_data.get_error_base('getAvailableCoupon', [model, '优惠券列表', 'activity'], e)
 		try:
-			self.activity.recharge_list([model, '充值活动列表'])
+			self.activity.recharge_list([model, '充值活动列表', 'shop'])
 		except Exception as e:
-			self.get_config_data.get_error_base('getRechargeList', [model, '充值活动列表'], e)
+			self.get_config_data.get_error_base('getRechargeList', [model, '充值活动列表', 'shop'], e)
 		try:
-			self.user.init_shop([model, '会员初始化'])
+			self.user.init_shop([model, '会员初始化', 'user'])
 		except Exception as e:
-			self.get_config_data.get_error_base('initUserShop', [model, '会员初始化'], e)
+			self.get_config_data.get_error_base('initUserShop', [model, '会员初始化', 'user'], e)
 
 	# 支付完成
 	def pay_success(self):
-		model = ["订单", "支付完成"]
+		model = ["订单", "支付完成", 'shop']
 		try:
 			self.shop.detail(model)
 		except Exception as e:
 			self.get_config_data.get_error_base('shopDetail', model, e)
+		model = ["订单", "支付完成", 'goods']
 		try:
 			self.goods.check(model)
 		except Exception as e:
 			self.get_config_data.get_error_base('checkGoodsStatusList', model, e)
+		model = ["订单", "支付完成", 'order']
 		try:
 			self.order.detail(model)
 		except Exception as e:
 			self.get_config_data.get_error_base('orderDetail', model, e)
+		model = ["订单", "支付完成", 'activity']
 		try:
 			self.coupon.coupon_get_share(model)
 		except Exception as e:
@@ -134,7 +139,7 @@ class Goods:
 
 	# 广告位
 	def poster(self):
-		model = ["广告", "广告位"]
+		model = ["广告", "广告位", 'goods']
 		try:
 			self.goods.advertising_list(model)
 		except Exception as e:

@@ -120,6 +120,11 @@
                                 name="filterResult" id="filterResult">
                             <option value="">全部</option>
                         </select>
+                        <label style="color: snow">服务:</label>
+                        <select class="chosen-select form-control" data-placeholder="全部" style="width: 200px;"
+                                name="filterService" id="filterService">
+                            <option value="">全部</option>
+                        </select>
                         <div style="float: right">
                             <label class="form-control">
                                 <span class="text-navy">用例数: </span><span class="text-navy b-r"
@@ -142,9 +147,10 @@
                             <th>测试类</th>
                             <th>测试模块</th>
                             <th>用例描述</th>
+                            <th>服务</th>
                             <th>请求接口</th>
                             <th>请求数据</th>
-                            <th>运行时长(毫秒)</th>
+                            <!--<th>耗时(毫秒)</th>-->
                             <th>traceid</th>
                             <th>结果</th>
                             <th>操作</th>
@@ -243,12 +249,16 @@
         $("#totalTime").text(resultData["totalTime"]);
         var classNames = [];
         var results = [];
+        var services = [];
         $.each(resultData["testResult"], function (i, n) {
             if (classNames.indexOf(n["className"]) == -1) {
                 classNames.push(n["className"]);
             }
             if (results.indexOf(n["status"]) == -1) {
                 results.push(n["status"]);
+            }
+            if (services.indexOf(n["service"]) == -1) {
+                services.push(n["service"]);
             }
         });
 
@@ -258,11 +268,15 @@
         $.each(results, function (i, n) {
             $("#filterResult").append("<option value='" + n + "' hassubinfo='true'>" + n + "</option>");
         });
+        $.each(services, function (i, n) {
+            $("#filterService").append("<option value='" + n + "' hassubinfo='true'>" + n + "</option>");
+        });
 
         $("#filterClass").chosen({search_contains: true});
         $("#filterResult").chosen({search_contains: true});
+        $("#filterService").chosen({search_contains: true});
 
-        function generateResult(className, caseResult) {
+        function generateResult(className, caseResult, caseService) {
             $("#detailBody").children().remove();
             var filterAll = 0;
             var filterOk = 0;
@@ -270,7 +284,8 @@
             var filterFail = 0;
             var filterSkip = 0;
             $.each(resultData["testResult"], function (i, n) {
-                if ((className == "" || n["className"] == className) && (caseResult == "" || n["status"] == caseResult)) {
+                if ((className == "" || n["className"] == className) && (caseResult == "" || n["status"] == caseResult)
+                    && (caseService == "" || n["service"] == caseService)) {
                     filterAll += 1;
                     var status = "";
                     if (n["status"] == '成功') {
@@ -293,9 +308,11 @@
                         "<td>" + n["className"] + "</td>" +
                         "<td>" + n["modelName"] + "</td>" +
                         "<td>" + n["caseText"] + "</td>" +
+                        "<td>" + n["service"] + "</td>" +
                         "<td>" + n["methodName"] + "</td>" +
-                        "<td>" + n["description"] + "</td>" +
-                        "<td>" + n["spendTime"] + "</td>" +
+                        "<td style='max-width: 450px;max-height:75px;overflow: hidden;display: block;" +
+                        "cursor: pointer'>" + n["description"] + "</td>" +
+                        // "<td>" + n["spendTime"] + "</td>" +
                         "<td>" + n["traceid"] + "</td>" +
                         status + "<td><button type='button' onclick='details(this)' buttonIndex='" + i + "' class='btn btn-primary btn-xs' style='margin-bottom: 0px'>展开</button></td></tr>"
                     $("#detailBody").append(tr);
@@ -308,18 +325,27 @@
             $("#filterSkip").text(filterSkip);
         }
 
-        generateResult("", "");
+        generateResult("", "", "");
 
         $("#filterClass").on('change', function () {
             var className = $("#filterClass").val();
             var caseResult = $("#filterResult").val();
-            generateResult(className, caseResult);
+            var caseService = $("#filterService").val();
+            generateResult(className, caseResult, caseService);
         });
 
         $("#filterResult").on('change', function () {
             var className = $("#filterClass").val();
             var caseResult = $("#filterResult").val();
-            generateResult(className, caseResult);
+            var caseService = $("#filterService").val();
+            generateResult(className, caseResult, caseService);
+        });
+
+        $("#filterService").on('change', function () {
+            var className = $("#filterClass").val();
+            var caseResult = $("#filterResult").val();
+            var caseService = $("#filterService").val();
+            generateResult(className, caseResult, caseService);
         });
 
         //$(".chosen-select").trigger("chosen:updated");

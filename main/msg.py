@@ -20,21 +20,21 @@ class Msg:
 	def start_up(self):
 		model = "用户"
 		try:
-			self.msg.detail([model, '消息计数'])
+			self.msg.detail([model, '消息计数', 'msg'])
 		except Exception as e:
-			self.get_config_data.get_error_base('getMessageCount', [model, '消息计数'], e)
+			self.get_config_data.get_error_base('getMessageCount', [model, '消息计数', 'msg'], e)
 		try:
-			self.msg.list([model, '消息通知列表'])
+			self.msg.list([model, '消息通知列表', 'msg'])
 		except Exception as e:
-			self.get_config_data.get_error_base('getMessageList', [model, '消息通知列表'], e)
+			self.get_config_data.get_error_base('getMessageList', [model, '消息通知列表', 'msg'], e)
 		try:
-			self.comment.add_replay([model, '回复评论'])
+			self.comment.add_replay([model, '回复评论', 'comment'])
 		except Exception as e:
-			self.get_config_data.get_error_base('addReplay', [model, '回复评论'], e)
+			self.get_config_data.get_error_base('addReplay', [model, '回复评论', 'comment'], e)
 		try:
-			self.msg.delete([model, '删除消息'])
+			self.msg.delete([model, '删除消息', 'msg'])
 		except Exception as e:
-			self.get_config_data.get_error_base('delMessage', [model, '删除消息'], e)
+			self.get_config_data.get_error_base('delMessage', [model, '删除消息', 'msg'], e)
 
 
 if __name__ == '__main__':

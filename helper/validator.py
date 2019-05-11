@@ -23,7 +23,7 @@ class ValidatorHelper:
 				ret['key'] = list(set(ret['key']))
 				ret['val'] = list(set(ret['val']))
 				if ret['key'] or ret['val']:
-					ret['report_base_status'] = 204
+					ret['report_base_status'] = 202
 				return ret
 			return {"key": [], "val": [], 'report': ""}
 		else:

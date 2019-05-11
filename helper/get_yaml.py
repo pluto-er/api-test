@@ -77,16 +77,18 @@ class GetYaml:
 			{
 				"className": model[0],
 				"modelName": model[1],
+				"service": model[2],
 				"methodName": ret['uri'],
 				"description": str(data),
 				"caseText": str(cases_text),
-				"spendTime": params['request_time'],
+				# "spendTime": params['request_time'],
 				"status": status_code,
 				"traceid": params['traceid'],
 				"log": [
 					"bid=" + str(ret['header']['bid']) + ";sid=" + str(ret['header']['sid']) + ";uid=" + str(
-							ret['header']['uid']),
-					ret['host'],
+							ret['header']['uid']) + "<br/>POST=" + str(data),
+					ret['host'] + "<br/>运行时长(毫秒)=" + str(params['request_time']),
+					params['request_time'],
 					params['status'],
 					params['code'],
 					params['message'],
