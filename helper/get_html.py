@@ -6,6 +6,7 @@ from helper.send_email import SendEmailHelper
 from lib.global_val import glo
 from helper.qywx import Qywx
 
+
 class GetHtml:
 
 	def __init__(self):
@@ -33,15 +34,16 @@ class GetHtml:
 		# 发送邮件
 		conf = OperationYaml.get_config()
 		title = "小程序API测试"
-		content = '<html><h3>全面测试小程序api:' \
-				  '</h3><a href="' + conf['case_url'] + file_name + '" ' \
-																	'style="font-size:18px">点击查看报告</a></html>'
+		# content = '<html><h3>全面测试小程序api:' \
+		# 		  '</h3><a href="' + conf['case_url'] + file_name + '" ' \
+		# 															'style="font-size:18px">点击查看报告</a></html>'
+		content = '测试小程序api:' + conf['case_url'] + file_name
 		qywx = Qywx()
 		qywx.send_msg_qywx_text(
 				{'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": content})
 		print(content)
 
-		# self.send_email.send_report_email(title, content)
+	# self.send_email.send_report_email(title, content)
 
 	def set_start(self, file_path):
 		return self.get_data_html.set_start(file_path)
