@@ -88,7 +88,6 @@ class GetYaml:
 					"bid=" + str(ret['header']['bid']) + ";sid=" + str(ret['header']['sid']) + ";uid=" + str(
 							ret['header']['uid']) + "<br/>POST=" + str(data),
 					ret['host'] + "<br/>运行时长(毫秒)=" + str(params['request_time']),
-					params['request_time'],
 					params['status'],
 					params['code'],
 					params['message'],

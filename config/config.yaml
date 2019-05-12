@@ -12,9 +12,9 @@ header:
 #请求环境域名
 #host: "http://127.0.0.5"
 host: "https://api-testing.weizhilian.com"
-#case_url: "http://192.168.31.243"
+case_url: "http://192.168.31.243"
 #case_url: "http://192.168.103.126"
-case_url: "http://148.70.137.31:8171"
+#case_url: "http://148.70.137.31:8171"
 
 # 接收测试结果的邮件，多个用，隔开
 user_email: "1357282015@qq.com,1358448980@qq.com"

@@ -33,7 +33,6 @@ class WorkerData:
 		url = ret['url']
 		header = ret['header']
 		post_data = ret['expect']['retData']
-
 		# 循环用例，请求获取数据
 		for data in post_data:
 			params = self.send_post.send_post(url, data, header)

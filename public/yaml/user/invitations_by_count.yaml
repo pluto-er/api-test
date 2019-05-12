@@ -3,6 +3,9 @@ retData:
   - startTime: 1
     endTime: 2
     cases_text: "邀请消费人数统计"
+  - startTime: 1557032762
+    endTime: 1657032762
+    cases_text: "邀请消费人数统计"
 
 "result": {
   "data": {

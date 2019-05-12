@@ -1,4 +1,5 @@
 import operator
+import math
 from helper.get_html import GetHtml
 from helper.get_yaml import GetYaml
 
@@ -90,3 +91,31 @@ class ValidatorHelper:
 		for params_key_data in params_key:
 			params_val.append(params[params_key_data])
 		return {"data": data_val, "params": params_val}
+
+	# 断言页码
+	def page(self, page_size, total, list, data):
+		report = ""
+		if not list:
+			return report
+		if page_size == 100:
+			num_data = total % data['size']
+			num_params = len(list)
+			if int(num_data) != int(num_params):
+				report += "返回数量错误，page=" + str(data['page'])
+		if page_size == 101 and len(list):
+			report += "返回数量错误,当前页面不应该有值，page=" + str(data['page'])
+
+		return report
+
+	# 设置page
+	def set_page(self, data, total):
+		page_size = 0
+		page = data['page']
+		if data['page'] == 100 and total:
+			page_size = 100
+			page = math.ceil(int(total) / int(data['size']))
+		elif data['page'] == 101 and total:
+			page_size = 101
+			page = math.ceil(int(total) / int(data['size'])) + 1
+
+		return {"page_size": page_size, "page": page}

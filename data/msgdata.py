@@ -156,14 +156,22 @@ class MsgData:
 			return 500
 
 		# 循环用例，请求获取数据
+		total = 0
 		for data in post_data:
 			data['toUid'] = worker_manager
 			data['fromUid'] = user['data']['ucid']
+			page_data = self.validator.set_page(data, total)
+			data['page'] = page_data['page']
+			page_size = page_data['page_size']
+
 			params = self.send_post.send_post(url, data, header)
 			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
 			if result_status == 'fail':
 				continue
 
+			total = params['data']['total']
+			report = self.validator.page(page_size, params['data']['total'], params['data']['list'], data)
+			result_status['report'] = report
 			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True

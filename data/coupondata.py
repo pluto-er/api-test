@@ -110,13 +110,33 @@ class CouponData:
 
 		# 循环用例，请求获取数据
 		for data in post_data:
-			# 请求api获取结果
-			params = self.send_post.send_post(url, data, header)
-			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-			if result_status == "fail":
-				continue
+			total = 0
+			cases_text = data['cases_text']
+			page_text = {1: "", 0: "第0页", 100: "最后一页", 101: "大于最后一页"}
+			for page_post in [1, 0, 100, 101]:
+				# 请求api获取结果
+				data['page'] = page_post
+				page_data = self.validator.set_page(data, total)
+				data['page'] = page_data['page']
+				page_size = page_data['page_size']
 
-			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+				params = self.send_post.send_post(url, data, header)
+				result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+				if result_status == "fail":
+					continue
+				if data['type'] == 1:
+					key = "unused"
+				elif data['tyddpe'] == 2:
+					key = "used"
+				elif data['tyddpe'] == 3:
+					key = "expiry"
+				elif data['tyddpe'] == 4:
+					key = "record"
+				total = params['data']['count'][key]
+				result_status['report'] = self.validator.page(page_size, params['data']['count'][key],
+															  params['data']['list'], data)
+				data['cases_text'] = page_text[page_post] + cases_text
+				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return params
 

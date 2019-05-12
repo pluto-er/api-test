@@ -25,9 +25,9 @@ class Startup:
 		except Exception as e:
 			self.get_config_data.get_error_base('cityList', [model, '城市列表', 'shop'], e)
 		try:
-			self.shop.list([model, '城市门店', 'shopss'])
+			self.shop.list([model, '城市门店', 'shop'])
 		except Exception as e:
-			self.get_config_data.get_error_base('shopList', [model, '城市门店', 'shopss'], e)
+			self.get_config_data.get_error_base('shopList', [model, '城市门店', 'shop'], e)
 
 
 if __name__ == '__main__':

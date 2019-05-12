@@ -47,27 +47,41 @@ class OrderData:
 			post_data = ret['expect']['retData']
 
 		for data in post_data:
-			# 请求api获取结果
-			params = self.send_post.send_post(url, data, header)
-			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-			if result_status == "fail":
-				continue
+			total = 0
+			cases_text = data['cases_text']
+			page_text = {1: "", 0: "第0页", 100: "最后一页", 101: "大于最后一页"}
+			for page_post in [1, 0, 100, 101]:
+				# 请求api获取结果
+				data['page'] = page_post
+				page_data = self.validator.set_page(data, total)
+				data['page'] = page_data['page']
+				page_size = page_data['page_size']
 
-			# 特殊·断言
-			report = ""
-			for request_data in params['data']['list']:
-				if data['status'] and request_data['status'] not in data['status']:
-					params['report_status'] = 202
-					report += "用户状态错误，status=" + str(request_data['status']) + "<br/>"
-				if request_data['payTime'] + 86400 * 3 < int(time.time()) and request_data['status'] not in [9, 10]:
-					params['report_status'] = 202
-					report += "3天过去未完成数据，orderno=" + request_data['orderno'] + "<br/>"
-				if request_data['updateTime'] + 3600 < int(time.time()) and request_data['type'] == 3 and request_data[
-					'dispatchType'] not in [6, 7, 8] and request_data['deliveryType'] not in [1, 2]:
-					params['report_status'] = 202
-					report += "外卖订单一个小时内未发生状态改变，orderno=" + str(request_data['orderno']) + "<br/>"
-			result_status['report'] = report
-			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+				params = self.send_post.send_post(url, data, header)
+				result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+				if result_status == "fail":
+					continue
+
+				# 特殊·断言
+				report = ""
+				total = params['data']['count']
+				report += self.validator.page(page_size, params['data']['count'], params['data']['list'], data)
+
+				for request_data in params['data']['list']:
+					if data['status'] and request_data['status'] not in data['status']:
+						params['report_status'] = 202
+						report += "用户状态错误，status=" + str(request_data['status']) + "<br/>"
+					if request_data['payTime'] + 86400 * 3 < int(time.time()) and request_data['status'] not in [9, 10]:
+						params['report_status'] = 202
+						report += "3天过去未完成数据，orderno=" + request_data['orderno'] + "<br/>"
+					if request_data['updateTime'] + 3600 < int(time.time()) and request_data['type'] == 3 and \
+							request_data[
+								'dispatchType'] not in [6, 7, 8] and request_data['deliveryType'] not in [1, 2]:
+						params['report_status'] = 202
+						report += "外卖订单一个小时内未发生状态改变，orderno=" + str(request_data['orderno']) + "<br/>"
+				result_status['report'] = report
+				data['cases_text'] = page_text[page_post] + cases_text
+				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return params
 

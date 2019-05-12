@@ -39,63 +39,78 @@ class CommentData:
 
 		# 循环用例，请求获取数据
 		for data in post_data:
-			params = self.comment_post.send_post(url, data, header)
-			result_status = self.validator.validate_status(ret, params, model, data)
-			if result_status == 'fail':
-				continue
+			total = 0
+			cases_text = data['cases_text']
+			page_text = {1: "", 0: "第0页", 100: "最后一页", 101: "大于最后一页"}
+			for page_post in [1, 0, 100, 101]:
+				data['page'] = page_post
+				page_data = self.validator.set_page(data, total)
+				data['page'] = page_data['page']
+				page_size = page_data['page_size']
 
-			# 特殊值断言
-			report = ""
-			if params['data']['star'] > 500 or params['data']['star'] < 0:
-				params['report_status'] = 204
-				report += "评论总评分错误;star=" + str(params['data']['star']) + "<br/>"
+				params = self.comment_post.send_post(url, data, header)
+				result_status = self.validator.validate_status(ret, params, model, data)
+				if result_status == 'fail':
+					continue
 
-			if params['data']['list']:
-				for list_data in params['data']['list']:
-					# 断言星数是否对应
-					if int(list_data['orderStar']) != int(data['star']):
-						params['report_status'] = 204
-						report += "评论星级筛选错误;orderno=" + str(list_data['orderno']) + "结果星级;star=" + str(
-								list_data['orderStar']) + "<br/>"
-					# 断言类型
-					if int(list_data['type']) != int(data['type']):
-						if (list_data['type'] == 2 and data['type'] == 1) or (
-								list_data['type'] == 5 and data['type'] == 4):
-							pass
-						else:
+				# 特殊值断言
+				report = ""
+				if params['data']['star'] > 500 or params['data']['star'] < 0:
+					params['report_status'] = 204
+					report += "评论总评分错误;star=" + str(params['data']['star']) + "<br/>"
+
+				if params['data']['list']:
+					total = params['data']['total']
+					report += self.validator.page(page_size, params['data']['total'], params['data']['list'], data)
+
+					for list_data in params['data']['list']:
+						# 断言星数是否对应
+						if int(list_data['orderStar']) != int(data['star']):
 							params['report_status'] = 204
-							report += "评论类型筛选错误;orderno=" + str(list_data['orderno']) + "结果类型;type=" + str(
-									list_data['type']) + "<br/>"
-					# 断言内容
-					if not list_data['content']:
-						params['report_status'] = 202
-						report += "评论内容筛选错误;orderno=" + str(list_data['orderno']) + "结果为空<br/>"
-					# 断言回复
-					if list_data['replay']:
-						for replay_data in list_data['replay']:
-							if replay_data['cid'] != list_data['id']:
+							report += "评论星级筛选错误;orderno=" + str(list_data['orderno']) + "结果星级;star=" + str(
+									list_data['orderStar']) + "<br/>"
+						# 断言类型
+						if int(list_data['type']) != int(data['type']):
+							if (list_data['type'] == 2 and data['type'] == 1) or (
+									list_data['type'] == 5 and data['type'] == 4):
+								pass
+							else:
 								params['report_status'] = 204
-								report += "评论回复内容错误;列出了不属于cid=" + str(list_data['id']) + "的评论,replay_cid=" + str(
-										replay_data[
-											'cid']) + "<br/>"
-							if not replay_data['fromName']:
-								params['report_status'] = 202
-								report += "回复者名称为空;评论cid=" + str(replay_data['cid']) + \
-										  ";replay_id=" + str(replay_data['id']) + ";name=" + str(
-										replay_data['fromName']) + "<br/>"
-							if not replay_data['toName']:
-								params['report_status'] = 202
-								report += "被回复者名称为空;评论id=" + str(replay_data['cid']) + ",replay_id=" + str(replay_data[
-																											   'id']) + "<br/>"
-							if not replay_data['content']:
-								params['report_status'] = 202
-								report += "回复内容为空;评论id=" + str(replay_data['cid']) + ",replay_id=" + str(replay_data[
-																											 'id']) + "<br/>"
+								report += "评论类型筛选错误;orderno=" + str(list_data['orderno']) + "结果类型;type=" + str(
+										list_data['type']) + "<br/>"
+						# 断言内容
+						if not list_data['content']:
+							params['report_status'] = 202
+							report += "评论内容筛选错误;orderno=" + str(list_data['orderno']) + "结果为空<br/>"
+						# 断言回复
+						if list_data['replay']:
+							for replay_data in list_data['replay']:
+								if replay_data['cid'] != list_data['id']:
+									params['report_status'] = 204
+									report += "评论回复内容错误;列出了不属于cid=" + str(list_data['id']) + "的评论,replay_cid=" + str(
+											replay_data[
+												'cid']) + "<br/>"
+								if not replay_data['fromName']:
+									params['report_status'] = 202
+									report += "回复者名称为空;评论cid=" + str(replay_data['cid']) + \
+											  ";replay_id=" + str(replay_data['id']) + ";name=" + str(
+											replay_data['fromName']) + "<br/>"
+								if not replay_data['toName']:
+									params['report_status'] = 202
+									report += "被回复者名称为空;评论id=" + str(replay_data['cid']) + ",replay_id=" + str(
+											replay_data[
+												'id']) + "<br/>"
+								if not replay_data['content']:
+									params['report_status'] = 202
+									report += "回复内容为空;评论id=" + str(replay_data['cid']) + ",replay_id=" + str(
+											replay_data[
+												'id']) + "<br/>"
 
-			else:
-				report += "没有评论数据"
-			result_status['report'] = report
-			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+				else:
+					report += "没有评论数据"
+				result_status['report'] = report
+				data['cases_text'] = page_text[page_post] + cases_text
+				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 

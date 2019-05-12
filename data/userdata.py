@@ -114,8 +114,13 @@ class UserData:
 		post_data = ret['expect']['retData']
 
 		# 循环用例，请求获取数据
+		total = 0
 		for data in post_data:
 			# 请求api获取结果
+			page_data = self.validator.set_page(data, total)
+			data['page'] = page_data['page']
+			page_size = page_data['page_size']
+
 			params = self.send_post.send_post(url, data, header)
 
 			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
@@ -125,6 +130,9 @@ class UserData:
 			# 特殊断言
 			report = ""
 			if params['data']['list']:
+				total = params['data']['total']
+				report += self.validator.page(page_size, params['data']['total'], params['data']['list'], data)
+
 				for request_data in params['data']['list']:
 					if request_data['amount'] < 0:
 						params['report_status'] = 202
@@ -150,23 +158,36 @@ class UserData:
 
 		# 循环用例，请求获取数据
 		for data in post_data:
+			total = 0
+			cases_text = data['cases_text']
+			page_text = {1: "", 0: "第0页", 100: "最后一页", 101: "大于最后一页"}
 			# 请求api获取结果
-			params = self.send_post.send_post(url, data, header)
-			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-			if result_status == 'fail':
-				continue
-			# 特殊断言
-			report = ""
-			for result_data in params['data']['list']:
-				if data['type'] != 0 and result_data['type'] != data['type']:
-					params['report_status'] = 202
-					report += "消费明细类型错误，type=" + str(result_data['type']) + "<br/>"
-				if not result_data['orderId']:
-					params['report_status'] = 202
-					report += "使用订单不能为空，orderId= " + str(result_data['orderId']) + "<br/>"
+			for page_post in [1, 0, 100, 101]:
+				data['page'] = page_post
+				page_data = self.validator.set_page(data, total)
+				data['page'] = page_data['page']
+				page_size = page_data['page_size']
 
-			result_status['report'] = report
-			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+				params = self.send_post.send_post(url, data, header)
+				result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+				if result_status == 'fail':
+					continue
+				# 特殊断言
+				report = ""
+				total = params['data']['total']
+				report += self.validator.page(page_size, params['data']['total'], params['data']['list'], data)
+
+				for result_data in params['data']['list']:
+					if data['type'] != 0 and result_data['type'] != data['type']:
+						params['report_status'] = 202
+						report += "消费明细类型错误，type=" + str(result_data['type']) + "<br/>"
+					if not result_data['orderId']:
+						params['report_status'] = 202
+						report += "使用订单不能为空，orderId= " + str(result_data['orderId']) + "<br/>"
+
+				result_status['report'] = report
+				data['cases_text'] = page_text[page_post] + cases_text
+				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 
@@ -220,9 +241,13 @@ class UserData:
 		url = ret['url']
 		header = ret['header']
 		post_data = ret['expect']['retData']
-
+		total = 0
 		# 循环用例，请求获取数据
 		for data in post_data:
+			page_data = self.validator.set_page(data, total)
+			data['page'] = page_data['page']
+			page_size = page_data['page_size']
+
 			# 请求api获取结果
 			params = self.send_post.send_post(url, data, header)
 			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
@@ -232,6 +257,9 @@ class UserData:
 			# 特殊断言
 			report = ""
 			if params['data']['list']:
+				total = params['data']['total']
+				report += self.validator.page(page_size, params['data']['total'], params['data']['list'], data)
+
 				for result_data in params['data']['list']:
 					if result_data['extend']['money'] < 0 or not result_data['extend']['fromUid']:
 						params['report_status'] = 202

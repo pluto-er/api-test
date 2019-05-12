@@ -1,9 +1,37 @@
-uri: "/user/data/give"  #用户赠送数据列表
+uri: "/user/data/give"  #用户赠送数据列表  type 1为返还的金额，2为收到的赠送
 retData:
   - type: 1
     page: 1
     size: 10
-    cases_text: "用户赠送数据列表"
+    cases_text: "用户赠送数据列表-返还的金额"
+  - type: 1
+    page: 0
+    size: 10
+    cases_text: "第零页用户赠送数据列表-返还的金额"
+  - type: 1
+    page: 100
+    size: 10
+    cases_text: "最后一页用户赠送数据列表-返还的金额"
+  - type: 1
+    page: 101
+    size: 10
+    cases_text: "大于最后一页用户赠送数据列表-返还的金额"
+  - type: 2
+    page: 1
+    size: 10
+    cases_text: "用户赠送数据列表-收到的赠送"
+  - type: 2
+    page: 0
+    size: 10
+    cases_text: "第零页用户赠送数据列表-收到的赠送"
+  - type: 2
+    page: 100
+    size: 10
+    cases_text: "最后一页用户赠送数据列表-收到的赠送"
+  - type: 2
+    page: 101
+    size: 10
+    cases_text: "大于最后一页用户赠送数据列表-收到的赠送"
 
 
 "result": {

@@ -1,10 +1,25 @@
-uri: "/shop/shop/list"  #店铺列表
+uri: "/shop/shop/list"  #店铺列表  page等于100表示最后一页  101 page大于最后一页
 retData:
   - cityId: 510100
     query:
     page: 1
     size: 10
     cases_text: "某城市商铺列表"
+  - cityId: 510100
+    query:
+    page: 0
+    size: 10
+    cases_text: "page为0某城市商铺列表"
+  - cityId: 510100
+    query:
+    page: 100
+    size: 10
+    cases_text: "最后一页某城市商铺列表"
+  - cityId: 510100
+    query:
+    page: 101
+    size: 10
+    cases_text: "大于最后一页城市商铺列表"
   - cityId: 510100
     query: "测试"
     page: 1

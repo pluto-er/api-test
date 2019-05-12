@@ -3,6 +3,15 @@ retData:
   - page: 1
     size: 10
     cases_text: "评论奖励列表"
+  - page: 0
+    size: 10
+    cases_text: "第零页评论奖励列表"
+  - page: 100
+    size: 10
+    cases_text: "最后一页评论奖励列表"
+  - page: 101
+    size: 10
+    cases_text: "大于最后一页评论奖励列表"
 
 "result": {
   "data": {

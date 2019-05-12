@@ -3,6 +3,15 @@ retData:
   - page: 1
     size: 10
     cases_text: "充值明细"
+  - page: 0
+    size: 10
+    cases_text: "第零页充值明细"
+  - page: 100
+    size: 10
+    cases_text: "最后一页充值明细"
+  - page: 101
+    size: 10
+    cases_text: "大于最后一页充值明细"
 
 "result": {
   "data": {

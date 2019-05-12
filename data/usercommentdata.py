@@ -30,7 +30,12 @@ class UserCommentData:
 		post_data = ret['expect']['retData']
 
 		# 循环用例，请求获取数据
+		total = 0
 		for data in post_data:
+			page_data = self.validator.set_page(data, total)
+			data['page'] = page_data['page']
+			page_size = page_data['page_size']
+
 			params = self.send_post.send_post(url, data, header)
 			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
 			if result_status == "fail":
@@ -38,6 +43,10 @@ class UserCommentData:
 
 			# 断言内容
 			report = ""
+
+			total = params['data']['total']
+			report += self.validator.page(page_size, params['data']['total'], params['data']['list'], data)
+
 			for result_data in params['data']['list']:
 				if int(result_data['uid']) != int(header['uid']):
 					params['report_status'] = 202

@@ -5,6 +5,21 @@ retData:
     page: 1
     size: 10
     cases_text: "聊天记录"
+  - toUid: 83  #店长ucid
+    fromUid: 46
+    page: 0
+    size: 10
+    cases_text: "第零页聊天记录"
+  - toUid: 83  #店长ucid
+    fromUid: 46
+    page: 100
+    size: 10
+    cases_text: "最后一页聊天记录"
+  - toUid: 83  #店长ucid
+    fromUid: 46
+    page: 101
+    size: 10
+    cases_text: "大于最后一页聊天记录"
 
 "result": {
   "data": {
