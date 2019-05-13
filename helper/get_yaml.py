@@ -138,7 +138,7 @@ class GetYaml:
 		first_file_path = root_path + "/generate/report/" + day
 		is_exists = os.path.exists(first_file_path)
 		if not is_exists:
-			os.makedirs(first_file_path)
+			os.makedirs(first_file_path, 777)
 
 		# 判断是否存在路径
 		first_file_path = root_path + "/generate/html/" + day
