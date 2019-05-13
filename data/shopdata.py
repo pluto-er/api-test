@@ -234,16 +234,22 @@ class ShopData:
 			page_size = page_data['page_size']
 
 			params = self.send_post.send_post(url, data, header)
-			dict_val = self.validator.set_dict_list(exect_data, params['data']['list'])
-			params['data']['list'] = dict_val['params']
-			ret['expect']['result']['data']['list'] = dict_val['data']
-			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
-			if result_status == 'fail':
-				return 500
-			total = params['data']['total']
-			report = self.validator.page(page_size, params['data']['total'], params['data']['list'], data)
-			result_status['report'] = report
-			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+			if params['data']['list']:
+				dict_val = self.validator.set_dict_list(exect_data, params['data']['list'])
+				params['data']['list'] = dict_val['params']
+				ret['expect']['result']['data']['list'] = dict_val['data']
+				result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
+				if result_status == 'fail':
+					return 500
+				total = params['data']['total']
+				report = self.validator.page(page_size, params['data']['total'], params['data']['list'], data)
+				result_status['report'] = report
+				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
+			else:
+				params['message'] = "没有数据"
+				params['report_status'] = 202
+				result_status = {"key": [], "val": [], 'report': report}
+				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
 
@@ -314,5 +320,5 @@ class ShopData:
 
 if __name__ == '__main__':
 	run = ShopData()
-	res_data = run.list('启动页')
+	res_data = run.table_list(['启动页', 'shezhi'])
 	print(res_data)

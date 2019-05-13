@@ -11,6 +11,7 @@ from helper.get_html import GetHtml
 from helper.request_post import SendPost
 from helper.validator import ValidatorHelper
 from helper.get_config import GetDataConfig
+from helper.get_premise import GetPremise
 from data.orderdata import OrderData
 
 
@@ -23,6 +24,7 @@ class CouponData:
 		self.validator = ValidatorHelper()
 		self.get_config_data = GetDataConfig()
 		self.order = OrderData()
+		self.get_premise = GetPremise()
 
 	# 获取活动配置-注册弹窗信息
 	def get_reg(self, model):
@@ -126,11 +128,11 @@ class CouponData:
 					continue
 				if data['type'] == 1:
 					key = "unused"
-				elif data['tyddpe'] == 2:
+				elif data['type'] == 2:
 					key = "used"
-				elif data['tyddpe'] == 3:
+				elif data['type'] == 3:
 					key = "expiry"
-				elif data['tyddpe'] == 4:
+				elif data['type'] == 4:
 					key = "record"
 				total = params['data']['count'][key]
 				result_status['report'] = self.validator.page(page_size, params['data']['count'][key],
@@ -287,6 +289,14 @@ class CouponData:
 		# 循环用例，请求获取数据
 		for data in post_data:
 			# 请求api获取结果
+			order_list = self.get_premise.get_order_list({"status": [8]})
+			if not order_list:
+				continue
+			if order_list['data']['list']:
+				order_one = random.choice(order_list['data']['list'])
+
+			data['orderId'] = order_one['id']
+			data['orderno'] = order_one['orderno']
 			params = self.send_post.send_post(url, data, header)
 
 			result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
@@ -295,7 +305,7 @@ class CouponData:
 
 			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
-		return params
+		return True
 
 	# 赠券
 	def coupon_donate(self, model):
@@ -455,5 +465,5 @@ class CouponData:
 
 if __name__ == '__main__':
 	run = CouponData()
-	ret = run.get_share_coupon(['优惠券', '优惠券'])
+	ret = run.coupon_goods_able_list(['优惠券', '优惠券'])
 	print(ret)

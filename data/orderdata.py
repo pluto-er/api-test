@@ -98,20 +98,20 @@ class OrderData:
 		result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
 		if result_status == "fail":
 			return 500
+		data = {"cases_text": "获取订单不同状态的数量"}
+		# # 获取未评论数
+		# data = {'status': [8], 'page': 1, 'size': 10, 'refundType': [1, 2]}
+		# url = ret['host'] + "/order/list"
+		# # 获取订单
+		# ret_list_data = self.list(model, [{"status": [9], "page": 1, "size": 10, "refundType": []}])
+		#
+		# report = ""
+		# if int(ret_list_data['data']['count']) != int(params['data']['waitCommentCount']):
+		# 	params['report_status'] = 202
+		# 	report += "数量错误，list_count=" + str(ret_list_data['data']['count']) + ";总计count=" + str(
+		# 			params['data']['waitCommentCount']) + "<br/>"
 
-		# 获取未评论数
-		data = {'status': [8], 'page': 1, 'size': 10, 'refundType': [1, 2]}
-		url = ret['host'] + "/order/list"
-		# 获取订单
-		ret_list_data = self.list(model, [{"status": [9], "page": 1, "size": 10, "refundType": []}])
-
-		report = ""
-		if int(ret_list_data['data']['count']) != int(params['data']['waitCommentCount']):
-			params['report_status'] = 202
-			report += "数量错误，list_count=" + str(ret_list_data['data']['count']) + ";总计count=" + str(
-					params['data']['waitCommentCount']) + "<br/>"
-
-		result_status['report'] = report
+		# result_status['report'] = report
 		self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True

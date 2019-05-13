@@ -397,7 +397,7 @@ class GetPremise:
 			}
 		return result
 
-	def get_order_list(self, data = []):
+	def get_order_list(self, data = {}):
 		file_path = "/public/yaml/order/list.yaml"
 		ret = self.get_config_data.get_data_post("getOrderList", file_path)
 		url = ret['url']
