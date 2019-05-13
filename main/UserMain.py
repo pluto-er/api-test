@@ -36,7 +36,7 @@ class UserMain:
 		GetYaml.init_file(file_name)
 		# 开始执行
 		self.startup.start_up()  # 启动页面
-		# self.shop.start_up()  # 店铺相关
+		self.shop.start_up()  # 店铺相关
 		# self.goods.my_data()  # 菜品列表
 		# self.goods.my_order()  # 点餐-确认页
 		# self.goods.pay_success()  # 支付完成
