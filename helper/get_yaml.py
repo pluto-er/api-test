@@ -141,7 +141,8 @@ class GetYaml:
 			os.makedirs(first_file_path)
 
 		# 判断是否存在路径
-		first_file_path = root_path + "/generate/html/" + day
+		first_file_path = "/home/worker/wzl-api-qtp/www/" + day
+		# first_file_path = root_path + "/generate/html/" + day
 		is_exists = os.path.exists(first_file_path)
 		if not is_exists:
 			os.makedirs(first_file_path)
