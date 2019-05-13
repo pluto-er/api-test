@@ -38,7 +38,7 @@ class GetHtml:
 		# content = '<html><h3>全面测试小程序api:' \
 		# 		  '</h3><a href="' + conf['case_url'] + file_name + '" ' \
 		# 															'style="font-size:18px">点击查看报告</a></html>'
-		content = '测试小程序api:' + conf['case_url'] + file_name
+		content = '测试小程序api:' + conf['case_url'] + glo.get_value('report_yaml') + ".html"
 		qywx = Qywx()
 		qywx.send_msg_qywx_text(
 				{'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": content})
