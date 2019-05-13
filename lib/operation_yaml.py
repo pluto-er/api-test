@@ -59,5 +59,5 @@ class OperationYaml:
 
 if __name__ == '__main__':
 	run = OperationYaml()
-	ret = run.get('/public/yaml/shop/city_list.yaml')
+	ret = run.get('/public/yaml/order/list.yaml')
 	print(ret)
