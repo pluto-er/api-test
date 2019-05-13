@@ -42,8 +42,8 @@ class GetPremise:
 		data = []
 
 		params = self.send_post.send_post(url, data, header)
-		if params['status'] == 500 or not params['data']:
-			return False
+		# if params['status'] == 500 or not params['data']:
+		# 	return False
 		return params
 
 	# 获取菜品列表
@@ -396,6 +396,30 @@ class GetPremise:
 			"addGoodsList": add_goods_return,
 			}
 		return result
+
+	def get_order_list(self, data = []):
+		file_path = "/public/yaml/order/list.yaml"
+		ret = self.get_config_data.get_data_post("getOrderList", file_path)
+		url = ret['url']
+		header = ret['header']
+
+		params = self.send_post.send_post(url, data, header)
+		if params['status'] == 500 or not params['data']:
+			return False
+		return params
+
+	# 获取标签列表
+	def get_label_list(self, type):
+		file_path = "/public/yaml/comment/get_label_list.yaml"
+		ret = self.get_config_data.get_data_post("getOrderCommentTags", file_path)
+		url = ret['url']
+		header = ret['header']
+
+		params = self.send_post.send_post(url, {"type": type}, header)
+		if params['status'] == 500 or not params['data']:
+			return False
+
+		return params
 
 
 if __name__ == '__main__':

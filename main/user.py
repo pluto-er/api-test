@@ -178,14 +178,15 @@ class User:
 	# 评论
 	def my_comment(self):
 		model = "评论"
-		try:
-			self.comment.get_label_list(['评论', '标签列表', 'comment'])
-		except Exception as e:
-			self.get_config_data.get_error_base('getOrderCommentTags', [model, '标签列表', 'comment'], e)
-		try:
-			self.comment.add_comment([model, '发布评论', 'comment'])
-		except Exception as e:
-			self.get_config_data.get_error_base('addOrderComment', [model, '发布评论', 'comment'], e)
+		# try:
+		# 	self.comment.get_label_list(['评论', '标签列表', 'comment'])
+		# except Exception as e:
+		# 	self.get_config_data.get_error_base('getOrderCommentTags', [model, '标签列表', 'comment'], e)
+		# try:
+		self.comment.add_comment([model, '发布评论', 'comment'])
+		# except Exception as e:
+		# 	self.get_config_data.get_error_base('addOrderComment', [model, '发布评论', 'comment'], e)
+		return True
 		try:
 			self.user_comment.comment_list([model, '用户评论列表', 'comment'])
 		except Exception as e:

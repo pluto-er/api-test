@@ -260,7 +260,10 @@ class CommentData:
 
 			for data in post_data:
 				# 获取订单
-				order_list = self.order.list(model, [{"status": [8]}])
+				time.sleep(2)
+				order_list = self.get_premise.get_order_list({"status": [8]})
+				if not order_list:
+					continue
 				if order_list['data']['list']:
 					order_one = random.choice(order_list['data']['list'])
 				else:
@@ -288,7 +291,7 @@ class CommentData:
 					type = 1
 				elif data['type'] == 5:
 					type = 2
-				ret_label = self.get_label_list(model, [{"type": type}])
+				ret_label = self.get_premise.get_label_list(type)
 				data['label'] = []
 				if ret_label['data']:
 					if data['orderStar'] in [1, 2]:

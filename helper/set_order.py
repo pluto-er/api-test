@@ -136,10 +136,10 @@ class SetOrder:
 			goods_list_number.append(goods_number)
 		header = self.get_config_data.get_conf("checkGoodsStatusList")
 		params = self.send_post.send_post(header['host'] + header['uri'], {'gids': goods_list_number}, header['header'])
-		if params['status'] != 200:
-			return False
+		# if params['status'] != 200:
+		# 	return False
 
-		return True
+		return params
 
 	# 设置请求数据
 	def get_base_data(self, type):
@@ -167,6 +167,8 @@ class SetOrder:
 
 	# 校验支付结果值
 	def validator_pay(self, params, type = 2):
+		if not params:
+			return False
 		if type == 2:
 			expect = {'data': {'payment': {'appId': 'wxd9a28df0646534d8',
 				'timeStamp': '1528272139', 'nonceStr': 'ZqVLm8Pat11R1lES',

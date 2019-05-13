@@ -4,14 +4,14 @@ header:
   bid: "10006"
   sid: "96"
   uid: "63"
-  token: "2414c603b629c76ac770183c8bb21cc7" #token指定用户并直接修改过期时间
+  token: "6d37fd279d83b16225e0ebe9d4afb81c" #token指定用户并直接修改过期时间
   locale: "1"
   miniversion: "1"
   sdkversion: "1"
 
 #请求环境域名
 #host: "http://127.0.0.5"
-host: "https://api-testing.weizhilian.com"
+host: "https://api-qa.weizhilian.com"
 #case_url: "http://192.168.31.243"
 #case_url: "http://192.168.103.126"
 case_url: "http://148.70.137.31:8171"

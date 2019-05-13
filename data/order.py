@@ -29,6 +29,14 @@ class OrderData:
 	def add_order(self, type = 5):
 		# 组合
 		model = ["下单", '下单', 'order']
+		# self.goods_type(type)
+		# self.order_package(type)
+		# self.add_goods(type)
+		# self.order_coupon(type)
+		# self.business_time_out(type)
+		# self.shopping_way(type)
+		# self.stock_ample(type)
+		# return True
 		try:
 			self.goods_type(type)
 		except Exception as e:
@@ -68,19 +76,20 @@ class OrderData:
 		try:
 			self.stock_ample(type)
 		except Exception as e:
-			result_status['report'] = "营业时间内-库存情况" + str(e)
-			self.get_yaml_data.set_to_yaml(ret, {}, pay_ret, ["订单", "下单"], result_status)
+			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 	# 组合
 	def goods_type(self, type):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
-		# 0默认  1使用优惠券 2使用菜品券 3加购都选上
-		term_text = ["", "-使用优惠券", "-加购不选"]
-		for term in [0, 1, 2]:
-			for post_status in [[2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]]:
+		# 0默认（不使用优惠券，加购）  1使用优惠券（加购）  2加购不选，不使用优惠券 3加购不选，使用优惠券
+		term_text = ["", "-使用优惠券", "-加购不选", "-使用优惠券，不加购"]
+		for term in [0, 1, 2, 3]:
+			for post_status in [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]]:
 				data = self.set_order.get_base_data(type)  # 获取请求数据
 				# 处理case描述
+				if post_status == [1]:
+					data['cases_text'] = "只购买单品商品"
 				if post_status == [2]:
 					data['cases_text'] = "只购买多规格商品"
 				elif post_status == [3]:
@@ -123,7 +132,7 @@ class OrderData:
 
 				# 获取加购
 				status = 0
-				if term == 2:
+				if term == 2 or term == 3:
 					status = 3
 				add_goods = self.get_premise.get_add_goods(type, status)
 
@@ -133,7 +142,7 @@ class OrderData:
 				data['addGoodsList'] = goods_pay['addGoodsList']
 				data['price'] = goods_pay['price']
 				data['vip_price'] = goods_pay['vip_price']
-				if term == 1:
+				if term == 1 or term == 3:
 					# 优惠券
 					coupon = self.get_premise.coupon_list()
 					coupon_ret = self.set_order.validator_coupon(type, coupon, data['vip_price'], 1)
@@ -154,8 +163,15 @@ class OrderData:
 					data['addressId'] = address_data['address_id']
 					data['price'] = data['price'] + address_data['service_fee']
 					data['vip_price'] = data['vip_price'] + address_data['service_fee']
-				pay_ret = self.pay(data, 2)
-				pay_status = self.set_order.validator_pay(pay_ret, 2)
+
+				if data['goodsList']:
+					pay_ret = self.pay(data, 2)
+					pay_status = self.set_order.validator_pay(pay_ret, 2)
+				else:
+					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '没有可选菜品', "report_status": 202,
+						"traceid": 0, "request_time": 0}
+					pay_status = False
+
 				report = ""
 				if pay_status:
 					time.sleep(1)
@@ -180,7 +196,7 @@ class OrderData:
 		# coupon_data 1使用 2不使用
 		coupon_text = ["-使用优惠券", ""]
 		for coupon_data in [1, 2]:
-			for post_status in [4, 5, 6]:
+			for post_status in [1, 2, 3, 4, 5, 6]:
 				file_path = "/public/yaml/order/add.yaml"
 				ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 
@@ -214,8 +230,15 @@ class OrderData:
 					data['addressId'] = address_data['address_id']
 					data['price'] = data['price'] + address_data['service_fee']
 					data['vip_price'] = data['vip_price'] + address_data['service_fee']
-				pay_ret = self.pay(data, 2)
-				result_status = self.set_order.validator_pay(pay_ret, 2)
+
+				if data['goodsList']:
+					pay_ret = self.pay(data, 2)
+					result_status = self.set_order.validator_pay(pay_ret, 2)
+				else:
+					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '没有可选菜品', "report_status": 202,
+						"traceid": 0, "request_time": 0}
+					result_status = False
+
 				# 1必选单选/其他选1 2必选多选/其他选1 3 必选不选/其他选1
 				# 4 非必单选（必选选择）  5非必选多选（必选选择） 6 非必选不选（必选选择）
 				if post_status == 1:
@@ -332,106 +355,112 @@ class OrderData:
 	def order_coupon(self, type = 5):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
-		# coupon_status 1正常 2不在使用时间内 3就餐方式满足  4 就餐方式不满足 5金额满足 6金额不满足
-		for post_status in [1, 2, 3, 4, 5, 6]:
-			goods = self.get_premise.get_order_goods(type, [1])
-			params_post = self.get_config_data.get_conf("getAvailableCoupon")
-			coupon_list = self.send_post.send_post(params_post['url'], {}, params_post['header'])
-			if coupon_list['status'] != 200 or not coupon_list['data'] or not coupon_list['data']['coupon']:
-				return False
-			coupon_data = coupon_list['data']['coupon']
+		# coupon_status 1正常 2不在使用时间内 3就餐方式满足  4 就餐方式不满足 5金额满足 6金额不满足 7 不使用
+		for post_type_data in [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 3], [1, 2, 3]]:
+			for post_status in [1, 2, 3, 4, 5, 6, 7]:
+				goods = self.get_premise.get_order_goods(type, post_type_data)
+				params_post = self.get_config_data.get_conf("getAvailableCoupon")
+				coupon_list = self.send_post.send_post(params_post['url'], {}, params_post['header'])
+				if coupon_list['status'] != 200 or not coupon_list['data'] or not coupon_list['data']['coupon']:
+					return False
+				coupon_data = coupon_list['data']['coupon']
 
-			data = self.set_order.get_base_data(type)
-			goods_pay = self.set_order.get_pay_amount(type, goods['goodsList'], goods['addGoodsList'])
-			data['goodsList'] = goods_pay['goodsList']
-			data['addGoodsList'] = goods_pay['addGoodsList']
-			data['price'] = goods_pay['price']
-			data['vip_price'] = goods_pay['vip_price']
+				data = self.set_order.get_base_data(type)
+				goods_pay = self.set_order.get_pay_amount(type, goods['goodsList'], goods['addGoodsList'])
+				data['goodsList'] = goods_pay['goodsList']
+				data['addGoodsList'] = goods_pay['addGoodsList']
+				data['price'] = goods_pay['price']
+				data['vip_price'] = goods_pay['vip_price']
+				if post_status == 7:
+					coupon_ret = []
+				else:
+					coupon_ret = self.set_order.validator_coupon(type, coupon_data, data['vip_price'], post_status)
+				if coupon_ret:
+					coupon_one = random.choice(coupon_ret)
+					data['couponIds'] = [coupon_one['id']]
+					data['price'] = data['price'] - coupon_one['amount']
+					data['vip_price'] = data['vip_price'] - coupon_one['amount']
 
-			coupon_ret = self.set_order.validator_coupon(type, coupon_data, data['vip_price'], post_status)
-			if coupon_ret:
-				coupon_one = random.choice(coupon_ret)
-				data['couponIds'] = [coupon_one['id']]
-				data['price'] = data['price'] - coupon_one['amount']
-				data['vip_price'] = data['vip_price'] - coupon_one['amount']
+					# 获取联系方式
+					picked = self.get_premise.picked_up_info()
+					data['addressId'] = picked
+					if type == 3:
+						address_data = self.set_order.set_shop_wm()
+						data['addressId'] = address_data['address_id']
+						data['price'] = data['price'] + address_data['service_fee']
+						data['vip_price'] = data['vip_price'] + address_data['service_fee']
 
-				# 获取联系方式
-				picked = self.get_premise.picked_up_info()
-				data['addressId'] = picked
-				if type == 3:
-					address_data = self.set_order.set_shop_wm()
-					data['addressId'] = address_data['address_id']
-					data['price'] = data['price'] + address_data['service_fee']
-					data['vip_price'] = data['vip_price'] + address_data['service_fee']
-
-				pay_ret = self.pay(data, 2)
-				result_status = self.set_order.validator_pay(pay_ret, 2)
-				if post_status == 1:
-					data['cases_text'] = "使用优惠券下单"
-					if not result_status:
+					pay_ret = self.pay(data, 2)
+					result_status = self.set_order.validator_pay(pay_ret, 2)
+					if post_status == 1:
+						data['cases_text'] = "使用优惠券下单"
+						if not result_status:
+							pay_ret['report_status'] = 500
+					elif post_status == 2:
+						data['cases_text'] = "使用当前时间不可用优惠券下单"
 						pay_ret['report_status'] = 500
-				elif post_status == 2:
-					data['cases_text'] = "使用当前时间不可用优惠券下单"
-					pay_ret['report_status'] = 500
-					if not result_status:
-						pay_ret['report_status'] = 200
-						pay_ret['code'] = 0
-				elif post_status == 3:
-					data['cases_text'] = "使用当前就餐方式可用优惠券下单"
-					if not result_status:
+						if not result_status:
+							pay_ret['report_status'] = 200
+							pay_ret['code'] = 0
+					elif post_status == 3:
+						data['cases_text'] = "使用当前就餐方式可用优惠券下单"
+						if not result_status:
+							pay_ret['report_status'] = 500
+					elif post_status == 4:
+						data['cases_text'] = "使用当前就餐方式不可用优惠券下单"
 						pay_ret['report_status'] = 500
-				elif post_status == 4:
-					data['cases_text'] = "使用当前就餐方式不可用优惠券下单"
-					pay_ret['report_status'] = 500
-					if not result_status:
-						pay_ret['report_status'] = 200
-						pay_ret['code'] = 0
-				elif post_status == 2:
-					data['cases_text'] = "使用金额达到使用条件优惠券下单"
-					if not result_status:
+						if not result_status:
+							pay_ret['report_status'] = 200
+							pay_ret['code'] = 0
+					elif post_status == 5:
+						data['cases_text'] = "使用金额达到使用条件优惠券下单"
+						if not result_status:
+							pay_ret['report_status'] = 500
+					elif post_status == 6:
+						data['cases_text'] = "使用金额未达到使用条件的优惠券下单"
 						pay_ret['report_status'] = 500
-				elif post_status == 2:
-					data['cases_text'] = "使用金额未达到使用条件的优惠券下单"
-					pay_ret['report_status'] = 500
-					if not result_status:
-						pay_ret['report_status'] = 200
-						pay_ret['code'] = 0
-				report = ""
-				# 余额支付
-				if result_status:
-					time.sleep(1)
-					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
-					if cancel_status:
-						pay_ret = self.pay(data, 1)
-						self.set_order.validator_pay(pay_ret, 1)
-					else:
-						report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
-				result_status = {"key": [], "val": [], 'report': report}
-				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
-			else:
-				pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '', "request_time": 0, "traceid": 0}
-				if post_status == 1:
-					data['cases_text'] = "使用优惠券下单"
-					pay_ret['report_status'] = 202
-				elif post_status == 2:
-					data['cases_text'] = "使用当前时间不可用优惠券下单"
-					pay_ret['report_status'] = 202
-				elif post_status == 3:
-					data['cases_text'] = "使用当前就餐方式可用优惠券下单"
-					pay_ret['report_status'] = 202
-				elif post_status == 4:
-					data['cases_text'] = "使用当前就餐方式不可用优惠券下单"
-					pay_ret['report_status'] = 202
-				elif post_status == 5:
-					data['cases_text'] = "使用金额达到使用条件优惠券下单"
-					pay_ret['report_status'] = 202
-				elif post_status == 6:
-					data['cases_text'] = "使用金额未达到使用条件的优惠券下单"
-					pay_ret['report_status'] = 202
-				report = "没有对应优惠券，跳过下单"
-				result_status = {"key": [], "val": [], 'report': report}
-				data['cases_text'] = self.get_type_code(type) + data['cases_text']
-				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+						if not result_status:
+							pay_ret['report_status'] = 200
+							pay_ret['code'] = 0
+					report = ""
+					# 余额支付
+					if result_status:
+						time.sleep(1)
+						cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
+						if cancel_status:
+							pay_ret = self.pay(data, 1)
+							self.set_order.validator_pay(pay_ret, 1)
+						else:
+							report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
+					result_status = {"key": [], "val": [], 'report': report}
+					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+				else:
+					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '', "request_time": 0, "traceid": 0}
+					if post_status == 1:
+						data['cases_text'] = "使用优惠券下单"
+						pay_ret['report_status'] = 202
+					elif post_status == 2:
+						data['cases_text'] = "使用当前时间不可用优惠券下单"
+						pay_ret['report_status'] = 202
+					elif post_status == 3:
+						data['cases_text'] = "使用当前就餐方式可用优惠券下单"
+						pay_ret['report_status'] = 202
+					elif post_status == 4:
+						data['cases_text'] = "使用当前就餐方式不可用优惠券下单"
+						pay_ret['report_status'] = 202
+					elif post_status == 5:
+						data['cases_text'] = "使用金额达到使用条件优惠券下单"
+						pay_ret['report_status'] = 202
+					elif post_status == 6:
+						data['cases_text'] = "使用金额未达到使用条件的优惠券下单"
+						pay_ret['report_status'] = 202
+					elif post_status == 7:
+						data['cases_text'] = "不使用优惠券下单"
+						pay_ret['report_status'] = 202
+					report = "没有对应优惠券，跳过下单"
+					result_status = {"key": [], "val": [], 'report': report}
+					data['cases_text'] = self.get_type_code(type) + data['cases_text']
+					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
 
 		return result_status
 
@@ -440,78 +469,11 @@ class OrderData:
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 		data = self.set_order.get_base_data(type)
-		goods_data = self.get_premise.get_goods(type, [1], 1)
-		goods_params = []
-		price = vip_price = box_price = 0
-		for goods in goods_data:
-			goods_post = self.set_order.add_goods_type_single(goods)
-			goods_params.append(goods_post)
-			price = price + goods_post['price'] * goods_post['number']
-			vip_price = vip_price + goods_post['vipPrice'] * goods_post['number']
-			box_price = box_price + goods_post['boxPrice'] * goods_post['number']
-		goods_return = {"goods": goods_params, "price": price, "vip_price": vip_price, "box_price": box_price}
-		# 加购
-		add_goods = self.get_premise.get_add_goods(type)
-		goods_pay = self.set_order.get_pay_amount(type, goods_return, add_goods)
-		data['goodsList'] = goods_pay['goodsList']
-		data['addGoodsList'] = goods_pay['addGoodsList']
-		data['price'] = goods_pay['price']
-		data['vip_price'] = goods_pay['vip_price']
-
-		# 获取联系方式
-		picked = 0
-		if type == 4 or type == 5:
-			picked = self.get_premise.picked_up_info()
-		data['addressId'] = picked
-		if type == 3:
-			address_data = self.set_order.set_shop_wm()
-			data['addressId'] = address_data['address_id']
-			data['price'] = data['price'] + address_data['service_fee']
-			data['vip_price'] = data['vip_price'] + address_data['service_fee']
-
-		pay_ret = self.pay(data, 2)
-		result_status = 200
-		if pay_ret:
-			result_status = self.set_order.validator_pay(pay_ret, 2)
-		else:
-			pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '', "report_status": 202, "traceid": 0,
-				"request_time": 0}
-		data['cases_text'] = "购买不支持就餐方式的商品"
-		if not result_status:
-			pay_ret['report_status'] = 200
-			pay_ret['code'] = 0
-		report = ""
-		# 余额支付
-		if result_status:
-			time.sleep(1)
-			cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
-			if cancel_status:
-				pay_ret = self.pay(data, 1)
-				self.set_order.validator_pay(pay_ret, 1)
-			else:
-				report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
-		result_status = {"key": [], "val": [], 'report': report}
-		data['cases_text'] = self.get_type_code(type) + data['cases_text']
-		self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
-
-	# 营业时间内--库存充足情况下(成功)
-	def stock_ample(self, type = 5):
-		file_path = "/public/yaml/order/add.yaml"
-		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
-		for stock_data in [1, 2, 3]:  # 1小于起购 2等于/大于起购 3库存不足
-			data = self.set_order.get_base_data(type)
-			status = 0
-			if stock_data == 3:
-				status = 3
-			goods_data = self.get_premise.get_goods(type, [1], status)
+		for post_type_data in [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 3], [1, 2, 3]]:
+			goods_data = self.get_premise.get_goods(type, post_type_data, 1)
 			goods_params = []
 			price = vip_price = box_price = 0
 			for goods in goods_data:
-				if goods['min'] <= 1 and stock_data == 1:
-					continue
-				# 商品
-				if stock_data == 1:
-					goods['min'] = goods['min'] - 1
 				goods_post = self.set_order.add_goods_type_single(goods)
 				goods_params.append(goods_post)
 				price = price + goods_post['price'] * goods_post['number']
@@ -536,24 +498,24 @@ class OrderData:
 				data['addressId'] = address_data['address_id']
 				data['price'] = data['price'] + address_data['service_fee']
 				data['vip_price'] = data['vip_price'] + address_data['service_fee']
-
-			pay_ret = self.pay(data, 2)
-			result_status = self.set_order.validator_pay(pay_ret, 2)
-			report = ""
-			if stock_data == 1:
-				data['cases_text'] = "购买数量小于最小起购数量"
+			if data['goodsList']:
+				pay_ret = self.pay(data, 2)
+				result_status = 200
+				if pay_ret:
+					result_status = self.set_order.validator_pay(pay_ret, 2)
+				else:
+					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '', "report_status": 202, "traceid": 0,
+						"request_time": 0}
 				if not result_status:
 					pay_ret['report_status'] = 200
 					pay_ret['code'] = 0
-			elif stock_data == 2:
-				data['cases_text'] = "购买数量满足最小起购数量"
-				if not result_status:
-					pay_ret['report_status'] = 500
-			elif stock_data == 3:
-				data['cases_text'] = "购买库存不足的情况"
-				if not result_status:
-					pay_ret['report_status'] = 500
-					pay_ret['code'] = 0
+			else:
+				pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '没有可选菜品', "report_status": 202,
+					"traceid": 0, "request_time": 0}
+				result_status = False
+			data['cases_text'] = "购买不支持就餐方式的商品"
+
+			report = ""
 			# 余额支付
 			if result_status:
 				time.sleep(1)
@@ -564,8 +526,95 @@ class OrderData:
 				else:
 					report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 			result_status = {"key": [], "val": [], 'report': report}
-			data['cases_text'] = self.get_type_code(type) + data['cases_text']
+			data['cases_text'] = self.get_type_code(type) + data['cases_text'] + self.get_goods_type_code(
+					post_type_data)
 			self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+
+	# 营业时间内--库存充足情况下(成功)
+	def stock_ample(self, type = 5):
+		file_path = "/public/yaml/order/add.yaml"
+		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
+		for post_type_data in [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 3], [1, 2, 3]]:
+			for stock_data in [4]:  # 1小于起购 2等于/大于起购 3库存不足 4不可售时间 TODO
+				data = self.set_order.get_base_data(type)
+				status = 0
+				if stock_data == 3:
+					status = 3
+				if stock_data == 4:
+					status = 2
+				goods_data = self.get_premise.get_goods(type, post_type_data, status)
+				goods_params = []
+				price = vip_price = box_price = 0
+				for goods in goods_data:
+					if goods['min'] <= 1 and stock_data == 1:
+						continue
+					# 商品
+					if stock_data == 1:
+						goods['min'] = goods['min'] - 1
+					goods_post = self.set_order.add_goods_type_single(goods)
+					goods_params.append(goods_post)
+					price = price + goods_post['price'] * goods_post['number']
+					vip_price = vip_price + goods_post['vipPrice'] * goods_post['number']
+					box_price = box_price + goods_post['boxPrice'] * goods_post['number']
+				goods_return = {"goods": goods_params, "price": price, "vip_price": vip_price, "box_price": box_price}
+				# 加购
+				add_goods = self.get_premise.get_add_goods(type)
+				goods_pay = self.set_order.get_pay_amount(type, goods_return, add_goods)
+				data['goodsList'] = goods_pay['goodsList']
+				data['addGoodsList'] = goods_pay['addGoodsList']
+				data['price'] = goods_pay['price']
+				data['vip_price'] = goods_pay['vip_price']
+
+				# 获取联系方式
+				picked = 0
+				if type == 4 or type == 5:
+					picked = self.get_premise.picked_up_info()
+				data['addressId'] = picked
+				if type == 3:
+					address_data = self.set_order.set_shop_wm()
+					data['addressId'] = address_data['address_id']
+					data['price'] = data['price'] + address_data['service_fee']
+					data['vip_price'] = data['vip_price'] + address_data['service_fee']
+				if data['goodsList']:
+					pay_ret = self.pay(data, 2)
+					result_status = self.set_order.validator_pay(pay_ret, 2)
+				else:
+					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '没有可选菜品', "report_status": 202,
+						"traceid": 0, "request_time": 0}
+					result_status = False
+				report = ""
+				if stock_data == 1:
+					data['cases_text'] = "购买数量小于最小起购数量"
+					if not result_status:
+						pay_ret['report_status'] = 200
+						pay_ret['code'] = 0
+				elif stock_data == 2:
+					data['cases_text'] = "购买数量满足最小起购数量"
+					if not result_status:
+						pay_ret['report_status'] = 500
+				elif stock_data == 3:
+					data['cases_text'] = "购买库存不足的情况"
+					if not result_status:
+						pay_ret['report_status'] = 500
+						pay_ret['code'] = 0
+				elif stock_data == 4:
+					data['cases_text'] = "不可售时间"
+					if not result_status and pay_ret:
+						pay_ret['report_status'] = 500
+						pay_ret['code'] = 0
+				# 余额支付
+				if result_status:
+					time.sleep(1)
+					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
+					if cancel_status:
+						pay_ret = self.pay(data, 1)
+						self.set_order.validator_pay(pay_ret, 1)
+					else:
+						report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
+				result_status = {"key": [], "val": [], 'report': report}
+				data['cases_text'] = self.get_type_code(type) + data['cases_text'] + self.get_goods_type_code(
+						post_type_data)
+				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
 
 	# 非营业时间(成功)
 	def business_time_out(self, type = 5):
@@ -607,8 +656,15 @@ class OrderData:
 				data['book'] = book_status
 				data['bookTime'] = send_time_data['time']
 				data['addressId'] = self.get_premise.picked_up_info()
-				pay_ret = self.pay(data, 2)
-				result_status = self.set_order.validator_pay(pay_ret, 2)
+
+				if data['goodsList']:
+					pay_ret = self.pay(data, 2)
+					result_status = self.set_order.validator_pay(pay_ret, 2)
+				else:
+					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '没有可选菜品', "report_status": 202,
+						"traceid": 0, "request_time": 0}
+					result_status = False
+
 				report = ""
 				if send_time_data['status'] == 1:
 					data['cases_text'] = "非营业时间内，预约开启，正常营业时间内，正常下预定单"
@@ -676,6 +732,22 @@ class OrderData:
 		if type == 5:
 			return "【自提外带】"
 
+	def get_goods_type_code(self, type):
+		if type == [1]:
+			return "单品"
+		if type == [2]:
+			return "多规格"
+		if type == [3]:
+			return "套餐"
+		if type == [1, 2]:
+			return "单品、多规格"
+		if type == [1, 3]:
+			return "单品、套餐"
+		if type == [2, 3]:
+			return "多规格、套餐"
+		if type == [1, 2, 3]:
+			return "单品、多规格、套餐"
+
 	# 取消订单
 	def cancel_order(self, orderId):
 		file_path = "/public/yaml/order/cancel.yaml"
@@ -692,12 +764,12 @@ class OrderData:
 	# 新增订单  pay_type 1全额余额支付  2微信支付
 	def pay(self, data, pay_type = 2):
 		user = self.get_premise.get_user_info()  # 获取用户信息
-		if not user:
-			return False
+		if user['status'] == 500 or not user['data']:
+			return user
 		# 验证菜品
 		check_status = self.set_order.check_goods(data)
-		if not check_status:
-			return False
+		if check_status['status'] != 200:
+			return check_status
 		discount = int(user['data']['discount']) / 10000
 
 		if user['data']['vipId']:
