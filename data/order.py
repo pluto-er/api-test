@@ -174,7 +174,6 @@ class OrderData:
 
 				report = ""
 				if pay_status:
-					time.sleep(1)
 					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
 					if cancel_status:
 						pay_ret = self.pay(data, 1)
@@ -185,7 +184,6 @@ class OrderData:
 				result_status = {"key": [], "val": [], 'report': report}
 				data['cases_text'] = self.get_type_code(type) + data['cases_text']
 				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
-				time.sleep(1)
 
 		return True
 
@@ -267,7 +265,6 @@ class OrderData:
 					data['cases_text'] = "套餐内非必选未选下单"
 				report = ""
 				if result_status:
-					time.sleep(1)
 					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
 					if cancel_status:
 						pay_ret = self.pay(data, 1)
@@ -279,7 +276,6 @@ class OrderData:
 				if coupon_data == 1:
 					data['cases_text'] = data['cases_text'] + coupon_text[coupon_data - 1]
 				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
-				time.sleep(1)
 
 		return True
 
@@ -338,7 +334,6 @@ class OrderData:
 			report = ""
 			# 余额支付
 			if result_status:
-				time.sleep(1)
 				cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
 				if cancel_status:
 					pay_ret = self.pay(data, 1)
@@ -348,7 +343,6 @@ class OrderData:
 			result_status = {"key": [], "val": [], 'report': report}
 			data['cases_text'] = self.get_type_code(type) + data['cases_text']
 			self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
-			time.sleep(1)
 		return True
 
 	# 优惠券
@@ -425,7 +419,6 @@ class OrderData:
 					report = ""
 					# 余额支付
 					if result_status:
-						time.sleep(1)
 						cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
 						if cancel_status:
 							pay_ret = self.pay(data, 1)
@@ -518,7 +511,6 @@ class OrderData:
 			report = ""
 			# 余额支付
 			if result_status:
-				time.sleep(1)
 				cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
 				if cancel_status:
 					pay_ret = self.pay(data, 1)
@@ -604,7 +596,6 @@ class OrderData:
 						pay_ret['code'] = 0
 				# 余额支付
 				if result_status:
-					time.sleep(1)
 					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
 					if cancel_status:
 						pay_ret = self.pay(data, 1)
@@ -676,7 +667,6 @@ class OrderData:
 						pay_ret['report_status'] = 500
 				# 余额支付
 				if result_status:
-					time.sleep(1)
 					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
 					if cancel_status:
 						pay_ret = self.pay(data, 1)
@@ -783,7 +773,7 @@ class OrderData:
 		else:
 			data['balance'] = pay_amount
 			data['payAmount'] = 0
-
+		time.sleep(1)
 		params_post = self.get_config_data.get_conf("postOrderUrl")
 		params = self.send_post.send_post(params_post['url'], data, params_post['header'])
 		return params
