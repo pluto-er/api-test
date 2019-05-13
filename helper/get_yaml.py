@@ -21,7 +21,7 @@ class GetYaml:
 	# 写入yaml数据 file_path地址   data新增数据
 	@staticmethod
 	def set_to_yaml(ret, data, params, model, result_code):
-		file_path = "/public/report/" + glo.get_value('report_yaml') + "-header.yaml"
+		file_path = "/generate/report/" + glo.get_value('report_yaml') + "-header.yaml"
 		file_data = OperationYaml.get(file_path)
 
 		if "report_base_status" not in result_code:
@@ -118,7 +118,7 @@ class GetYaml:
 		OperationYaml.set(file_path, file_data)
 
 		# 追加数据到对应的yaml
-		file_path = "/public/report/" + glo.get_value('report_yaml') + ".yaml"
+		file_path = "/generate/report/" + glo.get_value('report_yaml') + ".yaml"
 		OperationYaml.add(file_path, result)
 
 	# 获取yaml数据
@@ -135,19 +135,19 @@ class GetYaml:
 
 		# 判断是否存在路径
 		day = time.strftime('%Y%m%d', time.localtime(time.time()))
-		first_file_path = root_path + "/public/report/" + day
+		first_file_path = root_path + "/generate/report/" + day
 		is_exists = os.path.exists(first_file_path)
 		if not is_exists:
 			os.makedirs(first_file_path)
 
 		# 判断是否存在路径
-		first_file_path = root_path + "/public/html/" + day
+		first_file_path = root_path + "/generate/html/" + day
 		is_exists = os.path.exists(first_file_path)
 		if not is_exists:
 			os.makedirs(first_file_path, 777)
 
 		# 创建yaml数据
-		file_path = "/public/report/" + day + "/" + file_name + "-header.yaml"
+		file_path = "/generate/report/" + day + "/" + file_name + "-header.yaml"
 		OperationYaml.create(file_path, conf)
 
 		glo.set_value('report_yaml', day + "/" + file_name)

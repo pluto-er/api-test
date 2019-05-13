@@ -19,7 +19,7 @@ class GetHtml:
 
 	# 写入html文件
 	def set_html(self):
-		file_path = "/public/report/" + glo.get_value('report_yaml')
+		file_path = "/generate/report/" + glo.get_value('report_yaml')
 		# 获取头部
 		file_path_header = file_path + "-header.yaml"
 		ret_header = self.get_yaml.get(file_path_header)
@@ -29,7 +29,7 @@ class GetHtml:
 		ret_header['totalTime'] = format(float(int(time.time()) - int(ret_header['begin_time'])) / float(60), '.2f')
 		ret_header['testResult'] = ret_data
 		send_html = "var  resultData=" + str(ret_header)
-		file_name = "/public/html/" + glo.get_value('report_yaml') + ".html"
+		file_name = "/generate/html/" + glo.get_value('report_yaml') + ".html"
 		self.get_data_html.set2(file_name, send_html)
 		# 发送邮件
 		conf = OperationYaml.get_config()
