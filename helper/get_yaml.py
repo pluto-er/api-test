@@ -39,7 +39,6 @@ class GetYaml:
 					result_code['report']) + ";traceid=" + str(params['traceid']))
 			status_code = "失败"
 		elif params['report_status'] == 202:
-			print(ret['uri'])
 			if ret['uri'] != "/order/add":
 				file_data['testSkip'] = int(file_data['testSkip']) + 1
 				print(ret['uri'] + "     warning;msg" + str(result_code['report']))
