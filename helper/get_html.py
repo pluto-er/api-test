@@ -29,7 +29,8 @@ class GetHtml:
 		ret_header['totalTime'] = format(float(int(time.time()) - int(ret_header['begin_time'])) / float(60), '.2f')
 		ret_header['testResult'] = ret_data
 		send_html = "var  resultData=" + str(ret_header)
-		file_name = "/generate/html/" + glo.get_value('report_yaml') + ".html"
+		file_name = "/home/worker/wzl-api-qtp/www/" + glo.get_value('report_yaml') + ".html"
+		# file_name = "/generate/html/" + glo.get_value('report_yaml') + ".html"
 		self.get_data_html.set2(file_name, send_html)
 		# 发送邮件
 		conf = OperationYaml.get_config()
