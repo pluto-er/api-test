@@ -13,7 +13,7 @@ class OperationHtml:
 		f.close()
 
 	def set2(self, path, add_data):
-		file_path = root_path + path
+		file_path = path
 		base_path = root_path + "/public/html/sample.html"
 		f1 = open(base_path, 'rb')  # 打开yaml文件
 		data = f1.read()
