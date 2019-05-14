@@ -29,14 +29,14 @@ class OrderData:
 	def add_order(self, type = 5):
 		# 组合
 		model = ["下单", '下单', 'order']
-		# self.goods_type(type)
+		self.goods_type(type)
 		# self.order_package(type)
 		# self.add_goods(type)
 		# self.order_coupon(type)
 		# self.business_time_out(type)
 		# self.shopping_way(type)
 		# self.stock_ample(type)
-		# return True
+		return True
 		try:
 			self.goods_type(type)
 		except Exception as e:
@@ -106,10 +106,11 @@ class OrderData:
 				goods = self.get_premise.get_goods(type, post_status)
 				if not goods:  # 没有值情况
 					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '',
-						"request_time": 0, "request_status": 202, "traceid": 0}
-					result_status = {"key": [], "val": [], 'report': "没有数据，直接进行下一条件"}
+						"request_time": 0, "report_status": 202, "traceid": 0}
+					result_status = {"key": [], "val": [], 'report': "没有菜品，直接进行下一条件"}
 					data['cases_text'] = self.get_type_code(type) + data['cases_text']
-					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单"], result_status)
+					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单",'order'], result_status)
+					continue
 				# 处理菜品
 				goods_list_data = []
 				price = vip_price = box_price = 0
@@ -151,6 +152,13 @@ class OrderData:
 						data['couponIds'] = [coupon_one['id']]
 						data['price'] = data['price'] - coupon_one['amount']
 						data['vip_price'] = data['vip_price'] - coupon_one['amount']
+					else:
+						pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '',
+							"request_time": 0, "report_status": 202, "traceid": 0}
+						result_status = {"key": [], "val": [], 'report': "没有优惠券，直接进行下一条件"}
+						data['cases_text'] = self.get_type_code(type) + data['cases_text']
+						self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+						continue
 
 				# 获取联系方式
 				picked = 0

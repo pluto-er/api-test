@@ -259,8 +259,10 @@ class CommentData:
 				star_text = "【五星好评】"
 
 			for data in post_data:
+				if 'cases_text' in data:
+					cases_text = data['cases_text']
 				# 获取订单
-				time.sleep(2)
+
 				order_list = self.get_premise.get_order_list({"status": [8]})
 				if not order_list:
 					continue
@@ -268,7 +270,7 @@ class CommentData:
 					order_one = random.choice(order_list['data']['list'])
 				else:
 					result_status = {"key": [], "val": [], 'report': "没有未评论订单"}
-					data['cases_text'] = star_text + data['cases_text']
+					data['cases_text'] = star_text + cases_text
 					self.get_yaml_data.set_to_yaml(ret, data, order_list, model, result_status)
 					break
 				# 请求api获取结果
@@ -301,6 +303,7 @@ class CommentData:
 					for choice in ret_label_data:
 						label = {"labelId": choice['id'], "labelName": choice['title'], "labelType": choice['type']}
 						data['label'].append(label)
+				time.sleep(2)
 				params = self.comment_post.send_post(url, data, header)
 				result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
 				if result_status == 'fail':
