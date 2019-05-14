@@ -351,7 +351,6 @@ class OrderData:
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 		# coupon_status 1正常 2不在使用时间内 3就餐方式满足  4 就餐方式不满足 5金额满足 6金额不满足 7 不使用
 		for post_type_data in [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 3], [1, 2, 3]]:
-		# for post_type_data in [[1]]:
 			for post_status in [1, 2, 3, 4, 5, 6, 7]:
 				goods = self.get_premise.get_order_goods(type, post_type_data)
 				params_post = self.get_config_data.get_conf("getAvailableCoupon")
