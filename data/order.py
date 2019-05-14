@@ -29,14 +29,14 @@ class OrderData:
 	def add_order(self, type = 5):
 		# 组合
 		model = ["下单", '下单', 'order']
-		self.goods_type(type)
+		# self.goods_type(type)
 		# self.order_package(type)
 		# self.add_goods(type)
 		# self.order_coupon(type)
 		# self.business_time_out(type)
 		# self.shopping_way(type)
 		# self.stock_ample(type)
-		return True
+		# return True
 		try:
 			self.goods_type(type)
 		except Exception as e:
