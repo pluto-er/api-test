@@ -41,7 +41,7 @@ class GetHtml:
 		content = '测试小程序api:' + conf['case_url'] + "/" + glo.get_value('report_yaml') + ".html"
 		qywx = Qywx()
 		qywx.send_msg_qywx_text(
-				{'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": content})
+				{'touser': '', "totag": "", "toparty": "2|4", "agentid": 1000012, "content": content})
 		print(content)
 
 	# self.send_email.send_report_email(title, content)
