@@ -14,6 +14,7 @@ sys.path.append(root_path)
 from helper.request_post import SendPost
 from helper.get_config import GetDataConfig
 from helper.validator import ValidatorHelper
+from helper.get_yaml import GetYaml
 
 
 class SetOrder:
@@ -22,6 +23,7 @@ class SetOrder:
 		self.send_post = SendPost()
 		self.get_config_data = GetDataConfig()
 		self.validator = ValidatorHelper()
+		self.get_yaml_data = GetYaml()
 
 	# 处理单品
 	def add_goods_type_single(self, goods_data, num = 1):
@@ -277,6 +279,7 @@ class SetOrder:
 		start_price = price_params['data']['startingPrice']
 		return {"service_fee": service_fee, "start_price": start_price, 'address_id': address_data['id']}
 
+	# 校验套餐的优惠券
 	def validator_package_coupon(self, type, package, price, vip_price, box_price):
 		if package['discountTop'] == 1:  # 上不封顶
 			discount = random.choice(package['discount'])
@@ -310,6 +313,16 @@ class SetOrder:
 			vip_price = vip_price - vip_discount_money
 
 		return {"price": price, "vip_price": vip_price}
+
+	# 设置写入空值情况
+	def set_none_yam(self, ret, data, params, model, report = "", status = 500):
+		result_status = {"key": [], "val": [], 'report': report}
+		if not params:
+			params = {'data': {}, 'status': 200, 'code': 0, 'message': '', 'request_time': 0, 'traceid': 0,
+				'report_status': status}
+		else:
+			params['report_status'] = status
+		self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 
 if __name__ == '__main__':

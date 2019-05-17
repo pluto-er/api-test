@@ -29,14 +29,14 @@ class OrderData:
 	def add_order(self, type = 5):
 		# 组合
 		model = ["下单", '下单', 'order']
-		# self.goods_type(type)
-		# self.order_package(type)
-		# self.add_goods(type)
-		# self.order_coupon(type)
+		# self.goods_type(type, model)
+		# self.order_package(type, model)
+		# self.add_goods(type, model)
+		self.order_coupon(type)
 		# self.business_time_out(type)
 		# self.shopping_way(type)
 		# self.stock_ample(type)
-		# return True
+		return True
 		try:
 			self.goods_type(type)
 		except Exception as e:
@@ -79,7 +79,7 @@ class OrderData:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 	# 组合
-	def goods_type(self, type):
+	def goods_type(self, type, model = ['订单', '下单', 'order']):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 		# 0默认（不使用优惠券，加购）  1使用优惠券（加购）  2加购不选，不使用优惠券 3加购不选，使用优惠券
@@ -105,11 +105,8 @@ class OrderData:
 				data['cases_text'] = data['cases_text'] + term_text[term]
 				goods = self.get_premise.get_goods(type, post_status)
 				if not goods:  # 没有值情况
-					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '',
-						"request_time": 0, "report_status": 202, "traceid": 0}
-					result_status = {"key": [], "val": [], 'report': "没有菜品，直接进行下一条件"}
 					data['cases_text'] = self.get_type_code(type) + data['cases_text']
-					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+					self.set_order.set_none_yam(ret, data, [], model, "当前条件菜品没有菜品，直接进行下一条件", 202)
 					continue
 				# 处理菜品
 				goods_list_data = []
@@ -136,6 +133,10 @@ class OrderData:
 				if term == 2 or term == 3:
 					status = 3
 				add_goods = self.get_premise.get_add_goods(type, status)
+				if status == 3 and add_goods['status'] == 0:
+					data['cases_text'] = self.get_type_code(type) + data['cases_text']
+					self.set_order.set_none_yam(ret, data, [], model, "当前就餐方式没有必选加购菜品", 500)
+					continue
 
 				# 组装数据
 				goods_pay = self.set_order.get_pay_amount(type, goods_params, add_goods)
@@ -176,11 +177,15 @@ class OrderData:
 					pay_ret = self.pay(data, 2)
 					pay_status = self.set_order.validator_pay(pay_ret, 2)
 				else:
-					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '没有可选菜品', "report_status": 202,
-						"traceid": 0, "request_time": 0}
-					pay_status = False
+					data['cases_text'] = self.get_type_code(type) + data['cases_text']
+					self.set_order.set_none_yam(ret, data, [], model, "没有可选菜品", 202)
+					continue
 
 				report = ""
+				if (term == 2 or term == 3) and pay_status and add_goods['status'] == 1:
+					data['cases_text'] = self.get_type_code(type) + data['cases_text']
+					self.set_order.set_none_yam(ret, data, pay_ret, model, "必须加购未勾选，却下单成功", 500)
+					continue
 				if pay_status:
 					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
 					if cancel_status:
@@ -191,26 +196,34 @@ class OrderData:
 
 				result_status = {"key": [], "val": [], 'report': report}
 				data['cases_text'] = self.get_type_code(type) + data['cases_text']
-				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, model, result_status)
 
 		return True
 
 	# 套餐相关
-	def order_package(self, type):
-		# 1必选单选/其他选1 2必选多选/其他选1 3 必选不选/其他选1
-		# 4 非必单选（必选选择）  5非必选多选（必选选择） 6 非必选不选（必选选择）
+	def order_package(self, type, model):
+		# 1必选单选/其他选1 2 必选不选/其他选1
+		# 3 非必单选（必选选择）  4非必选多选（必选选择） 5 非必选不选（必选选择）
 		# coupon_data 1使用 2不使用
 		coupon_text = ["-使用优惠券", ""]
 		for coupon_data in [1, 2]:
-			for post_status in [1, 2, 3, 4, 5, 6]:
+			cases_data = ['', '套餐内必选选择,非必选选其一下单', '套餐内必选不选下单',
+				'套餐内非必选选其一下单', '套餐内非必选多选下单', '套餐内非必选未选下单']
+			for post_status in [1, 2, 3, 4, 5]:
 				file_path = "/public/yaml/order/add.yaml"
 				ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 
-				data = self.set_order.get_base_data(type)
+				data = self.set_order.get_base_data(type)  # 获取下单基础数据
 				# 获取菜品
 				goods = self.get_premise.get_package(type, post_status)
+				if not goods['goods']:
+					data['cases_text'] = self.get_type_code(type) + cases_data[post_status]
+					self.set_order.set_none_yam(ret, data, [], model, "当前条件菜品没有菜品，直接进行下一条件", 202)
+					continue
+
 				# 获取加购
 				add_goods = self.get_premise.get_add_goods(type)
+
 				goods_pay = self.set_order.get_pay_amount(type, goods, add_goods)
 				data['goodsList'] = goods_pay['goodsList']
 				data['addGoodsList'] = goods_pay['addGoodsList']
@@ -236,42 +249,28 @@ class OrderData:
 					data['addressId'] = address_data['address_id']
 					data['price'] = data['price'] + address_data['service_fee']
 					data['vip_price'] = data['vip_price'] + address_data['service_fee']
-
 				if data['goodsList']:
 					pay_ret = self.pay(data, 2)
 					result_status = self.set_order.validator_pay(pay_ret, 2)
 				else:
-					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '没有可选菜品', "report_status": 202,
-						"traceid": 0, "request_time": 0}
-					result_status = False
+					data['cases_text'] = self.get_type_code(type) + data['cases_text']
+					self.set_order.set_none_yam(ret, data, [], model, "没有可选菜品", 202)
+					continue
 
 				# 1必选单选/其他选1 2必选多选/其他选1 3 必选不选/其他选1
 				# 4 非必单选（必选选择）  5非必选多选（必选选择） 6 非必选不选（必选选择）
-				if post_status == 1:
-					data['cases_text'] = "套餐内必选只选其一下单"
-				elif post_status == 2:
-					data['cases_text'] = "套餐内必选多选下单"
-					pay_ret['status'] = 500
-					pay_ret['message'] = "套餐内必选未选下单-却下单成功"
-					if not result_status:
-						pay_ret['status'] = 200
-						pay_ret['code'] = 0
-						pay_ret['message'] = ""
-				elif post_status == 3:
-					data['cases_text'] = "套餐内必选未选下单"
-					pay_ret['status'] = 500
-					pay_ret['message'] = "套餐内必选未选下单-却下单成功"
-					if not result_status:
-						pay_ret['status'] = 200
-						pay_ret['code'] = 0
-						pay_ret['message'] = ""
-				elif post_status == 4:
-					data['cases_text'] = "套餐内非必选选其一下单"
-				elif post_status == 5:
-					data['cases_text'] = "套餐内非必选多选下单"
-				elif post_status == 6:
-					data['cases_text'] = "套餐内非必选未选下单"
+				data['cases_text'] = cases_data[post_status]
 				report = ""
+				if post_status == 2:
+					if result_status:
+						pay_ret['report_status'] = 500
+						report = "套餐内必选未选下单-却下单成功"
+						result_status = False
+					else:
+						pay_ret['status'] = 200
+						pay_ret['code'] = 0
+						pay_ret['message'] = ""
+
 				if result_status:
 					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
 					if cancel_status:
@@ -288,13 +287,15 @@ class OrderData:
 		return True
 
 	# 加购相关
-	def add_goods(self, type, goods_type = [1]):
+	def add_goods(self, type, model):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 		#  0 都选 1非必选不选	2必选不选 3非必选和必选都不选
+		cases_data = ['加购产品满足条件', '不选非必选加购产品', '必选加购产品未选择', '非必选加购商品和必选加购商品都不选']
 		for post_status in [0, 1, 2, 3]:
-			data = self.set_order.get_base_data(type)
+			data = self.set_order.get_base_data(type)  # 获取请求基础数据
 			goods = self.get_premise.get_order_goods(type, [1], post_status)
+
 			goods_pay = self.set_order.get_pay_amount(type, goods['goodsList'], goods['addGoodsList'])
 			data['goodsList'] = goods_pay['goodsList']
 			data['addGoodsList'] = goods_pay['addGoodsList']
@@ -314,17 +315,15 @@ class OrderData:
 
 			pay_ret = self.pay(data, 2)
 			result_status = self.set_order.validator_pay(pay_ret, 2)
+			data['cases_text'] = cases_data[post_status]
 			if post_status == 0:
-				data['cases_text'] = "加购产品满足条件"
 				if not result_status:
 					pay_ret['status'] = 500
 			elif post_status == 1:
-				data['cases_text'] = "不选非必选加购产品"
 				if not result_status:
 					pay_ret['status'] = 500
 					pay_ret['code'] = 0
 			elif post_status == 2:
-				data['cases_text'] = "必选加购产品未选择"
 				pay_ret['status'] = 500
 				pay_ret['message'] = "必选加购产品未选择-却下单成功"
 				if not result_status:
@@ -332,7 +331,6 @@ class OrderData:
 					pay_ret['code'] = 0
 					pay_ret['message'] = ""
 			elif post_status == 3:
-				data['cases_text'] = "非必选加购商品和必选加购商品都不选"
 				pay_ret['status'] = 500
 				pay_ret['message'] = "非必选加购商品和必选加购商品都不选-却下单成功"
 				if not result_status:
@@ -350,7 +348,7 @@ class OrderData:
 					report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 			result_status = {"key": [], "val": [], 'report': report}
 			data['cases_text'] = self.get_type_code(type) + data['cases_text']
-			self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+			self.get_yaml_data.set_to_yaml(ret, data, pay_ret, model, result_status)
 		return True
 
 	# 优惠券
@@ -368,7 +366,7 @@ class OrderData:
 				coupon_data = coupon_list['data']['coupon']
 
 				data = self.set_order.get_base_data(type)
-				goods_pay = self.set_order.get_pay_amount(type, goods['goodsList'], goods['addGoodsList'])
+				goods_pay = self.set_order.get_pay_amount(type, goods['goodsList'], goods['addGoodsList']['add_goods'])
 				data['goodsList'] = goods_pay['goodsList']
 				data['addGoodsList'] = goods_pay['addGoodsList']
 				data['price'] = goods_pay['price']
@@ -483,7 +481,7 @@ class OrderData:
 			goods_return = {"goods": goods_params, "price": price, "vip_price": vip_price, "box_price": box_price}
 			# 加购
 			add_goods = self.get_premise.get_add_goods(type)
-			goods_pay = self.set_order.get_pay_amount(type, goods_return, add_goods)
+			goods_pay = self.set_order.get_pay_amount(type, goods_return, add_goods['add_goods'])
 			data['goodsList'] = goods_pay['goodsList']
 			data['addGoodsList'] = goods_pay['addGoodsList']
 			data['price'] = goods_pay['price']
@@ -559,7 +557,7 @@ class OrderData:
 				goods_return = {"goods": goods_params, "price": price, "vip_price": vip_price, "box_price": box_price}
 				# 加购
 				add_goods = self.get_premise.get_add_goods(type)
-				goods_pay = self.set_order.get_pay_amount(type, goods_return, add_goods)
+				goods_pay = self.set_order.get_pay_amount(type, goods_return, add_goods['add_goods'])
 				data['goodsList'] = goods_pay['goodsList']
 				data['addGoodsList'] = goods_pay['addGoodsList']
 				data['price'] = goods_pay['price']

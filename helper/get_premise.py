@@ -93,6 +93,7 @@ class GetPremise:
 	"""
 	加购
 	status 0默认(都选)  1非必选不选 2 必选不选 3 非必选和必选都不选
+	返回值：ret_status  0正常 1必选未选
 	"""
 
 	def add_goods_shop(self, type, status = 0):
@@ -100,6 +101,7 @@ class GetPremise:
 			type = 1
 		elif type == 5:
 			type = 2
+		ret_status = 0
 		header = self.get_config_data.get_conf("getAddSlpListUrl")
 		params = self.send_post.send_post(header['url'], {"type": type}, header['header'])
 		if not params['data']:
@@ -107,6 +109,7 @@ class GetPremise:
 		add_goods_result = []
 		for goods_add_data in params['data']['required']:
 			if status == 2 or status == 3:
+				ret_status = 1
 				continue
 			if goods_add_data['vipPrice'] == 0:
 				goods_add_data['vipPrice'] = goods_add_data['price']
@@ -141,7 +144,7 @@ class GetPremise:
 				}
 			add_goods_result.append(add_goods_list)
 
-		return add_goods_result
+		return {"add_goods": add_goods_result, "status": ret_status}
 
 	"""
 	获取联系方式，随便写入一个电话号码
@@ -234,8 +237,8 @@ class GetPremise:
 		return result
 
 	# 获取套餐
-	# 1必选单选/其他选1 2必选多选/其他选1 3 必选不选/其他选1
-	# 4 非必单选（必选选择）  5非必选多选（必选选择） 6 非必选不选（必选选择）
+	# 1必选单选/其他选1  2 必选不选/其他选1
+	# 3 非必单选（必选选择）  4非必选多选（必选选择） 5 非必选不选（必选选择）
 	def get_package(self, type, post_data):
 		goods = self.get_goods(type, [3])
 		package_result = []
@@ -265,33 +268,40 @@ class GetPremise:
 						package_parts_data.append(package_parts)
 
 				if post_data == 1:
-					if package_data['option'] == 1:
+					if package_data['option'] == 1 and package_data['multi'] == 1:  # 单选
 						package_result.append(random.choice(package_parts_data))
+					elif package_data['option'] == 1 and package_data['multi'] == 2:  # 多选
+						for parts_data in package_parts_data:
+							package_result.append(parts_data)
 					else:
 						package_result.append(random.choice(package_parts_data))
 				if post_data == 2:
-					if package_data['option'] == 1:
-						for parts_data in package_parts_data:
-							package_result.append(parts_data)
-					else:
-						package_result.append(random.choice(package_parts_data))
-				if post_data == 3:
 					if package_data['option'] != 1:
 						package_result.append(random.choice(package_parts_data))
-				if post_data == 4:
-					if package_data['option'] == 1:
+				if post_data == 3:
+					if package_data['option'] == 1 and package_data['multi'] == 1:  # 单选
 						package_result.append(random.choice(package_parts_data))
+					elif package_data['option'] == 1 and package_data['multi'] == 2:  # 多选
+						for parts_data in package_parts_data:
+							package_result.append(parts_data)
 					else:
 						package_result.append(random.choice(package_parts_data))
-				if post_data == 5:
-					if package_data['option'] == 1:
+				if post_data == 4:
+					if package_data['option'] == 1 and package_data['multi'] == 1:  # 单选
 						package_result.append(random.choice(package_parts_data))
+					elif package_data['option'] == 1 and package_data['multi'] == 2:  # 多选
+						for parts_data in package_parts_data:
+							package_result.append(parts_data)
 					else:
 						for parts_data in package_parts_data:
 							package_result.append(parts_data)
-				if post_data == 6:
-					if package_data['option'] == 1:
+				if post_data == 5:
+					if package_data['option'] == 1 and package_data['multi'] == 1:  # 单选
 						package_result.append(random.choice(package_parts_data))
+					elif package_data['option'] == 1 and package_data['multi'] == 2:  # 多选
+						for parts_data in package_parts_data:
+							package_result.append(parts_data)
+
 			goodsList = []
 			for goods_package in package_result:
 				goodsList.append({
@@ -320,12 +330,13 @@ class GetPremise:
 	def get_add_goods(self, type, status = 0):
 		add_goods_price = add_goods_vip_price = add_goods_box_price = 0
 		add_goods = self.add_goods_shop(type, status)
-		for add_goods_data in add_goods:
+		for add_goods_data in add_goods['add_goods']:
 			add_goods_price = add_goods_price + add_goods_data['price'] * add_goods_data['number']
 			add_goods_vip_price = add_goods_vip_price + add_goods_data['vipPrice'] * add_goods_data['number']
 			add_goods_box_price = add_goods_box_price + add_goods_data['boxPrice'] * add_goods_data['number']
-		add_goods_return = {"add_goods": add_goods, "add_goods_price": add_goods_price,
-			"add_goods_vip_price": add_goods_vip_price, "add_goods_box_price": add_goods_box_price}
+		add_goods_return = {"add_goods": add_goods['add_goods'], "add_goods_price": add_goods_price,
+			"add_goods_vip_price": add_goods_vip_price, "add_goods_box_price": add_goods_box_price,
+			'status': add_goods['status']}
 		return add_goods_return
 
 	# 获取，能正常下单的菜品
@@ -350,12 +361,13 @@ class GetPremise:
 		goods_return = {"goods": goods_params, "price": price, "vip_price": vip_price, "box_price": box_price}
 		# 加购
 		add_goods = self.add_goods_shop(type, add_status)
-		for add_goods_data in add_goods:
+		for add_goods_data in add_goods['add_goods']:
 			add_goods_price = add_goods_price + add_goods_data['price'] * add_goods_data['number']
 			add_goods_vip_price = add_goods_vip_price + add_goods_data['vipPrice'] * add_goods_data['number']
 			add_goods_box_price = add_goods_box_price + add_goods_data['boxPrice'] * add_goods_data['number']
-		add_goods_return = {"add_goods": add_goods, "add_goods_price": add_goods_price,
-			"add_goods_vip_price": add_goods_vip_price, "add_goods_box_price": add_goods_box_price}
+		add_goods_return = {"add_goods": add_goods['add_goods'], "add_goods_price": add_goods_price,
+			"add_goods_vip_price": add_goods_vip_price, "add_goods_box_price": add_goods_box_price,
+			'status': add_goods['status']}
 		result = {
 			"goodsList": goods_return,
 			"addGoodsList": add_goods_return,
@@ -385,12 +397,13 @@ class GetPremise:
 		goods_return = {"goods": goods_params, "price": price, "vip_price": vip_price, "box_price": box_price}
 		# 加购
 		add_goods = self.add_goods_shop(type, add_status)
-		for add_goods_data in add_goods:
+		for add_goods_data in add_goods['add_goods']:
 			add_goods_price = add_goods_price + add_goods_data['price'] * add_goods_data['number']
 			add_goods_vip_price = add_goods_vip_price + add_goods_data['vipPrice'] * add_goods_data['number']
 			add_goods_box_price = add_goods_box_price + add_goods_data['boxPrice'] * add_goods_data['number']
-		add_goods_return = {"add_goods": add_goods, "add_goods_price": add_goods_price,
-			"add_goods_vip_price": add_goods_vip_price, "add_goods_box_price": add_goods_box_price}
+		add_goods_return = {"add_goods": add_goods['add_goods'], "add_goods_price": add_goods_price,
+			"add_goods_vip_price": add_goods_vip_price, "add_goods_box_price": add_goods_box_price,
+			'status': add_goods['status']}
 		result = {
 			"goodsList": goods_return,
 			"addGoodsList": add_goods_return,
@@ -424,5 +437,5 @@ class GetPremise:
 
 if __name__ == '__main__':
 	run = GetPremise()
-	ret = run.get_package(5, 1)
+	ret = run.add_goods_shop(5, 1)
 	print(ret)

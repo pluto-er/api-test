@@ -28,7 +28,7 @@ class GetYaml:
 			result_code['report_base_status'] = 200
 		file_data['testAll'] = int(file_data['testAll']) + 1
 		# 判断是否成功
-		if params['status'] == 500:
+		if params['status'] == 500 or params['report_status'] == 500 or params['code'] != 0:
 			if not file_data['service']:
 				file_data['service'][model[2]] = 1
 			elif model[2] in file_data['service']:
