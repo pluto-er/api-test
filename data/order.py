@@ -32,54 +32,54 @@ class OrderData:
 		# self.goods_type(type, model)
 		# self.order_package(type, model)
 		# self.add_goods(type, model)
-		# self.order_coupon(type)
-		# self.business_time_out(type)
-		# self.shopping_way(type)
-		# self.stock_ample(type)
+		# self.order_coupon(type,model)
+		# self.business_time_out(type,model)
+		# self.shopping_way(type,model)
+		# self.stock_ample(type,model)
 		# return True
 		try:
-			self.goods_type(type,model)
+			self.goods_type(type, model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 		# 套餐相关
 		try:
-			self.order_package(type,model)
+			self.order_package(type, model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 		# 加购
 		try:
-			self.add_goods(type,model)
+			self.add_goods(type, model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 		# 优惠券
 		try:
-			self.order_coupon(type,model)
+			self.order_coupon(type, model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 		# 非营业时间
 		try:
-			self.business_time_out(type)
+			self.business_time_out(type, model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 		# 不支持自提
 		try:
-			self.shopping_way(type,model)
+			self.shopping_way(type, model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 		# 营业时间内-库存情况
 		try:
-			self.stock_ample(type,model)
+			self.stock_ample(type, model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 	# 组合
-	def goods_type(self, type, model = ['订单', '下单', 'order']):
+	def goods_type(self, type, model = ["下单", "下单", 'order']):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 		# 0默认（不使用优惠券，加购）  1使用优惠券（加购）  2加购不选，不使用优惠券 3加购不选，使用优惠券
@@ -135,7 +135,7 @@ class OrderData:
 				add_goods = self.get_premise.get_add_goods(type, status)
 				if status == 3 and add_goods['status'] == 0:
 					data['cases_text'] = self.get_type_code(type) + data['cases_text']
-					self.set_order.set_none_yam(ret, data, [], model, "当前就餐方式没有必选加购菜品", 500)
+					self.set_order.set_none_yam(ret, data, [], model, "当前就餐方式没有必选加购菜品", 204)
 					continue
 
 				# 组装数据
@@ -201,7 +201,7 @@ class OrderData:
 		return True
 
 	# 套餐相关
-	def order_package(self, type, model):
+	def order_package(self, type, model = ["下单", "下单", 'order']):
 		# 1必选单选/其他选1 2 必选不选/其他选1
 		# 3 非必单选（必选选择）  4非必选多选（必选选择） 5 非必选不选（必选选择）
 		# coupon_data 1使用 2不使用
@@ -287,7 +287,7 @@ class OrderData:
 		return True
 
 	# 加购相关
-	def add_goods(self, type, model):
+	def add_goods(self, type, model = ["下单", "下单", 'order']):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 		#  0 都选 1非必选不选	2必选不选 3非必选和必选都不选
@@ -352,7 +352,7 @@ class OrderData:
 		return True
 
 	# 优惠券
-	def order_coupon(self, type = 5):
+	def order_coupon(self, type = 5, model = ["下单", "下单", 'order']):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 		# coupon_status 1正常 2不在使用时间内 3就餐方式满足  4 就餐方式不满足 5金额满足 6金额不满足 7 不使用
@@ -432,7 +432,7 @@ class OrderData:
 						else:
 							report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 					result_status = {"key": [], "val": [], 'report': report}
-					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["下单", '下单', 'order'], result_status)
 				else:
 					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '', "request_time": 0, "traceid": 0}
 					if post_status == 1:
@@ -456,15 +456,16 @@ class OrderData:
 					elif post_status == 7:
 						data['cases_text'] = "不使用优惠券下单"
 						pay_ret['report_status'] = 202
+					pay_ret['report_status'] = 200
 					report = "没有对应优惠券，跳过下单"
 					result_status = {"key": [], "val": [], 'report': report}
 					data['cases_text'] = self.get_type_code(type) + data['cases_text']
-					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["下单", '下单', 'order'], result_status)
 
 		return result_status
 
 	# 不支持就餐方式
-	def shopping_way(self, type = 5):
+	def shopping_way(self, type = 5, model = ["下单", "下单", 'order']):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 		data = self.set_order.get_base_data(type)
@@ -526,10 +527,10 @@ class OrderData:
 			result_status = {"key": [], "val": [], 'report': report}
 			data['cases_text'] = self.get_type_code(type) + data['cases_text'] + self.get_goods_type_code(
 					post_type_data)
-			self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+			self.get_yaml_data.set_to_yaml(ret, data, pay_ret, model, result_status)
 
 	# 营业时间内--库存充足情况下(成功)
-	def stock_ample(self, type = 5):
+	def stock_ample(self, type = 5, model = ["下单", "下单", 'order']):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 		for post_type_data in [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 3], [1, 2, 3]]:
@@ -611,10 +612,10 @@ class OrderData:
 				result_status = {"key": [], "val": [], 'report': report}
 				data['cases_text'] = self.get_type_code(type) + data['cases_text'] + self.get_goods_type_code(
 						post_type_data)
-				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, model, result_status)
 
 	# 非营业时间(成功)
-	def business_time_out(self, type = 5):
+	def business_time_out(self, type = 5, model = ["下单", "下单", 'order']):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 
@@ -681,7 +682,7 @@ class OrderData:
 						report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 				result_status = {"key": [], "val": [], 'report': report}
 				data['cases_text'] = self.get_type_code(type) + data['cases_text']
-				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
+				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, model, result_status)
 
 	# 是否营业
 

@@ -193,6 +193,7 @@ class CommentData:
 			if not data['content']:
 				result_status = {"key": [], "val": [], 'report': "无评论信息，已手动屏蔽错误"}
 				params['status'] = 200
+				params['report_status'] = 200
 				params['message'] = ''
 				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 				continue
