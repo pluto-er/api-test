@@ -32,31 +32,31 @@ class OrderData:
 		# self.goods_type(type, model)
 		# self.order_package(type, model)
 		# self.add_goods(type, model)
-		self.order_coupon(type)
+		# self.order_coupon(type)
 		# self.business_time_out(type)
 		# self.shopping_way(type)
 		# self.stock_ample(type)
-		return True
+		# return True
 		try:
-			self.goods_type(type)
+			self.goods_type(type,model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 		# 套餐相关
 		try:
-			self.order_package(type)
+			self.order_package(type,model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 		# 加购
 		try:
-			self.add_goods(type)
+			self.add_goods(type,model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 		# 优惠券
 		try:
-			self.order_coupon(type)
+			self.order_coupon(type,model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
@@ -68,13 +68,13 @@ class OrderData:
 
 		# 不支持自提
 		try:
-			self.shopping_way(type)
+			self.shopping_way(type,model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
 		# 营业时间内-库存情况
 		try:
-			self.stock_ample(type)
+			self.stock_ample(type,model)
 		except Exception as e:
 			self.get_config_data.get_error_base('postOrderUrl', model, e)
 
@@ -366,7 +366,7 @@ class OrderData:
 				coupon_data = coupon_list['data']['coupon']
 
 				data = self.set_order.get_base_data(type)
-				goods_pay = self.set_order.get_pay_amount(type, goods['goodsList'], goods['addGoodsList']['add_goods'])
+				goods_pay = self.set_order.get_pay_amount(type, goods['goodsList'], goods['addGoodsList'])
 				data['goodsList'] = goods_pay['goodsList']
 				data['addGoodsList'] = goods_pay['addGoodsList']
 				data['price'] = goods_pay['price']
