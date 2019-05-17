@@ -98,7 +98,7 @@ class ValidatorHelper:
 		if not list:
 			return report
 		if page_size == 100:
-			num_data = total % data['size']
+			num_data = int(total) % int(data['size'])
 			num_params = len(list)
 			if int(num_data) != int(num_params):
 				report += "返回数量错误，page=" + str(data['page'])
