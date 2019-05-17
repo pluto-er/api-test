@@ -15,7 +15,7 @@ from helper.validator import ValidatorHelper
 from helper.get_premise import GetPremise
 from helper.get_config import GetDataConfig
 from data.orderdata import OrderData
-from lib.operation_db import OperationDb
+# from lib.operation_db import OperationDb
 
 
 class CommentData:
