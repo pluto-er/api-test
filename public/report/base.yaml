@@ -8,3 +8,4 @@ testSkip: 0       #测试警告
 testPass: 0      #测试通过
 testError: 0      #测试通过
 testResult: []       #内容
+service: {}       #服务内容

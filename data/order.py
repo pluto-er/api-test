@@ -109,7 +109,7 @@ class OrderData:
 						"request_time": 0, "report_status": 202, "traceid": 0}
 					result_status = {"key": [], "val": [], 'report': "没有菜品，直接进行下一条件"}
 					data['cases_text'] = self.get_type_code(type) + data['cases_text']
-					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单",'order'], result_status)
+					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["订单", "下单", 'order'], result_status)
 					continue
 				# 处理菜品
 				goods_list_data = []
@@ -753,6 +753,7 @@ class OrderData:
 		url = ret['url']
 		header = ret['header']
 		data = {"orderId": orderId}
+		time.sleep(3)
 		params = self.send_post.send_post(url, data, header)
 		if params['status'] != 200:
 			return False
@@ -781,7 +782,7 @@ class OrderData:
 		else:
 			data['balance'] = pay_amount
 			data['payAmount'] = 0
-		time.sleep(1)
+		time.sleep(3)
 		params_post = self.get_config_data.get_conf("postOrderUrl")
 		params = self.send_post.send_post(params_post['url'], data, params_post['header'])
 		return params

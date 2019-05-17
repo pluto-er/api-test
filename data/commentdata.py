@@ -3,6 +3,7 @@ import sys
 import os
 import random
 import time
+import copy
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 获取根目录
 sys.path.append(root_path)
@@ -14,6 +15,7 @@ from helper.validator import ValidatorHelper
 from helper.get_premise import GetPremise
 from helper.get_config import GetDataConfig
 from data.orderdata import OrderData
+from lib.operation_db import OperationDb
 
 
 class CommentData:
@@ -244,7 +246,6 @@ class CommentData:
 		ret = self.get_data_config.get_data_post("addOrderComment", file_path)
 		url = ret['url']
 		header = ret['header']
-		post_data = ret['expect']['retData']
 		# 循环用例，请求获取数据
 		for star in [1, 2, 3, 4, 5]:
 			if star == 1:
@@ -257,13 +258,12 @@ class CommentData:
 				star_text = "【四星中评】"
 			else:
 				star_text = "【五星好评】"
-
+			post_cont = ret['expect']['retData']
+			post_data = copy.deepcopy(post_cont)
 			for data in post_data:
-				if 'cases_text' in data:
-					cases_text = data['cases_text']
+				cases_text = data['cases_text']
 				# 获取订单
-
-				order_list = self.get_premise.get_order_list({"status": [8]})
+				order_list = self.get_premise.get_order_list({"status": [8], "page": 1, "size": 1})
 				if not order_list:
 					continue
 				if order_list['data']['list']:
@@ -304,12 +304,12 @@ class CommentData:
 						label = {"labelId": choice['id'], "labelName": choice['title'], "labelType": choice['type']}
 						data['label'].append(label)
 				time.sleep(2)
+				data['cases_text'] = star_text + data['cases_text']
 				params = self.comment_post.send_post(url, data, header)
 				result_status = self.validator.validate_status(ret, params, model, data)  # 判断status
 				if result_status == 'fail':
 					continue
 
-				data['cases_text'] = star_text + data['cases_text']
 				self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return True
@@ -433,6 +433,30 @@ class CommentData:
 			self.get_yaml_data.set_to_yaml(ret, data, params, model, result_status)
 
 		return params
+
+	# 判断自动评论订单
+	def get_auto_list(self, model):
+		file_path = "/public/yaml/comment/list.yaml"
+		ret = self.get_data_config.get_data_post("commentList", file_path)
+
+		sql = "select o.id,o.orderno,o.status from comment_comment as c left join order_order as o on o.orderno = c.orderno  " \
+			  "where c.star_type =2  and o.status=8 order by o.create_time desc limit 10"
+		result = OperationDb.select("wzl_brand_10006", sql)
+		result_data = []
+		data = {"cases_text": "自动评论是否成功"}
+		result_status = {"key": [], "val": [], 'report': ""}
+		ret['expect']['result'] = []
+		if result:
+			for row in result:
+				result_data.append({"order_id": row[0], "orderno": row[1], "status": row[2]})
+
+			pay_ret = {'data': result_data, 'status': 500, 'code': 0, 'message': '自动评论订单，订单状态未改变',
+				"request_time": 0, "report_status": 202, "traceid": 0}
+		else:
+			pay_ret = {'data': [], 'status': 200, 'code': 0, 'message': '',
+				"request_time": 0, "report_status": 200, "traceid": 0}
+
+		self.get_yaml_data.set_to_yaml(ret, data, pay_ret, model, result_status)
 
 	# 获取前提评论列表
 	def comment_list_condition(self):

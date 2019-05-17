@@ -29,6 +29,121 @@ class GetYaml:
 		file_data['testAll'] = int(file_data['testAll']) + 1
 		# 判断是否成功
 		if params['status'] == 500:
+			if not file_data['service']:
+				file_data['service'][model[2]] = 1
+			elif model[2] in file_data['service']:
+				file_data['service'][model[2]] = file_data['service'][model[2]] + 1
+			else:
+				file_data['service'][model[2]] = 1
+			file_data['testError'] = int(file_data['testError']) + 1
+			print(ret['uri'] + "     Error:msg=" + str(params['message']) + ";traceid=" + str(params['traceid']))
+			status_code = "错误"
+		else:
+			print(ret['uri'] + "     success")
+			file_data['testPass'] = int(file_data['testPass']) + 1
+			status_code = "成功"
+		# elif result_code['report_base_status'] == 204:
+		# 	file_data['testFail'] = int(file_data['testFail']) + 1
+		# 	print(ret['uri'] + "     Fail:key=" + str(result_code['key']) + ":val=" + str(
+		# 			result_code['val']) + ":report=" + str(
+		# 			result_code['report']) + ";traceid=" + str(params['traceid']))
+		# 	status_code = "失败"
+		# elif params['report_status'] == 202:
+		# 	if ret['uri'] != "/order/add":
+		# 		file_data['testSkip'] = int(file_data['testSkip']) + 1
+		# 		print(ret['uri'] + "     warning;msg" + str(result_code['report']))
+		# 		status_code = "警告"
+		# 	else:
+		# 		file_data['testPass'] = int(file_data['testPass']) + 1
+		# 		print(ret['uri'] + "      success")
+		# 		status_code = "成功"
+		# elif params['status'] == 200 and params['code'] == 0:
+		# 	print(ret['uri'] + "     success")
+		# 	file_data['testPass'] = int(file_data['testPass']) + 1
+		# 	status_code = "成功"
+		# else:
+		# 	file_data['testFail'] = int(file_data['testFail']) + 1
+		# 	print(ret['uri'] + "     warning;msg" + str(params['message']))
+		# 	status_code = "失败"
+		# 判断是否存在用例
+		try:
+			if ret['expect']['test_cases']:
+				test_cases = "<a target='view_window' href='" + str(ret['expect']['test_cases']) + "'>关联用例</a>"
+			else:
+				test_cases = "无"
+		except KeyError:
+			test_cases = "无"
+
+		# 断言结果值
+		if not result_code['key']:
+			result_code['key'] = ""
+		if not result_code['val']:
+			result_code['val'] = ""
+		if not result_code['report']:
+			result_code['report'] = ""
+		# 组装数据
+		cases_text = data['cases_text']
+
+		del data['cases_text']
+
+		result = [
+			{
+				"className": model[0],
+				"modelName": model[1],
+				"service": model[2],
+				"methodName": ret['uri'],
+				"description": str(data),
+				"caseText": str(cases_text),
+				# "spendTime": params['request_time'],
+				"status": status_code,
+				"traceid": params['traceid'],
+				"log": [
+					"bid=" + str(ret['header']['bid']) + ";sid=" + str(ret['header']['sid']) + ";uid=" + str(
+							ret['header']['uid']) + "<br/>POST=" + str(data),
+					ret['host'] + "<br/>运行时长(毫秒)=" + str(params['request_time']),
+					params['status'],
+					params['code'],
+					params['message'],
+					[result_code['key']],
+					[result_code['val']],
+					result_code['report'],
+					time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
+					test_cases,
+					str(ret['expect']['result']),
+					str(params),
+					]
+				},
+			]
+		# if status_code in ['错误', '失败']:
+		# 	send_data = "【" + str(model[0]) + "-" + str(model[1]) + "】出错 traceid=" + str(
+		# 			params['traceid']) + "，message=" + str(params['message'])
+		# 	if result_code['report'] != "无":
+		# 		send_data += ",report=" + str(result_code['report'])
+		# 	if result_code['key'] != "无":
+		# 		send_data += ",缺少key=" + str([result_code['key']])
+		# 	if result_code['val'] != "无":
+		# 		send_data += ",value值错误=" + str([result_code['val']])
+		# 	send_data += ",url=" + str(ret['url']) + ",\nexpect=" + str(ret['expect']['result']) + "，\nresult=" + str(
+		# 			params)
+
+		# 写入base
+		OperationYaml.set(file_path, file_data)
+
+		# 追加数据到对应的yaml
+		file_path = "/generate/report/" + glo.get_value('report_yaml') + ".yaml"
+		OperationYaml.add(file_path, result)
+
+	# 写入yaml数据 file_path地址   data新增数据
+	@staticmethod
+	def set_to_yaml_old(ret, data, params, model, result_code):
+		file_path = "/generate/report/" + glo.get_value('report_yaml') + "-header.yaml"
+		file_data = OperationYaml.get(file_path)
+
+		if "report_base_status" not in result_code:
+			result_code['report_base_status'] = 200
+		file_data['testAll'] = int(file_data['testAll']) + 1
+		# 判断是否成功
+		if params['status'] == 500:
 			file_data['testError'] = int(file_data['testError']) + 1
 			print(ret['uri'] + "     Error:msg=" + str(params['message']) + ";traceid=" + str(params['traceid']))
 			status_code = "错误"

@@ -183,6 +183,7 @@
             $(obj).removeClass("btn-primary");
             $(obj).addClass("btn-danger");
             $.each(logs, function (i, n) {
+                    var report = ""
                     switch (i) {
                         case 0:
                             detailLog = detailLog + '<span style="font-weight: bold">前置条件：</span>';
@@ -191,22 +192,22 @@
                             detailLog = detailLog + '<span style="font-weight: bold">HOST：</span>';
                             break;
                         case  2:
-                            detailLog = detailLog + '<span style="font-weight: bold">Return_status：</span>';
+                            detailLog = detailLog + '<span style="font-weight: bold">status：</span>';
                             break;
                         case  3:
-                            detailLog = detailLog + '<span style="font-weight: bold">Return_code：</span>';
+                            detailLog = detailLog + '<span style="font-weight: bold">code：</span>';
                             break;
                         case  4:
                             detailLog = detailLog + '<span style="font-weight: bold">Message：</span>';
                             break;
                         case  5:
-                            detailLog = detailLog + '<span style="font-weight: bold">返回数据缺损值：</span>';
+                            // detailLog = detailLog + '<span style="font-weight: bold">返回数据缺损值：</span>';
                             break;
                         case  6:
-                            detailLog = detailLog + '<span style="font-weight: bold">返回类型错误：</span>';
+                            // detailLog = detailLog + '<span style="font-weight: bold">返回类型错误：</span>';
                             break;
                         case  7:
-                            detailLog = detailLog + '<span style="font-weight: bold">特别验证情况：</span>';
+                            report = '<span style="font-weight: bold">特别验证情况：</span>';
                             break;
                         case  8:
                             detailLog = detailLog + '<span style="font-weight: bold">执行时间：</span>';
@@ -226,10 +227,17 @@
                     } else if (log_len - 1 == i) {
                         detailLog = detailLog + "<p style='word-break: break-all;background-color: #ccc'>" + n + "</p>";
                     } else {
-                        detailLog = detailLog + "<p style='word-break: break-all;'>" + n + "</p>";
+                        if (i == 7 && n) {
+                            detailLog = detailLog + report + "<p style='word-break: break-all;'>" + n + "</p>";
+                        } else if ((i == 5) || (i == 6)) {
+
+                        } else {
+                            detailLog = detailLog + "<p style='word-break: break-all;'>" + n + "</p>";
+                        }
                     }
                 }
             );
+            console.log(detailLog);
             $(obj).parent().parent().after("<tr><td colspan='" + len + "'><div style='font-family: Consolas;font-size:12px'>" + detailLog + "</div></td></tr>");
         } else if ($(obj).text() == '收缩') {
             $(obj).parent().parent().next().remove();
