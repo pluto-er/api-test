@@ -13,7 +13,7 @@ from helper.validator import ValidatorHelper
 from helper.get_config import GetDataConfig
 from helper.get_premise import GetPremise
 from data.orderdata import OrderData
-
+from helper.set_order import SetOrder
 
 class CouponData:
 
@@ -25,6 +25,7 @@ class CouponData:
 		self.get_config_data = GetDataConfig()
 		self.order = OrderData()
 		self.get_premise = GetPremise()
+		self.set_order = SetOrder()
 
 	# 获取活动配置-注册弹窗信息
 	def get_reg(self, model):
@@ -294,7 +295,9 @@ class CouponData:
 				continue
 			if order_list['data']['list']:
 				order_one = random.choice(order_list['data']['list'])
-
+			else:
+				self.set_order.set_none_yam(ret, data, [], model, "当前没有未评论的订单", 204)
+				continue
 			data['orderId'] = order_one['id']
 			data['orderno'] = order_one['orderno']
 			params = self.send_post.send_post(url, data, header)

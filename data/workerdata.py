@@ -115,13 +115,15 @@ class WorkerData:
 		for data in worker_list:
 			post_data['workerId'] = data['uid']
 			post_data['rewardMoney'] = random.choice(reward['data'])
+			post_data['cases_text'] = "打赏员工小费"
+			if "manager_status" in data:
+				post_data['cases_text'] = "打赏店长小费"
+
 			params = self.send_post.send_post(url, post_data, header)
 			result_status = self.validator.validate_status(ret, params, model, post_data)
 			if result_status == 'fail':
 				continue
-			post_data['cases_text'] = "打赏员工小费"
-			if "manager_status" in data:
-				post_data['cases_text'] = "打赏店长小费"
+
 			self.get_yaml_data.set_to_yaml(ret, post_data, params, model, result_status)
 
 		return True
