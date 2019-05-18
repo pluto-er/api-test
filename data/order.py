@@ -29,14 +29,14 @@ class OrderData:
 	def add_order(self, type = 5):
 		# 组合
 		model = ["下单", '下单', 'order']
-		# self.goods_type(type, model)
+		self.goods_type(type, model)
 		# self.order_package(type, model)
 		# self.add_goods(type, model)
-		# self.order_coupon(type,model)
-		# self.business_time_out(type,model)
-		# self.shopping_way(type,model)
-		# self.stock_ample(type,model)
-		# return True
+		# self.order_coupon(type, model)
+		# self.business_time_out(type, model)
+		# self.shopping_way(type, model)
+		# self.stock_ample(type, model)
+		return True
 		try:
 			self.goods_type(type, model)
 		except Exception as e:
@@ -355,17 +355,22 @@ class OrderData:
 	def order_coupon(self, type = 5, model = ["下单", "下单", 'order']):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
+		cases_data = ['', '使用优惠券下单', '使用当前时间不可用优惠券下单', '使用当前就餐方式可用优惠券下单',
+			'使用当前就餐方式不可用优惠券下单', '使用金额达到使用条件优惠券下单', '使用金额未达到使用条件的优惠券下单', '不使用']
 		# coupon_status 1正常 2不在使用时间内 3就餐方式满足  4 就餐方式不满足 5金额满足 6金额不满足 7 不使用
 		for post_type_data in [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 3], [1, 2, 3]]:
 			for post_status in [1, 2, 3, 4, 5, 6, 7]:
+				data = self.set_order.get_base_data(type)
 				goods = self.get_premise.get_order_goods(type, post_type_data)
 				params_post = self.get_config_data.get_conf("getAvailableCoupon")
 				coupon_list = self.send_post.send_post(params_post['url'], {}, params_post['header'])
 				if coupon_list['status'] != 200 or not coupon_list['data'] or not coupon_list['data']['coupon']:
-					return False
+					data['cases_text'] = self.get_type_code(type) + cases_data[post_status]
+					self.set_order.set_none_yam(ret, data, [], model, "当前没有优惠券", 204)
+					continue
+
 				coupon_data = coupon_list['data']['coupon']
 
-				data = self.set_order.get_base_data(type)
 				goods_pay = self.set_order.get_pay_amount(type, goods['goodsList'], goods['addGoodsList'])
 				data['goodsList'] = goods_pay['goodsList']
 				data['addGoodsList'] = goods_pay['addGoodsList']
@@ -375,6 +380,7 @@ class OrderData:
 					coupon_ret = []
 				else:
 					coupon_ret = self.set_order.validator_coupon(type, coupon_data, data['vip_price'], post_status)
+
 				if coupon_ret:
 					coupon_one = random.choice(coupon_ret)
 					data['couponIds'] = [coupon_one['id']]
@@ -392,32 +398,27 @@ class OrderData:
 
 					pay_ret = self.pay(data, 2)
 					result_status = self.set_order.validator_pay(pay_ret, 2)
+					data['cases_text'] = cases_data[post_status]
 					if post_status == 1:
-						data['cases_text'] = "使用优惠券下单"
 						if not result_status:
 							pay_ret['report_status'] = 500
 					elif post_status == 2:
-						data['cases_text'] = "使用当前时间不可用优惠券下单"
 						pay_ret['report_status'] = 500
 						if not result_status:
 							pay_ret['report_status'] = 200
 							pay_ret['code'] = 0
 					elif post_status == 3:
-						data['cases_text'] = "使用当前就餐方式可用优惠券下单"
 						if not result_status:
 							pay_ret['report_status'] = 500
 					elif post_status == 4:
-						data['cases_text'] = "使用当前就餐方式不可用优惠券下单"
 						pay_ret['report_status'] = 500
 						if not result_status:
 							pay_ret['report_status'] = 200
 							pay_ret['code'] = 0
 					elif post_status == 5:
-						data['cases_text'] = "使用金额达到使用条件优惠券下单"
 						if not result_status:
 							pay_ret['report_status'] = 500
 					elif post_status == 6:
-						data['cases_text'] = "使用金额未达到使用条件的优惠券下单"
 						pay_ret['report_status'] = 500
 						if not result_status:
 							pay_ret['report_status'] = 200
@@ -434,35 +435,11 @@ class OrderData:
 					result_status = {"key": [], "val": [], 'report': report}
 					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["下单", '下单', 'order'], result_status)
 				else:
-					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '', "request_time": 0, "traceid": 0}
-					if post_status == 1:
-						data['cases_text'] = "使用优惠券下单"
-						pay_ret['report_status'] = 202
-					elif post_status == 2:
-						data['cases_text'] = "使用当前时间不可用优惠券下单"
-						pay_ret['report_status'] = 202
-					elif post_status == 3:
-						data['cases_text'] = "使用当前就餐方式可用优惠券下单"
-						pay_ret['report_status'] = 202
-					elif post_status == 4:
-						data['cases_text'] = "使用当前就餐方式不可用优惠券下单"
-						pay_ret['report_status'] = 202
-					elif post_status == 5:
-						data['cases_text'] = "使用金额达到使用条件优惠券下单"
-						pay_ret['report_status'] = 202
-					elif post_status == 6:
-						data['cases_text'] = "使用金额未达到使用条件的优惠券下单"
-						pay_ret['report_status'] = 202
-					elif post_status == 7:
-						data['cases_text'] = "不使用优惠券下单"
-						pay_ret['report_status'] = 202
-					pay_ret['report_status'] = 200
-					report = "没有对应优惠券，跳过下单"
-					result_status = {"key": [], "val": [], 'report': report}
-					data['cases_text'] = self.get_type_code(type) + data['cases_text']
-					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["下单", '下单', 'order'], result_status)
+					data['cases_text'] = self.get_type_code(type) + cases_data[post_status]
+					self.set_order.set_none_yam(ret, data, [], model, "没有对应优惠券，跳过下单", 202)
+					continue
 
-		return result_status
+		return True
 
 	# 不支持就餐方式
 	def shopping_way(self, type = 5, model = ["下单", "下单", 'order']):
@@ -482,7 +459,7 @@ class OrderData:
 			goods_return = {"goods": goods_params, "price": price, "vip_price": vip_price, "box_price": box_price}
 			# 加购
 			add_goods = self.get_premise.get_add_goods(type)
-			goods_pay = self.set_order.get_pay_amount(type, goods_return, add_goods['add_goods'])
+			goods_pay = self.set_order.get_pay_amount(type, goods_return, add_goods)
 			data['goodsList'] = goods_pay['goodsList']
 			data['addGoodsList'] = goods_pay['addGoodsList']
 			data['price'] = goods_pay['price']
@@ -558,7 +535,7 @@ class OrderData:
 				goods_return = {"goods": goods_params, "price": price, "vip_price": vip_price, "box_price": box_price}
 				# 加购
 				add_goods = self.get_premise.get_add_goods(type)
-				goods_pay = self.set_order.get_pay_amount(type, goods_return, add_goods['add_goods'])
+				goods_pay = self.set_order.get_pay_amount(type, goods_return, add_goods)
 				data['goodsList'] = goods_pay['goodsList']
 				data['addGoodsList'] = goods_pay['addGoodsList']
 				data['price'] = goods_pay['price']
