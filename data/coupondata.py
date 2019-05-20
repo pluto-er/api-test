@@ -15,6 +15,7 @@ from helper.get_premise import GetPremise
 from data.orderdata import OrderData
 from helper.set_order import SetOrder
 
+
 class CouponData:
 
 	def __init__(self):
@@ -436,7 +437,10 @@ class CouponData:
 			params_post = self.get_config_data.get_conf("getShareCoupon")
 			share_code = self.send_post.send_post(params_post['url'], {"orderId": order_one['id']},
 												  params_post['header'])
-
+			if not share_code['data']:
+				result_status = {"key": [], "val": [], 'report': "没有分享地址"}
+				self.get_yaml_data.set_to_yaml(ret, data, share_code, model, result_status)
+				continue
 			url_code = share_code['data']['url']
 			# 截取code
 			code_data = url_code.split('=')
