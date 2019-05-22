@@ -29,14 +29,14 @@ class OrderData:
 	def add_order(self, type = 5):
 		# 组合
 		model = ["下单", '下单', 'order']
-		self.goods_type(type, model)
+		# self.goods_type(type, model)
 		# self.order_package(type, model)
 		# self.add_goods(type, model)
 		# self.order_coupon(type, model)
 		# self.business_time_out(type, model)
 		# self.shopping_way(type, model)
 		# self.stock_ample(type, model)
-		return True
+		# return True
 		try:
 			self.goods_type(type, model)
 		except Exception as e:
@@ -511,7 +511,7 @@ class OrderData:
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 		for post_type_data in [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 3], [1, 2, 3]]:
-			for stock_data in [4]:  # 1小于起购 2等于/大于起购 3库存不足 4不可售时间 TODO
+			for stock_data in [1, 2, 3, 4]:  # 1小于起购 2等于/大于起购 3库存不足 4不可售时间 TODO
 				data = self.set_order.get_base_data(type)
 				status = 0
 				if stock_data == 3:

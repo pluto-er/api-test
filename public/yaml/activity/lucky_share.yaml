@@ -1,6 +1,7 @@
 uri: "/activity/coupon/lucky-share" #领取分享优惠券
 retData:
   - code: 1
+    cases_text: "领取分享优惠券"
 
 "result": {
   "data": {},

@@ -2,6 +2,7 @@
 import sys
 import os
 import random
+import copy
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 获取根目录
 sys.path.append(root_path)
@@ -77,7 +78,8 @@ class WorkerData:
 		worker_list = self.get_premise.worker_list()
 
 		# 循环用例，请求获取数据
-		for data in post_data:
+		for post_params in post_data:
+			data = copy.deepcopy(post_params)
 			case_text = data['cases_text']
 			for worker_data in worker_list:
 				# 请求api获取结果

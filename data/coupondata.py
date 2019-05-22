@@ -174,11 +174,10 @@ class CouponData:
 
 		# 获取订单
 		params_post = self.get_config_data.get_conf("getOrderList")
-		order_list = self.send_post.send_post(params_post['url'],
-											  {"status": [9], "page": 1, "size": 10, "refundType": []},
-											  params_post['header'])
+		order_list = self.send_post.send_post(params_post['url'], {"status": [9], "page": 1, "size": 10,
+			"refundType": []}, params_post['header'])
 		if order_list['status'] != 200 or not order_list['data']:
-			return False
+			self.set_order.set_none_yam(ret, {"cases_text": "分享优惠券"}, [], model, "当前没有已完成订单", 204)
 		order_one = random.choice(order_list['data']['list'])
 
 		# 循环用例，请求获取数据
