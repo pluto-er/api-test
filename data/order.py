@@ -295,7 +295,10 @@ class OrderData:
 		for post_status in [0, 1, 2, 3]:
 			data = self.set_order.get_base_data(type)  # 获取请求基础数据
 			goods = self.get_premise.get_order_goods(type, [1], post_status)
-
+			if not goods['goodsList']:
+				data['cases_text'] = self.get_type_code(type) + cases_data[post_status]
+				self.set_order.set_none_yam(ret, data, [], model, "没有可选菜品，直接进行下一条件", 202)
+				continue
 			goods_pay = self.set_order.get_pay_amount(type, goods['goodsList'], goods['addGoodsList'])
 			data['goodsList'] = goods_pay['goodsList']
 			data['addGoodsList'] = goods_pay['addGoodsList']
@@ -362,6 +365,11 @@ class OrderData:
 			for post_status in [1, 2, 3, 4, 5, 6, 7]:
 				data = self.set_order.get_base_data(type)
 				goods = self.get_premise.get_order_goods(type, post_type_data)
+				if not goods['goodsList']:
+					data['cases_text'] = self.get_type_code(type) + cases_data[post_status]
+					self.set_order.set_none_yam(ret, data, [], model, "没有可选菜品，直接进行下一条件", 202)
+					continue
+
 				params_post = self.get_config_data.get_conf("getAvailableCoupon")
 				coupon_list = self.send_post.send_post(params_post['url'], {}, params_post['header'])
 				if coupon_list['status'] != 200 or not coupon_list['data'] or not coupon_list['data']['coupon']:
@@ -447,7 +455,15 @@ class OrderData:
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
 		data = self.set_order.get_base_data(type)
 		for post_type_data in [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 3], [1, 2, 3]]:
+			data['cases_text'] = "购买不支持就餐方式的商品"
+			data['cases_text'] = self.get_type_code(type) + data['cases_text'] + self.get_goods_type_code(
+					post_type_data)
+
 			goods_data = self.get_premise.get_goods(type, post_type_data, 1)
+			if not goods_data:
+				self.set_order.set_none_yam(ret, data, [], model, "没有可选菜品，直接进行下一条件", 202)
+				continue
+
 			goods_params = []
 			price = vip_price = box_price = 0
 			for goods in goods_data:
@@ -490,7 +506,6 @@ class OrderData:
 				pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '没有可选菜品', "report_status": 202,
 					"traceid": 0, "request_time": 0}
 				result_status = False
-			data['cases_text'] = "购买不支持就餐方式的商品"
 
 			report = ""
 			# 余额支付
@@ -502,14 +517,14 @@ class OrderData:
 				else:
 					report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 			result_status = {"key": [], "val": [], 'report': report}
-			data['cases_text'] = self.get_type_code(type) + data['cases_text'] + self.get_goods_type_code(
-					post_type_data)
+
 			self.get_yaml_data.set_to_yaml(ret, data, pay_ret, model, result_status)
 
 	# 营业时间内--库存充足情况下(成功)
 	def stock_ample(self, type = 5, model = ["下单", "下单", 'order']):
 		file_path = "/public/yaml/order/add.yaml"
 		ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
+		cases_data = ['', '购买数量小于最小起购数量', '购买数量满足最小起购数量', '购买库存不足的情况', '不可售时间']
 		for post_type_data in [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 3], [1, 2, 3]]:
 			for stock_data in [1, 2, 3, 4]:  # 1小于起购 2等于/大于起购 3库存不足 4不可售时间 TODO
 				data = self.set_order.get_base_data(type)
@@ -519,6 +534,12 @@ class OrderData:
 				if stock_data == 4:
 					status = 2
 				goods_data = self.get_premise.get_goods(type, post_type_data, status)
+				if not goods_data:
+					data['cases_text'] = self.get_type_code(type) + cases_data[stock_data] + self.get_goods_type_code(
+							post_type_data)
+					self.set_order.set_none_yam(ret, data, [], model, "没有可选菜品，直接进行下一条件", 202)
+					continue
+
 				goods_params = []
 				price = vip_price = box_price = 0
 				for goods in goods_data:
@@ -555,26 +576,35 @@ class OrderData:
 					pay_ret = self.pay(data, 2)
 					result_status = self.set_order.validator_pay(pay_ret, 2)
 				else:
-					pay_ret = {'data': {}, 'status': 200, 'code': 0, 'message': '没有可选菜品', "report_status": 202,
-						"traceid": 0, "request_time": 0}
-					result_status = False
+					data['cases_text'] = self.get_type_code(type) + cases_data[stock_data] + self.get_goods_type_code(
+							post_type_data)
+					self.set_order.set_none_yam(ret, data, [], model, "没有可选菜品", 202)
+					continue
+				if pay_ret['status'] == 200 and pay_ret['code'] == 15005:
+					data['cases_text'] = self.get_type_code(type) + cases_data[stock_data] + self.get_goods_type_code(
+							post_type_data)
+					code = pay_ret['code']
+					pay_ret['code'] = 0
+					self.set_order.set_none_yam(ret, data, pay_ret, model, str(pay_ret['message']) + "code=" + code,
+												202)
+					continue
+				# pay_ret = {'data': {},'status': 200, 'code': 0, 'message': '没有可选菜品', "report_status": 202,
+				# 	"traceid": 0, "request_time": 0}
+				# result_status = False
 				report = ""
+				data['cases_text'] = cases_data[stock_data]
 				if stock_data == 1:
-					data['cases_text'] = "购买数量小于最小起购数量"
 					if not result_status:
 						pay_ret['report_status'] = 200
 						pay_ret['code'] = 0
 				elif stock_data == 2:
-					data['cases_text'] = "购买数量满足最小起购数量"
 					if not result_status:
 						pay_ret['report_status'] = 500
 				elif stock_data == 3:
-					data['cases_text'] = "购买库存不足的情况"
 					if not result_status:
 						pay_ret['report_status'] = 500
 						pay_ret['code'] = 0
 				elif stock_data == 4:
-					data['cases_text'] = "不可售时间"
 					if not result_status and pay_ret:
 						pay_ret['report_status'] = 500
 						pay_ret['code'] = 0
@@ -605,7 +635,14 @@ class OrderData:
 			# status 1表示正常预定时间内  2表示非正常预定时间内
 			# 获取预定时间满足条件的订单
 			for send_time_data in send_time:
+				data['cases_text'] = ['', "非营业时间内，预约开启，正常营业时间内，正常下预定单",
+					'非营业时间内，预约开启，正常营业时间内，下非预定时间的订单']
 				goods = self.get_premise.get_order_goods_reserve(type, [1], 0)
+				if not goods['goodsList']:
+					data['cases_text'] = self.get_type_code(type) + data['cases_text']
+					self.set_order.set_none_yam(ret, data, [], model, "没有可选菜品，直接进行下一条件", 202)
+					continue
+
 				data = self.set_order.get_base_data(type)
 				goods_pay = self.set_order.get_pay_amount(type, goods['goodsList'], goods['addGoodsList'])
 				data['goodsList'] = goods_pay['goodsList']

@@ -152,7 +152,7 @@ class SetOrder:
 			"balance": 0,
 			"payAmount": 0,
 			"type": type,
-			"payType": 2,
+			"payType": 1,
 			"payMethod": 2,
 			"remark": "",
 			"book": 1,
