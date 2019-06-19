@@ -21,6 +21,7 @@ class GetYaml:
 	# 写入yaml数据 file_path地址   data新增数据
 	@staticmethod
 	def set_to_yaml(ret, data, params, model, result_code):
+		set_data = data.copy()
 		file_path = "/generate/report/" + glo.get_value('report_yaml') + "-header.yaml"
 		file_data = OperationYaml.get(file_path)
 
@@ -82,9 +83,9 @@ class GetYaml:
 		if not result_code['report']:
 			result_code['report'] = ""
 		# 组装数据
-		cases_text = data['cases_text']
+		cases_text = set_data['cases_text']
 
-		del data['cases_text']
+		del set_data['cases_text']
 
 		result = [
 			{
@@ -92,14 +93,14 @@ class GetYaml:
 				"modelName": model[1],
 				"service": model[2],
 				"methodName": ret['uri'],
-				"description": str(data),
+				"description": str(set_data),
 				"caseText": str(cases_text),
 				# "spendTime": params['request_time'],
 				"status": status_code,
 				"traceid": params['traceid'],
 				"log": [
 					"bid=" + str(ret['header']['bid']) + ";sid=" + str(ret['header']['sid']) + ";uid=" + str(
-							ret['header']['uid']) + "<br/>POST=" + str(data),
+							ret['header']['uid']) + "<br/>POST=" + str(set_data),
 					ret['host'] + "<br/>运行时长(毫秒)=" + str(params['request_time']),
 					params['status'],
 					params['code'],

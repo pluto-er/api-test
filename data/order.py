@@ -3,6 +3,7 @@ import sys
 import os
 import time
 import random
+import hashlib
 import json
 import datetime
 
@@ -172,7 +173,7 @@ class OrderData:
 					data['addressId'] = address_data['address_id']
 					data['price'] = data['price'] + address_data['service_fee']
 					data['vip_price'] = data['vip_price'] + address_data['service_fee']
-
+				##### 微信支付#################
 				if data['goodsList']:
 					pay_ret = self.pay(data, 2)
 					pay_status = self.set_order.validator_pay(pay_ret, 2)
@@ -187,12 +188,17 @@ class OrderData:
 					self.set_order.set_none_yam(ret, data, pay_ret, model, "必须加购未勾选，却下单成功", 500)
 					continue
 				if pay_status:
+					##### 余额支付#################
 					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
-					if cancel_status:
+					if pay_ret['post_status'] == 1:
+						if cancel_status:
+							pay_ret = self.pay(data, 1)
+							self.set_order.validator_pay(pay_ret, 1)
+						else:
+							report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
+					else:
 						pay_ret = self.pay(data, 1)
 						self.set_order.validator_pay(pay_ret, 1)
-					else:
-						report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 
 				result_status = {"key": [], "val": [], 'report': report}
 				data['cases_text'] = self.get_type_code(type) + data['cases_text']
@@ -273,11 +279,15 @@ class OrderData:
 
 				if result_status:
 					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
-					if cancel_status:
+					if pay_ret['post_status'] == 1:
+						if cancel_status:
+							pay_ret = self.pay(data, 1)
+							self.set_order.validator_pay(pay_ret, 1)
+						else:
+							report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
+					else:
 						pay_ret = self.pay(data, 1)
 						self.set_order.validator_pay(pay_ret, 1)
-					else:
-						report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 				result_status = {"key": [], "val": [], 'report': report}
 				data['cases_text'] = self.get_type_code(type) + data['cases_text']
 				if coupon_data == 1:
@@ -344,11 +354,15 @@ class OrderData:
 			# 余额支付
 			if result_status:
 				cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
-				if cancel_status:
+				if pay_ret['post_status'] == 1:
+					if cancel_status:
+						pay_ret = self.pay(data, 1)
+						self.set_order.validator_pay(pay_ret, 1)
+					else:
+						report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
+				else:
 					pay_ret = self.pay(data, 1)
 					self.set_order.validator_pay(pay_ret, 1)
-				else:
-					report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 			result_status = {"key": [], "val": [], 'report': report}
 			data['cases_text'] = self.get_type_code(type) + data['cases_text']
 			self.get_yaml_data.set_to_yaml(ret, data, pay_ret, model, result_status)
@@ -435,11 +449,15 @@ class OrderData:
 					# 余额支付
 					if result_status:
 						cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
-						if cancel_status:
+						if pay_ret['post_status'] == 1:
+							if cancel_status:
+								pay_ret = self.pay(data, 1)
+								self.set_order.validator_pay(pay_ret, 1)
+							else:
+								report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
+						else:
 							pay_ret = self.pay(data, 1)
 							self.set_order.validator_pay(pay_ret, 1)
-						else:
-							report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 					result_status = {"key": [], "val": [], 'report': report}
 					self.get_yaml_data.set_to_yaml(ret, data, pay_ret, ["下单", '下单', 'order'], result_status)
 				else:
@@ -511,11 +529,15 @@ class OrderData:
 			# 余额支付
 			if result_status:
 				cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
-				if cancel_status:
+				if pay_ret['post_status'] == 1:
+					if cancel_status:
+						pay_ret = self.pay(data, 1)
+						self.set_order.validator_pay(pay_ret, 1)
+					else:
+						report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
+				else:
 					pay_ret = self.pay(data, 1)
 					self.set_order.validator_pay(pay_ret, 1)
-				else:
-					report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 			result_status = {"key": [], "val": [], 'report': report}
 
 			self.get_yaml_data.set_to_yaml(ret, data, pay_ret, model, result_status)
@@ -611,11 +633,15 @@ class OrderData:
 				# 余额支付
 				if result_status:
 					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
-					if cancel_status:
+					if pay_ret['post_status'] == 1:
+						if cancel_status:
+							pay_ret = self.pay(data, 1)
+							self.set_order.validator_pay(pay_ret, 1)
+						else:
+							report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
+					else:
 						pay_ret = self.pay(data, 1)
 						self.set_order.validator_pay(pay_ret, 1)
-					else:
-						report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 				result_status = {"key": [], "val": [], 'report': report}
 				data['cases_text'] = self.get_type_code(type) + data['cases_text'] + self.get_goods_type_code(
 						post_type_data)
@@ -689,11 +715,15 @@ class OrderData:
 				# 余额支付
 				if result_status:
 					cancel_status = self.cancel_order(pay_ret['data']['payment']['orderId'])
-					if cancel_status:
+					if pay_ret['post_status'] == 1:
+						if cancel_status:
+							pay_ret = self.pay(data, 1)
+							self.set_order.validator_pay(pay_ret, 1)
+						else:
+							report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
+					else:
 						pay_ret = self.pay(data, 1)
 						self.set_order.validator_pay(pay_ret, 1)
-					else:
-						report = "取消订单失败，orderId=" + str(pay_ret['data']['payment']['orderId'])
 				result_status = {"key": [], "val": [], 'report': report}
 				data['cases_text'] = self.get_type_code(type) + data['cases_text']
 				self.get_yaml_data.set_to_yaml(ret, data, pay_ret, model, result_status)
@@ -798,6 +828,23 @@ class OrderData:
 		time.sleep(3)
 		params_post = self.get_config_data.get_conf("postOrderUrl")
 		params = self.send_post.send_post(params_post['url'], data, params_post['header'])
+		params['post_status'] = 1
+		if params['status'] == 200 and params['code'] == 2:
+			if params['message'] == "下单其它异常信息: 生成预订单失败，message=Undefined index: prepay_id":
+				# 写入xml错误文件
+				traceid = params['traceid']
+				# file_path = "/public/yaml/order/add.yaml"
+				# ret = self.get_config_data.get_data_post("postOrderUrl", file_path)
+				# result_status = {"key": [], "val": [], 'report': "下单其它异常信息: 生成预订单失败，message=Undefined index: prepay_id"}
+				# self.get_yaml_data.set_to_yaml(ret, data, params, ["下单", '下单', 'order'], result_status)
+				params = {'data': {'payment': {'appId': 'wxd9a28df0646534d8',
+					'timeStamp': '1528272139', 'nonceStr': 'ZqVLm8Pat11R1lES',
+					'package': 'prepay_id=wx0616310921997445847a6bb82103985001', 'signType': 'MD5',
+					'paySign': 'CD4DF19AE59427DFE83517F0A71CC9DA', 'orderId': 12345,
+					'orderno': '155641426764551068878', 'payAmount': 10240,
+					'prepayId': 'wx280917482887322d8d7918c11135339134'}, 'type': 1},
+					'status': 200, 'code': 0, 'message': '', 'traceid': traceid, 'request_time': params['request_time'],
+					'report_status': 200, "post_status": 2, 'serverTime': 1554209408.009201}
 		return params
 
 
