@@ -51,7 +51,7 @@ class GetHtml:
 
 		qywx = Qywx()
 		qywx.send_msg_qywx_text(
-				{'touser': '', "totag": "", "toparty": "2|4", "agentid": 1000012, "content": content})
+				{'touser': 'plutoer', "totag": "", "toparty": "", "agentid": 1000012, "content": content})
 		print(content)
 
 	# self.send_email.send_report_email(title, content)

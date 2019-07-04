@@ -42,7 +42,7 @@ class OperationYaml:
 	# 获取基础配置
 	@staticmethod
 	def get_config():
-		file_path = root_path + '/config/config.yaml'
+		file_path = root_path + '/config/base.yaml'
 		f1 = open(file_path, 'r', encoding = 'utf-8')  # 打开yaml文件
 		data = f1.read()  # 使用load方法加载
 		data = yaml.full_load(data)

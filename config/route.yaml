@@ -1,0 +1,4 @@
+#url地址页面，用于集体控制uri
+
+# 用户信息授权（登录、注册）暂时无法模拟授权登录不执行
+loginUrl: "/user/init/index"

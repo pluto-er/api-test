@@ -1,0 +1,32 @@
+# 请求头部
+header:
+  content-type: "application/json"
+  bid: "10006"
+  sid: "96"
+  uid: "30"
+  token: ""
+  locale: "zh-CN"
+
+
+  lon: "104.05883026123047"
+  Accept: "*/*"
+  sdkVersion: "2.7.2"
+  Accept-Language: "zh-cn"
+  lat: "30.548831939697266"
+  language: "zh-CN"
+  miniVersion: "2.3.2.10006"
+  User-Agent: "Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.4(0x17000428) NetType/WIFI Language/zh_CN"
+  Referer: "https://servicewechat.com/wxd9a28df0646534d8/0/page-frame.html"
+  Content-Length: "436"
+  Accept-Encoding: "br, gzip, deflate"
+  Connection: "keep-alive"
+
+
+#请求环境域名
+host: "www.baidu.com"
+case_url: "www.plutoer.com"
+
+# 接收测试结果的邮件，多个用，隔开
+#user_email: "1357282015@qq.com,1358448980@qq.com"
+
+

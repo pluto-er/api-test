@@ -32,6 +32,17 @@ class ValidatorHelper:
 			self.get_yaml_data.set_to_yaml(expect, data, params, model, result_status)
 			return 'fail'
 
+	"""
+	树形验证数据
+	expect 验证参照物
+	request 实际请求值
+	k  防止死循环
+	flag_key 对比验证不同的键
+	flag_value 对比验证不同的值
+	skip_key 跳过验证的参数
+	parent_key 父级参数
+	"""
+
 	def get_round_status(self, expect, request, k = 0, flag_key = [], flag_value = [], skip_key = ['cityList', 'test'],
 						 parent_key = ""):
 		if k > 100:  # 防止死循环

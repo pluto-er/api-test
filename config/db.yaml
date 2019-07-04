@@ -1,0 +1,6 @@
+#mysql配置
+mysqluser: "root"
+mysqlpass: ""
+mysqlurls: "127.0.0.1"
+mysqldb: "blog"
+mysqlport: "3306"

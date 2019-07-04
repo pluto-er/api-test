@@ -1,5 +1,5 @@
 # coding:utf-8
-
+# 全局变量的声明和使用
 
 class glo:
 
@@ -13,7 +13,6 @@ class glo:
 
 	@staticmethod
 	def get_value(key, defValue = None):
-
 		try:
 			return _global_dict[key]
 		except KeyError:

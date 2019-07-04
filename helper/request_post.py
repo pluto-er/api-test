@@ -2,7 +2,8 @@ from lib.client import RunMethod
 
 
 class SendPost:
-
+	# post请求
+	# 超时重试三次
 	def send_post(self, url, data, header = None, k = 0):
 		run = RunMethod()
 		ret = run.request_post(url, data, header)
@@ -17,5 +18,3 @@ class SendPost:
 
 if __name__ == '__main__':
 	pass
-	# run = SendPost()
-	# run.send_post('http://www.baidu.com', "", "")

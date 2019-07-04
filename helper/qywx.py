@@ -2,8 +2,8 @@ import time
 from lib.client import RunMethod
 from lib.global_val import glo
 
-corpid = "wwf9c376064d78d25f"  # 企业id
-corpsecret = "dbj5tOQcTqB3z2F6rKjPMDl84fxMAUqmZ6Z2d23ZyBo"  # 密钥
+corpid = "1111111111"  # 企业id
+corpsecret = "2222222222222222"  # 密钥
 
 
 class Qywx:

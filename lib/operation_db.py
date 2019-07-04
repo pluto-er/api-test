@@ -1,15 +1,14 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-
+# 链接数据库
 import MySQLdb
 
 
 class OperationDb:
-
 	@staticmethod
 	def select(data, sql):
 		# 打开数据库连接
-		db = MySQLdb.connect("118.24.141.135", 'root', 'riC%sdsdsD^^68$##rwwdPTO%a6s&a', data, charset = 'utf8mb4')
+		db = MySQLdb.connect("118.24.141.135", 'root', 'password', data, charset = 'utf8mb4')
 
 		# 使用cursor()方法获取操作游标
 		cursor = db.cursor()
